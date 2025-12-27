@@ -21,8 +21,12 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Engine.h"
 
 #include <list>
+#include <map>
+#include <memory>
+#include <string>
 
 class PlayerInfo;
+class Ship;
 class ShipEvent;
 
 
@@ -93,4 +97,16 @@ private:
 	bool hasControl = false;
 	bool canClick = false;
 	bool canDrag = false;
+
+	// Gödel's Sky: Track active combat for combat memory system.
+	// Maps NPC UUID to combat tracking data.
+	struct CombatData {
+		std::weak_ptr<Ship> target;
+		bool usedAfterburner = false;
+		bool usedMissiles = false;
+		bool usedBeams = false;
+		double lastCombatRange = 1000.;
+	};
+	std::map<std::string, CombatData> activeCombat;
+	bool wasUsingAfterburner = false;
 };

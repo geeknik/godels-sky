@@ -300,21 +300,49 @@ Threshold levels: `war`, `hostile`, `unfriendly`, `neutral`, `friendly`, `allied
 - Target sharing is government-specific
 - Allies don't share targets across hostile governments
 
-### Scenario 15: Combat Memory and Tactical Adaptation
+### Scenario 15: Combat Memory Recording
 
-**Goal**: Verify that NPCs remember player combat tactics.
+**Goal**: Verify that combat encounters are tracked in NPC memory.
 
 **Steps**:
-1. Engage the same NPC multiple times
-2. Consistently use specific tactics (missiles, afterburner, close range)
-3. Encounter the same NPC again after several combat encounters
+1. Find a hostile NPC and engage in combat
+2. Use missile weapons consistently
+3. Either destroy the NPC or jump away (flee)
+4. Check the encounter record for that NPC's UUID
 
 **Expected Results**:
-- NPCs track player weapon preferences (missile vs beam)
-- NPCs track if player uses afterburner frequently
-- NPCs track player's preferred combat range
-- NPCs track if player tends to flee
-- After enough data, NPCs can predict player behavior
+- Combat encounters are incremented after each fight
+- Weapon type usage is tracked (missiles vs beams)
+- Combat range is recorded and averaged over encounters
+- Jumping away during combat increments the flee count
+- Destroying the NPC finalizes the combat record without flee
+
+**Test Variations**:
+- Fight same NPC type multiple times: cumulative tracking
+- Mix weapon types: both missile and beam counts increase
+- Flee vs stay: flee count only increases when player jumps
+
+### Scenario 16: AI Tactical Adaptation
+
+**Goal**: Verify that NPCs adapt tactics based on combat memory.
+
+**Steps**:
+1. Build up combat history with an NPC (2+ encounters)
+2. Consistently use missile weapons in those encounters
+3. Engage the same NPC again
+4. Observe their approach behavior
+
+**Expected Results**:
+- NPCs with combat memory of missile-using players approach aggressively
+- Aggressive approach means closing distance quickly (MoveToAttack)
+- NPCs without sufficient memory (< 2 encounters) use normal Attack
+- The adaptation only applies when NPC is attacking the player
+
+**Technical Details**:
+- `GetCombatMemoryHints()` queries player's EncounterLog for NPC's UUID
+- Requires 2+ combat encounters for hints to be valid
+- `PlayerPrefersMissiles()` returns true if missile use > beam use
+- Aggressive approach bypasses normal range-keeping behavior
 
 ## Console Commands for Testing
 
@@ -363,6 +391,12 @@ Consequence-related data files:
 8. **Distress Response Priority**: Ships responding to distress calls will abandon other activities. This can interrupt mining, harvesting, or patrol behaviors.
 
 9. **Strength Assessment Threshold**: Strength assessment uses a 2x multiplier. Ships with "daring" personality bypass this check entirely.
+
+10. **Combat Memory Minimum**: Combat memory hints require at least 2 combat encounters before NPCs adapt tactics. Single encounters don't provide enough data.
+
+11. **Weapon Detection Heuristic**: Weapon type detection checks player's equipped weapons at combat end, not actual fired projectiles. Players with mixed loadouts will have both types recorded.
+
+12. **Flee Detection Timing**: Fleeing is detected when player's flagship jumps. Combat records are finalized for all active combats at that moment.
 
 ## Reporting Issues
 

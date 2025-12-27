@@ -44,6 +44,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Ship.h"
 #include "ShipEvent.h"
 #include "StellarObject.h"
+#include "Weapon.h"
 #include "System.h"
 #include "UI.h"
 
@@ -711,7 +712,20 @@ void MainPanel::StepEvents(bool &isActive)
 		// Handle jump events from the player's flagship. This means we should check
 		// for entering missions that can be offered.
 		if((event.Type() & ShipEvent::JUMP) && flagship && event.Actor().get() == flagship)
+		{
 			player.CreateEnteringMissions();
+
+			// Gödel's Sky: Player jumping away ends all active combats as "fled".
+			for(auto &pair : activeCombat)
+			{
+				EncounterRecord *record = const_cast<EncounterRecord *>(
+					player.Encounters().Get(pair.first));
+				if(record)
+					record->RecordCombatEncounter(true, pair.second.usedAfterburner,
+						pair.second.usedMissiles, pair.second.usedBeams, pair.second.lastCombatRange);
+			}
+			activeCombat.clear();
+		}
 
 		// Gödel's Sky: Record significant player actions to the ActionLog.
 		// This tracks the player's behavior patterns over time.
@@ -749,7 +763,6 @@ void MainPanel::StepEvents(bool &isActive)
 		}
 
 		// Gödel's Sky: Record NPC encounters for memory system.
-		// This allows NPCs to "remember" past interactions with the player.
 		if(actor && actor->IsPlayer() && event.Target())
 		{
 			const int encounterEvents = ShipEvent::SCAN_CARGO | ShipEvent::SCAN_OUTFITS |
@@ -761,13 +774,53 @@ void MainPanel::StepEvents(bool &isActive)
 				string systemName = player.GetSystem() ? player.GetSystem()->TrueName() : "";
 				string uuid = target->UUID().ToString();
 
-				// Get or create encounter record for this NPC.
 				EncounterRecord &record = player.Encounters().GetOrCreate(
 					uuid, player.GetDate(), systemName);
 
-				// Update the record with the new encounter.
 				record.RecordEncounter(player.GetDate(), systemName);
 				record.RecordEvent(event.Type());
+
+				const int combatEvents = ShipEvent::DISABLE | ShipEvent::DESTROY | ShipEvent::PROVOKE;
+				if(event.Type() & combatEvents)
+				{
+					double combatRange = flagship ? flagship->Position().Distance(target->Position()) : 1000.;
+
+					bool playerHasMissiles = false;
+					bool playerHasBeams = false;
+					if(flagship)
+						for(const Hardpoint &hardpoint : flagship->Weapons())
+							if(hardpoint.GetOutfit() && hardpoint.GetOutfit()->GetWeapon())
+							{
+								const Weapon &weapon = *hardpoint.GetOutfit()->GetWeapon();
+								if(weapon.MissileStrength() > 0)
+									playerHasMissiles = true;
+								else if(weapon.Velocity() > 0)
+									playerHasBeams = true;
+							}
+
+					if(event.Type() & ShipEvent::DESTROY)
+					{
+						auto it = activeCombat.find(uuid);
+						if(it != activeCombat.end())
+						{
+							record.RecordCombatEncounter(false, it->second.usedAfterburner,
+								playerHasMissiles, playerHasBeams, combatRange);
+							activeCombat.erase(it);
+						}
+						else
+							record.RecordCombatEncounter(false, wasUsingAfterburner,
+								playerHasMissiles, playerHasBeams, combatRange);
+					}
+					else
+					{
+						CombatData &data = activeCombat[uuid];
+						data.target = target;
+						data.usedAfterburner = data.usedAfterburner || wasUsingAfterburner;
+						data.usedMissiles = playerHasMissiles;
+						data.usedBeams = playerHasBeams;
+						data.lastCombatRange = combatRange;
+					}
+				}
 			}
 		}
 

@@ -149,6 +149,15 @@ private:
 	std::shared_ptr<Ship> GetSharedTarget(const Government *gov) const;
 	void BroadcastPlayerWarning(const Government *gov, int level);
 	int GetPlayerWarningLevel(const Government *gov) const;
+
+	struct CombatMemoryHints {
+		bool hasMemory = false;
+		bool playerLikelyToFlee = false;
+		bool playerPrefersMissiles = false;
+		double preferredRange = 1000.;
+	};
+	CombatMemoryHints GetCombatMemoryHints(const Ship &npc) const;
+
 	// Pick a new target for the given ship.
 	std::shared_ptr<Ship> FindTarget(const Ship &ship) const;
 	std::shared_ptr<Ship> FindNonHostileTarget(const Ship &ship) const;

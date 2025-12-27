@@ -1992,6 +1992,25 @@ int AI::GetPlayerWarningLevel(const Government *gov) const
 
 
 
+AI::CombatMemoryHints AI::GetCombatMemoryHints(const Ship &npc) const
+{
+	CombatMemoryHints hints;
+
+	string uuid = npc.UUID().ToString();
+	const EncounterRecord *record = player.Encounters().Get(uuid);
+	if(!record || record->combatEncounters < 2)
+		return hints;
+
+	hints.hasMemory = true;
+	hints.playerLikelyToFlee = record->PlayerLikelyToFlee();
+	hints.playerPrefersMissiles = record->PlayerPrefersMissiles();
+	hints.preferredRange = record->GetPreferredCombatRange();
+
+	return hints;
+}
+
+
+
 // Pick a new target for the given ship.
 shared_ptr<Ship> AI::FindTarget(const Ship &ship) const
 {
@@ -2530,7 +2549,18 @@ void AI::MoveIndependent(Ship &ship, Command &command)
 		}
 		else
 		{
-			Attack(ship, command, *target);
+			bool useAggressiveApproach = false;
+			if(target->IsYours() && !ship.IsYours())
+			{
+				CombatMemoryHints hints = GetCombatMemoryHints(ship);
+				if(hints.hasMemory && hints.playerPrefersMissiles)
+					useAggressiveApproach = true;
+			}
+
+			if(useAggressiveApproach)
+				MoveToAttack(ship, command, *target);
+			else
+				Attack(ship, command, *target);
 			boarders.erase(&ship);
 		}
 		return;
