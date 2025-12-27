@@ -213,6 +213,46 @@ Threshold levels: `war`, `hostile`, `unfriendly`, `neutral`, `friendly`, `allied
 - Flee radius increases with threat level (1500 + threat * 2000)
 - NPCs that have seen you attack allies are more cautious
 
+### Scenario 10: Distress Call System
+
+**Goal**: Verify that ships under attack call for help and allies respond.
+
+**Steps**:
+1. Find a system with multiple allied merchant ships
+2. Attack a weaker merchant ship while stronger allies are nearby (<5000 distance)
+3. Observe the nearby allied ships' behavior
+
+**Expected Results**:
+- Outgunned ships broadcast distress (attacker strength > 1.5x victim strength)
+- Allied ships with sufficient strength (> 0.8x attacker) respond
+- Responding ships change target to the attacker
+- Responding ships move toward the distressed ship
+- Responders with combat capability engage the attacker
+
+**Test Variations**:
+- Attack a lone ship: No distress response (no allies nearby)
+- Attack near timid ships: They flee instead of responding
+- Attack near unarmed ships: They cannot respond (no weapons)
+- Attack near pacifist ships: They do not respond (personality)
+
+### Scenario 11: Strength Assessment Before Engaging
+
+**Goal**: Verify that NPCs evaluate strength before engaging.
+
+**Steps**:
+1. Get a powerful ship (high shield/hull/weapons)
+2. Build up perceived threat by destroying many ships
+3. Travel to systems with weaker NPC ships
+4. Observe whether weak NPCs engage you
+
+**Expected Results**:
+- NPCs won't engage ships more than 2x their strength
+- Player's perceived threat increases effective strength assessment
+- NPCs with "daring" personality ignore strength checks
+- NPCs consider nearby ally strength in calculations
+- Weak NPCs that would normally be hostile avoid engaging
+- Strong NPCs still engage normally
+
 ## Console Commands for Testing
 
 If the game has console access, use these to check conditions:
@@ -254,6 +294,12 @@ Consequence-related data files:
 5. **Pattern Caching**: Player behavior pattern is cached per-step for performance. Pattern changes may take a few seconds to propagate to NPC behavior.
 
 6. **Witness Flee Detection**: Witness flee only triggers when player is actively firing (Command::PRIMARY). Ships won't flee from players who are just targeting but not shooting.
+
+7. **Distress Call Range**: Distress calls have a 5000-unit range. Ships beyond this range will not respond regardless of alliance.
+
+8. **Distress Response Priority**: Ships responding to distress calls will abandon other activities. This can interrupt mining, harvesting, or patrol behaviors.
+
+9. **Strength Assessment Threshold**: Strength assessment uses a 2x multiplier. Ships with "daring" personality bypass this check entirely.
 
 ## Reporting Issues
 

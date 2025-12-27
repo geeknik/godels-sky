@@ -271,6 +271,51 @@ namespace {
 		return true;
 	}
 
+	constexpr double DISTRESS_RANGE = 5000.;
+	constexpr int DISTRESS_COOLDOWN = 120;
+	constexpr double STRENGTH_RATIO_TO_BROADCAST = 1.5;
+	constexpr double STRENGTH_RATIO_TO_RESPOND = 0.8;
+
+	bool ShouldBroadcastDistress(const Ship &ship, int64_t myStrength, int64_t attackerStrength)
+	{
+		if(ship.IsDisabled() || ship.IsDestroyed())
+			return false;
+		if(!ship.GetGovernment())
+			return false;
+		if(ship.GetPersonality().IsUnconstrained())
+			return false;
+
+		return attackerStrength > myStrength * STRENGTH_RATIO_TO_BROADCAST;
+	}
+
+	bool CanRespondToDistress(const Ship &responder, const Ship &distressed,
+		int64_t responderStrength, int64_t attackerStrength)
+	{
+		if(responder.IsDisabled() || responder.IsDestroyed())
+			return false;
+		if(!IsArmed(responder))
+			return false;
+		if(responder.GetPersonality().IsTimid() || responder.GetPersonality().IsPacifist())
+			return false;
+		if(responder.GetSystem() != distressed.GetSystem())
+			return false;
+
+		const Government *responderGov = responder.GetGovernment();
+		const Government *distressedGov = distressed.GetGovernment();
+		if(!responderGov || !distressedGov)
+			return false;
+		if(responderGov->IsEnemy(distressedGov))
+			return false;
+
+		double distance = responder.Position().Distance(distressed.Position());
+		if(distance > DISTRESS_RANGE)
+			return false;
+
+		return responderStrength > attackerStrength * STRENGTH_RATIO_TO_RESPOND;
+	}
+
+
+
 	void Deploy(const Ship &ship, bool includingDamaged)
 	{
 		for(const Ship::Bay &bay : ship.Bays())
@@ -772,6 +817,8 @@ void AI::Clean()
 	shipStrength.clear();
 	enemyStrength.clear();
 	allyStrength.clear();
+	distressRespondersForShip.clear();
+	lastDistressBroadcastStep.clear();
 }
 
 
@@ -820,6 +867,8 @@ void AI::Step(Command &activeCommands)
 	for(auto &bodyIt : formations)
 		for(auto &positionerIt : bodyIt.second)
 			positionerIt.second.Step();
+
+	CleanupDistressCalls();
 
 	const Ship *flagship = player.Flagship();
 	step = (step + 1) & 31;
@@ -961,6 +1010,17 @@ void AI::Step(Command &activeCommands)
 				AutoFire(*it, firingCommands, *targetAsteroid);
 			else
 				AutoFire(*it, firingCommands);
+		}
+
+		if(isPresent && !it->IsYours() && target && target->GetGovernment()->IsEnemy(gov))
+			BroadcastDistress(*it);
+
+		if(isPresent && !it->IsYours() && IsRespondingToDistress(*it))
+		{
+			RespondToDistress(*it, command);
+			it->SetCommands(command);
+			it->SetCommands(firingCommands);
+			continue;
 		}
 
 		// If this ship is hyperspacing, or in the act of
@@ -1655,6 +1715,127 @@ bool AI::HasHelper(const Ship &ship, const bool needsFuel, const bool needsEnerg
 
 
 
+void AI::BroadcastDistress(Ship &ship)
+{
+	shared_ptr<Ship> attacker = ship.GetTargetShip();
+	if(!attacker || !attacker->GetGovernment()->IsEnemy(ship.GetGovernment()))
+		return;
+
+	auto it = lastDistressBroadcastStep.find(&ship);
+	if(it != lastDistressBroadcastStep.end() && (step - it->second + 32) % 32 < DISTRESS_COOLDOWN / 32)
+		return;
+
+	auto myStrengthIt = shipStrength.find(&ship);
+	auto attackerStrengthIt = shipStrength.find(attacker.get());
+	int64_t myStrength = myStrengthIt != shipStrength.end() ? myStrengthIt->second : ship.Strength();
+	int64_t attackerStrength = attackerStrengthIt != shipStrength.end() ?
+		attackerStrengthIt->second : attacker->Strength();
+
+	if(!ShouldBroadcastDistress(ship, myStrength, attackerStrength))
+		return;
+
+	lastDistressBroadcastStep[&ship] = step;
+
+	const Government *gov = ship.GetGovernment();
+	auto allyIt = allyLists.find(gov);
+	if(allyIt == allyLists.end())
+		return;
+
+	for(Ship *ally : allyIt->second)
+	{
+		if(ally == &ship || ally->IsDisabled() || ally->IsDestroyed())
+			continue;
+		if(ally->GetShipToAssist())
+			continue;
+
+		auto allyStrengthIt = shipStrength.find(ally);
+		int64_t allyStrength = allyStrengthIt != shipStrength.end() ? allyStrengthIt->second : ally->Strength();
+
+		if(CanRespondToDistress(*ally, ship, allyStrength, attackerStrength))
+			distressRespondersForShip[&ship].insert(ally);
+	}
+}
+
+
+
+void AI::RespondToDistress(Ship &ship, Command &command)
+{
+	const Ship *distressedShip = nullptr;
+	for(auto &pair : distressRespondersForShip)
+	{
+		if(pair.second.count(&ship))
+		{
+			distressedShip = pair.first;
+			break;
+		}
+	}
+
+	if(!distressedShip)
+		return;
+
+	if(distressedShip->IsDisabled() || distressedShip->IsDestroyed() ||
+		distressedShip->GetSystem() != ship.GetSystem())
+	{
+		for(auto &pair : distressRespondersForShip)
+			pair.second.erase(&ship);
+		return;
+	}
+
+	shared_ptr<Ship> attacker = const_cast<Ship *>(distressedShip)->GetTargetShip();
+	if(attacker && attacker->IsTargetable() && !attacker->IsDisabled())
+	{
+		ship.SetTargetShip(attacker);
+		MoveToAttack(ship, command, *attacker);
+	}
+	else
+	{
+		MoveTo(ship, command, distressedShip->Position(), distressedShip->Velocity(), 200., .8);
+	}
+}
+
+
+
+bool AI::IsRespondingToDistress(const Ship &ship) const
+{
+	for(const auto &pair : distressRespondersForShip)
+		if(pair.second.count(&ship))
+			return true;
+	return false;
+}
+
+
+
+void AI::CleanupDistressCalls()
+{
+	for(auto it = distressRespondersForShip.begin(); it != distressRespondersForShip.end(); )
+	{
+		const Ship *distressed = it->first;
+		if(!distressed || distressed->IsDisabled() || distressed->IsDestroyed())
+		{
+			it = distressRespondersForShip.erase(it);
+			continue;
+		}
+
+		auto &responders = it->second;
+		for(auto respIt = responders.begin(); respIt != responders.end(); )
+		{
+			const Ship *responder = *respIt;
+			if(!responder || responder->IsDisabled() || responder->IsDestroyed() ||
+				responder->GetSystem() != distressed->GetSystem())
+				respIt = responders.erase(respIt);
+			else
+				++respIt;
+		}
+
+		if(responders.empty())
+			it = distressRespondersForShip.erase(it);
+		else
+			++it;
+	}
+}
+
+
+
 // Pick a new target for the given ship.
 shared_ptr<Ship> AI::FindTarget(const Ship &ship) const
 {
@@ -1751,8 +1932,17 @@ shared_ptr<Ship> AI::FindTarget(const Ship &ship) const
 		if(maxStrength && range > 1000. && !foe->IsDisabled())
 		{
 			const auto otherStrengthIt = shipStrength.find(foe);
-			if(otherStrengthIt != shipStrength.end() && otherStrengthIt->second > maxStrength)
-				continue;
+			if(otherStrengthIt != shipStrength.end())
+			{
+				int64_t effectiveFoeStrength = otherStrengthIt->second;
+				if(foe->IsYours())
+				{
+					double perceivedThreat = GetFleeUrgency(ship, player);
+					effectiveFoeStrength = static_cast<int64_t>(effectiveFoeStrength * (1. + perceivedThreat));
+				}
+				if(effectiveFoeStrength > maxStrength)
+					continue;
+			}
 		}
 
 		// Merciful ships do not attack any ships that are trying to escape.

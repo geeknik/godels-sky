@@ -136,6 +136,11 @@ private:
 	void AskForHelp(Ship &ship, bool &isStranded, const Ship *flagship);
 	bool CanHelp(const Ship &ship, const Ship &helper, const bool needsFuel, const bool needsEnergy) const;
 	bool HasHelper(const Ship &ship, const bool needsFuel, const bool needsEnergy);
+	// Distress call system for combat situations.
+	void BroadcastDistress(Ship &ship);
+	void RespondToDistress(Ship &ship, Command &command);
+	bool IsRespondingToDistress(const Ship &ship) const;
+	void CleanupDistressCalls();
 	// Pick a new target for the given ship.
 	std::shared_ptr<Ship> FindTarget(const Ship &ship) const;
 	std::shared_ptr<Ship> FindNonHostileTarget(const Ship &ship) const;
@@ -301,4 +306,7 @@ private:
 	// Cached player behavior pattern, updated periodically for performance.
 	mutable BehaviorPattern cachedPlayerPattern = BehaviorPattern::UNKNOWN;
 	mutable int patternCacheStep = -1;
+
+	std::map<const Ship *, std::set<const Ship *>> distressRespondersForShip;
+	std::map<const Ship *, int> lastDistressBroadcastStep;
 };
