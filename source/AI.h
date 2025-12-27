@@ -141,6 +141,14 @@ private:
 	void RespondToDistress(Ship &ship, Command &command);
 	bool IsRespondingToDistress(const Ship &ship) const;
 	void CleanupDistressCalls();
+	void UpdateSystemDanger(const System *system, int delta);
+	int GetSystemDanger(const System *system) const;
+	void SeekConvoy(Ship &ship, Command &command);
+	bool IsInConvoy(const Ship &ship) const;
+	void ShareTarget(const Government *gov, const std::shared_ptr<Ship> &target);
+	std::shared_ptr<Ship> GetSharedTarget(const Government *gov) const;
+	void BroadcastPlayerWarning(const Government *gov, int level);
+	int GetPlayerWarningLevel(const Government *gov) const;
 	// Pick a new target for the given ship.
 	std::shared_ptr<Ship> FindTarget(const Ship &ship) const;
 	std::shared_ptr<Ship> FindNonHostileTarget(const Ship &ship) const;
@@ -309,4 +317,10 @@ private:
 
 	std::map<const Ship *, std::set<const Ship *>> distressRespondersForShip;
 	std::map<const Ship *, int> lastDistressBroadcastStep;
+
+	std::map<const System *, int> systemPlayerAggressionCount;
+	std::map<const Ship *, std::weak_ptr<Ship>> convoyLeaderForShip;
+
+	mutable std::map<const Government *, std::weak_ptr<Ship>> governmentSharedTarget;
+	std::map<const Government *, int> governmentPlayerWarningLevel;
 };

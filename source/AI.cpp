@@ -783,6 +783,19 @@ void AI::UpdateEvents(const list<ShipEvent> &events)
 				// Apply immediate reputation effects for non-witnessed actions.
 				if(immediateActions)
 					event.TargetGovernment()->Offend(immediateActions, target->CrewValue());
+
+				constexpr int aggressiveEvents = ShipEvent::PROVOKE | ShipEvent::DISABLE |
+					ShipEvent::DESTROY | ShipEvent::BOARD;
+				if(newActions & aggressiveEvents)
+				{
+					const System *system = target->GetSystem();
+					if(system)
+						++systemPlayerAggressionCount[system];
+
+					BroadcastPlayerWarning(event.TargetGovernment(), 1);
+					if(newActions & ShipEvent::DESTROY)
+						BroadcastPlayerWarning(event.TargetGovernment(), 2);
+				}
 			}
 		}
 	}
@@ -819,6 +832,9 @@ void AI::Clean()
 	allyStrength.clear();
 	distressRespondersForShip.clear();
 	lastDistressBroadcastStep.clear();
+	convoyLeaderForShip.clear();
+	governmentSharedTarget.clear();
+	governmentPlayerWarningLevel.clear();
 }
 
 
@@ -1393,7 +1409,21 @@ void AI::Step(Command &activeCommands)
 		// are hostile targets nearby, and whether the escort has any
 		// immediate needs (like refueling).
 		else if(!parent)
+		{
+			bool isVulnerable = !IsArmed(*it) || personality.IsTimid();
+			int warningLevel = GetPlayerWarningLevel(gov);
+			if(isVulnerable && warningLevel > 0 && !target)
+			{
+				SeekConvoy(*it, command);
+				if(IsInConvoy(*it))
+				{
+					it->SetCommands(command);
+					it->SetCommands(firingCommands);
+					continue;
+				}
+			}
 			MoveIndependent(*it, command);
+		}
 		else if(parent->GetSystem() != it->GetSystem())
 		{
 			if(personality.IsStaying() || !it->Attributes().Get("fuel capacity"))
@@ -1836,6 +1866,132 @@ void AI::CleanupDistressCalls()
 
 
 
+void AI::UpdateSystemDanger(const System *system, int delta)
+{
+	if(!system)
+		return;
+	systemPlayerAggressionCount[system] += delta;
+	if(systemPlayerAggressionCount[system] <= 0)
+		systemPlayerAggressionCount.erase(system);
+}
+
+
+
+int AI::GetSystemDanger(const System *system) const
+{
+	if(!system)
+		return 0;
+	auto it = systemPlayerAggressionCount.find(system);
+	return it != systemPlayerAggressionCount.end() ? it->second : 0;
+}
+
+
+
+void AI::SeekConvoy(Ship &ship, Command &command)
+{
+	auto leaderIt = convoyLeaderForShip.find(&ship);
+	if(leaderIt != convoyLeaderForShip.end())
+	{
+		shared_ptr<Ship> leader = leaderIt->second.lock();
+		if(leader && !leader->IsDisabled() && leader->GetSystem() == ship.GetSystem())
+		{
+			MoveTo(ship, command, leader->Position(), leader->Velocity(), 200., .8);
+			return;
+		}
+		convoyLeaderForShip.erase(leaderIt);
+	}
+
+	const Government *gov = ship.GetGovernment();
+	if(!gov)
+		return;
+
+	auto allyIt = allyLists.find(gov);
+	if(allyIt == allyLists.end())
+		return;
+
+	double bestDistance = 3000.;
+	Ship *bestLeader = nullptr;
+
+	for(Ship *ally : allyIt->second)
+	{
+		if(ally == &ship || ally->IsDisabled() || ally->IsDestroyed())
+			continue;
+		if(ally->GetSystem() != ship.GetSystem())
+			continue;
+		if(!IsArmed(*ally))
+			continue;
+		if(ally->GetPersonality().IsTimid())
+			continue;
+
+		double distance = ship.Position().Distance(ally->Position());
+		if(distance < bestDistance)
+		{
+			bestDistance = distance;
+			bestLeader = ally;
+		}
+	}
+
+	if(bestLeader)
+	{
+		convoyLeaderForShip[&ship] = bestLeader->shared_from_this();
+		MoveTo(ship, command, bestLeader->Position(), bestLeader->Velocity(), 200., .8);
+	}
+}
+
+
+
+bool AI::IsInConvoy(const Ship &ship) const
+{
+	auto it = convoyLeaderForShip.find(&ship);
+	if(it == convoyLeaderForShip.end())
+		return false;
+	shared_ptr<Ship> leader = it->second.lock();
+	return leader && !leader->IsDisabled() && leader->GetSystem() == ship.GetSystem();
+}
+
+
+
+void AI::ShareTarget(const Government *gov, const shared_ptr<Ship> &target)
+{
+	if(!gov || !target)
+		return;
+	governmentSharedTarget[gov] = target;
+}
+
+
+
+shared_ptr<Ship> AI::GetSharedTarget(const Government *gov) const
+{
+	if(!gov)
+		return nullptr;
+	auto it = governmentSharedTarget.find(gov);
+	if(it == governmentSharedTarget.end())
+		return nullptr;
+	return it->second.lock();
+}
+
+
+
+void AI::BroadcastPlayerWarning(const Government *gov, int level)
+{
+	if(!gov)
+		return;
+	int &current = governmentPlayerWarningLevel[gov];
+	current = max(current, level);
+}
+
+
+
+int AI::GetPlayerWarningLevel(const Government *gov) const
+{
+	if(!gov)
+		return 0;
+	auto it = governmentPlayerWarningLevel.find(gov);
+	return it != governmentPlayerWarningLevel.end() ? it->second : 0;
+}
+
+
+
 // Pick a new target for the given ship.
 shared_ptr<Ship> AI::FindTarget(const Ship &ship) const
 {
@@ -2018,6 +2174,19 @@ shared_ptr<Ship> AI::FindTarget(const Ship &ship) const
 		}
 	}
 
+	if(!isYours && !target)
+	{
+		shared_ptr<Ship> sharedTarget = GetSharedTarget(gov);
+		if(sharedTarget && sharedTarget->IsTargetable() &&
+			sharedTarget->GetSystem() == ship.GetSystem() &&
+			gov->IsEnemy(sharedTarget->GetGovernment()))
+		{
+			double range = sharedTarget->Position().Distance(ship.Position());
+			if(range < closest)
+				target = sharedTarget;
+		}
+	}
+
 	// With no hostile targets, NPCs with enforcement authority (and any
 	// mission NPCs) should consider friendly targets for surveillance.
 	if(!isYours && !target && (ship.IsSpecial() || scanPermissions.at(gov)))
@@ -2031,6 +2200,9 @@ shared_ptr<Ship> AI::FindTarget(const Ship &ship) const
 		if(target && (target->IsCloaked() || target->GetSystem() != ship.GetSystem()))
 			target.reset();
 	}
+
+	if(!isYours && target && gov->IsEnemy(target->GetGovernment()))
+		governmentSharedTarget[gov] = target;
 
 	return target;
 }
@@ -2419,6 +2591,7 @@ void AI::MoveIndependent(Ship &ship, Command &command)
 			? origin->JumpNeighbors(ship.JumpNavigation().JumpRange()) : origin->Links();
 		if(jumps)
 		{
+			bool isVulnerable = !IsArmed(ship) || ship.GetPersonality().IsTimid();
 			for(const System *link : links)
 			{
 				if(ship.IsRestrictedFrom(*link))
@@ -2430,6 +2603,13 @@ void AI::MoveIndependent(Ship &ship, Command &command)
 				Point direction = link->Position() - origin->Position();
 				int weight = static_cast<int>(
 					11. + 10. * ship.Facing().Unit().Dot(direction.Unit()));
+
+				if(isVulnerable)
+				{
+					int danger = GetSystemDanger(link);
+					if(danger > 0)
+						weight = max(1, weight - danger * 5);
+				}
 
 				systemWeights.push_back(weight);
 				totalWeight += weight;

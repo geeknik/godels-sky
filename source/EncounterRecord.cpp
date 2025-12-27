@@ -67,6 +67,18 @@ void EncounterRecord::Load(const DataNode &node)
 			playerWasAssisted = (child.Value(1) != 0);
 		else if(key == "total trade value" && child.Size() >= 2)
 			totalTradeValue = child.Value(1);
+		else if(key == "combat encounters" && child.Size() >= 2)
+			combatEncounters = child.Value(1);
+		else if(key == "player flee count" && child.Size() >= 2)
+			playerFleeCount = child.Value(1);
+		else if(key == "player afterburner use" && child.Size() >= 2)
+			playerAfterburnerUseCount = child.Value(1);
+		else if(key == "player missile use" && child.Size() >= 2)
+			playerMissileUseCount = child.Value(1);
+		else if(key == "player beam use" && child.Size() >= 2)
+			playerBeamUseCount = child.Value(1);
+		else if(key == "average combat range" && child.Size() >= 2)
+			averageCombatRange = child.Value(1);
 	}
 }
 
@@ -107,6 +119,15 @@ void EncounterRecord::Save(DataWriter &out) const
 			out.Write("player was assisted", 1);
 		if(totalTradeValue > 0)
 			out.Write("total trade value", totalTradeValue);
+		if(combatEncounters > 0)
+		{
+			out.Write("combat encounters", combatEncounters);
+			out.Write("player flee count", playerFleeCount);
+			out.Write("player afterburner use", playerAfterburnerUseCount);
+			out.Write("player missile use", playerMissileUseCount);
+			out.Write("player beam use", playerBeamUseCount);
+			out.Write("average combat range", averageCombatRange);
+		}
 	}
 	out.EndChild();
 }
@@ -432,4 +453,61 @@ void EncounterLog::TrimToMaxSize()
 		}
 		records.erase(oldest);
 	}
+}
+
+
+
+void EncounterRecord::RecordCombatEncounter(bool playerFled, bool usedAfterburner,
+	bool usedMissiles, bool usedBeams, double combatRange)
+{
+	++combatEncounters;
+	if(playerFled)
+		++playerFleeCount;
+	if(usedAfterburner)
+		++playerAfterburnerUseCount;
+	if(usedMissiles)
+		++playerMissileUseCount;
+	if(usedBeams)
+		++playerBeamUseCount;
+
+	if(combatEncounters == 1)
+		averageCombatRange = combatRange;
+	else
+		averageCombatRange = (averageCombatRange * (combatEncounters - 1) + combatRange) / combatEncounters;
+}
+
+
+
+bool EncounterRecord::PlayerLikelyToFlee() const
+{
+	if(combatEncounters < 2)
+		return false;
+	return playerFleeCount > combatEncounters / 2;
+}
+
+
+
+bool EncounterRecord::PlayerUsesAfterburner() const
+{
+	if(combatEncounters < 2)
+		return false;
+	return playerAfterburnerUseCount > combatEncounters / 2;
+}
+
+
+
+bool EncounterRecord::PlayerPrefersMissiles() const
+{
+	if(combatEncounters < 2)
+		return false;
+	return playerMissileUseCount > playerBeamUseCount;
+}
+
+
+
+double EncounterRecord::GetPreferredCombatRange() const
+{
+	if(combatEncounters == 0)
+		return 1000.;
+	return averageCombatRange;
 }

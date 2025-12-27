@@ -73,6 +73,13 @@ struct EncounterRecord {
 	// Economic interactions (for merchants).
 	int64_t totalTradeValue = 0;  // Total credits exchanged in trades
 
+	int combatEncounters = 0;
+	int playerFleeCount = 0;
+	int playerAfterburnerUseCount = 0;
+	int playerMissileUseCount = 0;
+	int playerBeamUseCount = 0;
+	double averageCombatRange = 0.;
+
 	// Default constructor.
 	EncounterRecord() = default;
 
@@ -113,6 +120,13 @@ struct EncounterRecord {
 
 	// Get a "friendship level" the NPC has with the player (0.0 - 1.0).
 	double GetFriendshipLevel() const;
+
+	void RecordCombatEncounter(bool playerFled, bool usedAfterburner,
+		bool usedMissiles, bool usedBeams, double combatRange);
+	bool PlayerLikelyToFlee() const;
+	bool PlayerUsesAfterburner() const;
+	bool PlayerPrefersMissiles() const;
+	double GetPreferredCombatRange() const;
 };
 
 

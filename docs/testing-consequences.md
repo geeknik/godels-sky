@@ -253,6 +253,69 @@ Threshold levels: `war`, `hostile`, `unfriendly`, `neutral`, `friendly`, `allied
 - Weak NPCs that would normally be hostile avoid engaging
 - Strong NPCs still engage normally
 
+### Scenario 12: Route Avoidance for Dangerous Systems
+
+**Goal**: Verify that vulnerable ships avoid systems where player has been aggressive.
+
+**Steps**:
+1. Attack and destroy ships in a specific system
+2. Travel to adjacent systems
+3. Observe unarmed merchant route selection
+4. Compare route choices before and after your attacks
+
+**Expected Results**:
+- Systems with player aggression are penalized in route weights
+- Unarmed/timid ships are less likely to jump to dangerous systems
+- Armed ships are unaffected by danger ratings
+- Route avoidance scales with aggression level
+
+### Scenario 13: Convoy Behavior
+
+**Goal**: Verify that vulnerable ships seek protection from armed allies.
+
+**Steps**:
+1. Attack several ships to raise warning level
+2. Find an unarmed merchant ship without a parent
+3. Observe if it seeks out armed ally ships
+4. Note if it follows the armed ship
+
+**Expected Results**:
+- Vulnerable ships seek convoy leaders when danger is present
+- Convoy leaders must be armed and non-timid
+- Ships stay within ~200 units of convoy leader
+- Convoy behavior stops when warning level drops
+
+### Scenario 14: Target Sharing Between Allies
+
+**Goal**: Verify that allied ships share target information.
+
+**Steps**:
+1. Provoke an NPC ship so it targets you
+2. Observe nearby allied ships
+3. Note if allies also target you
+
+**Expected Results**:
+- When one ship finds a target, allies consider it
+- Shared targets are prioritized if within range
+- Target sharing is government-specific
+- Allies don't share targets across hostile governments
+
+### Scenario 15: Combat Memory and Tactical Adaptation
+
+**Goal**: Verify that NPCs remember player combat tactics.
+
+**Steps**:
+1. Engage the same NPC multiple times
+2. Consistently use specific tactics (missiles, afterburner, close range)
+3. Encounter the same NPC again after several combat encounters
+
+**Expected Results**:
+- NPCs track player weapon preferences (missile vs beam)
+- NPCs track if player uses afterburner frequently
+- NPCs track player's preferred combat range
+- NPCs track if player tends to flee
+- After enough data, NPCs can predict player behavior
+
 ## Console Commands for Testing
 
 If the game has console access, use these to check conditions:
