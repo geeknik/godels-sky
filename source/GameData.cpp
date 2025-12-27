@@ -50,6 +50,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Planet.h"
 #include "Plugins.h"
 #include "shader/PointerShader.h"
+#include "EconomicState.h"
 #include "Politics.h"
 #include "RenderBuffer.h"
 #include "shader/RingShader.h"
@@ -89,6 +90,7 @@ namespace {
 	TextReplacements defaultSubstitutions;
 
 	Politics politics;
+	EconomicManager economicManager;
 
 	StarField background;
 
@@ -849,6 +851,13 @@ const Government *GameData::PlayerGovernment()
 Politics &GameData::GetPolitics()
 {
 	return politics;
+}
+
+
+
+EconomicManager &GameData::GetEconomicManager()
+{
+	return economicManager;
 }
 
 

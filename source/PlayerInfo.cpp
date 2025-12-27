@@ -22,6 +22,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "DataWriter.h"
 #include "Dialog.h"
 #include "DistanceMap.h"
+#include "EconomicState.h"
 #include "Files.h"
 #include "text/Format.h"
 #include "GameData.h"
@@ -485,6 +486,8 @@ void PlayerInfo::Load(const filesystem::path &path)
 			actionLog.Load(child);
 		else if(key == "encounter log")
 			encounterLog.Load(child);
+		else if(key == "economic state")
+			GameData::GetEconomicManager().Load(child);
 		else if(key == "start")
 			startData.Load(child);
 		else if(key == "message log")
@@ -5160,6 +5163,7 @@ void PlayerInfo::Save(DataWriter &out) const
 	// Gödel's Sky consequence systems.
 	actionLog.Save(out);
 	encounterLog.Save(out);
+	GameData::GetEconomicManager().Save(out);
 
 	out.Write();
 	out.WriteComment("How you began:");

@@ -15,6 +15,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "Politics.h"
 
+#include "EconomicState.h"
 #include "text/Format.h"
 #include "GameData.h"
 #include "Government.h"
@@ -309,6 +310,11 @@ pair<const Conversation *, string> Politics::Fine(PlayerInfo &player,
 			{
 				maxFine = fine.first;
 				reason = " for carrying illegal cargo.";
+
+				int illegalAmount = ship->Cargo().IllegalCargoAmount();
+				if(illegalAmount > 0 && player.GetSystem())
+					GameData::GetEconomicManager().RecordEvent(player.GetSystem(),
+						EconomicEventType::SMUGGLING_DETECTED, illegalAmount, "", true);
 
 				for(const Mission &mission : player.Missions())
 				{

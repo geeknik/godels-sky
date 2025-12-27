@@ -24,6 +24,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "CoreStartData.h"
 #include "DamageDealt.h"
 #include "DamageProfile.h"
+#include "EconomicState.h"
 #include "Effect.h"
 #include "FighterHitHelper.h"
 #include "shader/FillShader.h"
@@ -1488,6 +1489,9 @@ void Engine::EnterSystem()
 	// Remove expired bribes, clearance, and grace periods from past fines.
 	GameData::SetDate(today);
 	GameData::StepEconomy();
+	vector<string> economicNews = GameData::GetEconomicManager().StepDaily(today);
+	for(const string &headline : economicNews)
+		Messages::Add({headline, GameData::MessageCategories().Get("normal")});
 	// SetDate() clears any bribes from yesterday, so restore any auto-clearance.
 	for(const Mission &mission : player.Missions())
 		if(mission.ClearanceMessage() == "auto")
@@ -1943,6 +1947,18 @@ void Engine::MoveShip(const shared_ptr<Ship> &ship)
 			// Gödel's Sky: Notify witness system that this ship was destroyed.
 			// This may eliminate a witness from pending crime reports.
 			witnessSystem.NotifyShipDestroyed(ship.get());
+
+			// Gödel's Sky: Record economic impact of ship destruction.
+			if(ship->GetSystem() && !ship->IsYours())
+			{
+				const Government *gov = ship->GetGovernment();
+				if(gov && gov->IsEnemy())
+					GameData::GetEconomicManager().RecordEvent(ship->GetSystem(),
+						EconomicEventType::PIRATE_DESTROYED, 1, "", false);
+				else if(gov && !gov->IsPlayer())
+					GameData::GetEconomicManager().RecordEvent(ship->GetSystem(),
+						EconomicEventType::MERCHANT_DESTROYED, 1, "", false);
+			}
 		}
 		return;
 	}

@@ -22,6 +22,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Command.h"
 #include "CoreStartData.h"
 #include "Dialog.h"
+#include "EconomicState.h"
 #include "text/DisplayText.h"
 #include "shader/FillShader.h"
 #include "text/Font.h"
@@ -812,6 +813,41 @@ void MapDetailPanel::DrawInfo()
 	if(commodity == SHOW_GOVERNMENT)
 		PointerShader::Draw(uiPoint + Point(0., 20.), Point(1., 0.),
 			10.f, 10.f, 0.f, medium);
+
+	if(canView)
+	{
+		const SystemEconomy &economy = GameData::GetEconomicManager().GetSystemEconomy(selectedSystem);
+		EconomicStateType state = economy.GetState();
+		if(state != EconomicStateType::STABLE)
+		{
+			const Color *stateColor = nullptr;
+			switch(state)
+			{
+				case EconomicStateType::BOOM:
+					stateColor = GameData::Colors().Get("escort selected");
+					break;
+				case EconomicStateType::BUST:
+					stateColor = GameData::Colors().Get("dead");
+					break;
+				case EconomicStateType::SHORTAGE:
+					stateColor = GameData::Colors().Get("available job");
+					break;
+				case EconomicStateType::SURPLUS:
+					stateColor = GameData::Colors().Get("active mission");
+					break;
+				case EconomicStateType::LOCKDOWN:
+					stateColor = GameData::Colors().Get("radar hostile");
+					break;
+				default:
+					stateColor = &dim;
+					break;
+			}
+			string econText = SystemEconomy::GetStateName(state);
+			if(!economy.GetAffectedCommodity().empty())
+				econText += " (" + economy.GetAffectedCommodity() + ")";
+			font.Draw({econText, alignLeft}, uiPoint + Point(0., 33.), *stateColor);
+		}
+	}
 
 	const double tradeHeight = mapInterface->GetValue("trade height");
 	uiPoint = Point(Screen::Left() + startingX, Screen::Bottom() - tradeHeight);

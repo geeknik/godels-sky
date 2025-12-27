@@ -17,17 +17,20 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "Color.h"
 #include "Command.h"
+#include "EconomicState.h"
 #include "shader/FillShader.h"
 #include "text/Font.h"
 #include "text/FontSet.h"
 #include "text/Format.h"
 #include "GameData.h"
+#include "Government.h"
 #include "Information.h"
 #include "Interface.h"
 #include "MapDetailPanel.h"
 #include "Messages.h"
 #include "Outfit.h"
 #include "PlayerInfo.h"
+#include "Random.h"
 #include "Screen.h"
 #include "System.h"
 #include "UI.h"
@@ -155,6 +158,46 @@ void TradingPanel::Draw()
 		font.Draw(str, Point(MIN_X + NAME_X, lastY), unselected);
 	}
 
+	const SystemEconomy &economy = GameData::GetEconomicManager().GetSystemEconomy(&system);
+	const Government *gov = system.GetGovernment();
+	double reputation = gov ? gov->Reputation() : 0.0;
+	bool isBlackMarket = economy.IsBlackMarketOnly();
+
+	// Display economic state indicator (for non-STABLE states).
+	EconomicStateType state = economy.GetState();
+	if(state != EconomicStateType::STABLE && state != EconomicStateType::LOCKDOWN)
+	{
+		const Color *stateColor = nullptr;
+		switch(state)
+		{
+			case EconomicStateType::BOOM:
+				stateColor = GameData::Colors().Get("escort selected");
+				break;
+			case EconomicStateType::BUST:
+				stateColor = GameData::Colors().Get("dead");
+				break;
+			case EconomicStateType::SHORTAGE:
+				stateColor = GameData::Colors().Get("available job");
+				break;
+			case EconomicStateType::SURPLUS:
+				stateColor = GameData::Colors().Get("active mission");
+				break;
+			default:
+				stateColor = GameData::Colors().Get("medium");
+				break;
+		}
+		string stateText = "Economy: " + economy.GetStateDescription();
+		font.Draw(stateText, Point(MIN_X + NAME_X, y + 20), *stateColor);
+		y += 20;
+	}
+
+	if(isBlackMarket)
+	{
+		const Color &warning = *GameData::Colors().Get("dim");
+		font.Draw("BLACK MARKET - Trade at your own risk!", Point(MIN_X + NAME_X, y + 20), warning);
+		y += 20;
+	}
+
 	int i = 0;
 	bool canSell = false;
 	bool canBuy = false;
@@ -162,26 +205,43 @@ void TradingPanel::Draw()
 	for(const Trade::Commodity &commodity : GameData::Commodities())
 	{
 		y += 20;
-		int price = system.Trade(commodity.name);
+		int basePrice = system.Trade(commodity.name);
+		double buyMod, sellMod;
+		if(isBlackMarket)
+		{
+			buyMod = economy.GetBlackMarketModifier(true);
+			sellMod = economy.GetBlackMarketModifier(false);
+		}
+		else
+		{
+			double econBuyMod = economy.GetPriceModifier(commodity.name, true);
+			double econSellMod = economy.GetPriceModifier(commodity.name, false);
+			double repBuyMod = economy.GetReputationModifier(reputation, true);
+			double repSellMod = economy.GetReputationModifier(reputation, false);
+			buyMod = econBuyMod * repBuyMod;
+			sellMod = econSellMod * repSellMod;
+		}
+		int buyPrice = static_cast<int>(basePrice * buyMod);
+		int sellPrice = static_cast<int>(basePrice * sellMod);
 		int hold = player.Cargo().Get(commodity.name);
 
 		bool isSelected = (i++ == selectedRow);
 		const Color &color = (isSelected ? selected : unselected);
 		font.Draw(commodity.name, Point(MIN_X + NAME_X, y), color);
 
-		if(price)
+		if(basePrice)
 		{
 			canBuy |= isSelected;
-			font.Draw(to_string(price), Point(MIN_X + PRICE_X, y), color);
+			font.Draw(to_string(buyPrice), Point(MIN_X + PRICE_X, y), color);
 
 			int basis = player.GetBasis(commodity.name);
-			if(basis && basis != price && hold)
+			if(basis && basis != sellPrice && hold)
 			{
-				string profit = to_string(price - basis);
+				string profit = to_string(sellPrice - basis);
 				font.Draw(profit, Point(MIN_X + PROFIT_X, y), color);
 				showProfit = true;
 			}
-			int level = (price - commodity.low);
+			int level = (basePrice - commodity.low);
 			if(level < 0)
 				level = 0;
 			else if(level >= (commodity.high - commodity.low))
@@ -202,7 +262,7 @@ void TradingPanel::Draw()
 		if(hold)
 		{
 			sellOutfits = false;
-			canSell |= (price != 0);
+			canSell |= (basePrice != 0);
 			font.Draw(to_string(hold), Point(MIN_X + HOLD_X, y), selected);
 		}
 	}
@@ -239,13 +299,29 @@ bool TradingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command, 
 		Buy(1000000000);
 	else if(key == 'e' || key == 'S' || (key == 's' && (mod & KMOD_SHIFT)))
 	{
+		const SystemEconomy &economy = GameData::GetEconomicManager().GetSystemEconomy(&system);
+		const Government *gov = system.GetGovernment();
+		bool isBlackMarket = economy.IsBlackMarketOnly();
+		double reputation = gov ? gov->Reputation() : 0.0;
+		bool wasDetected = false;
 		for(const auto &it : player.Cargo().Commodities())
 		{
 			const string &commodity = it.first;
 			const int64_t &amount = it.second;
-			int64_t price = system.Trade(commodity);
-			if(!price || !amount)
+			int64_t basePrice = system.Trade(commodity);
+			if(!basePrice || !amount)
 				continue;
+
+			double sellMod;
+			if(isBlackMarket)
+				sellMod = economy.GetBlackMarketModifier(false);
+			else
+			{
+				double econSellMod = economy.GetPriceModifier(commodity, false);
+				double repSellMod = economy.GetReputationModifier(reputation, false);
+				sellMod = econSellMod * repSellMod;
+			}
+			int64_t price = static_cast<int64_t>(basePrice * sellMod);
 
 			int64_t basis = player.GetBasis(commodity, -amount);
 			profit += amount * price + basis;
@@ -255,7 +331,24 @@ bool TradingPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command, 
 			player.AdjustBasis(commodity, basis);
 			player.Accounts().AddCredits(amount * price);
 			player.Cargo().Remove(commodity, amount);
+
+			int tons = static_cast<int>(amount);
+			GameData::GetEconomicManager().RecordEvent(&system,
+				EconomicEventType::TRADE_COMPLETED, tons, commodity, true);
+			if(tons >= 500)
+				GameData::GetEconomicManager().RecordEvent(&system,
+					EconomicEventType::LARGE_SALE, tons, commodity, true);
+
+			if(isBlackMarket && !wasDetected && Random::Real() < economy.GetBlackMarketDetectionChance())
+			{
+				GameData::GetEconomicManager().RecordEvent(&system,
+					EconomicEventType::SMUGGLING_DETECTED, tons, commodity, true);
+				wasDetected = true;
+			}
 		}
+		if(wasDetected)
+			Messages::Add({"Your black market dealings have been detected!",
+				GameData::MessageCategories().Get("high")});
 		int day = player.GetDate().DaysSinceEpoch();
 		for(const auto &it : player.Cargo().Outfits())
 		{
@@ -318,9 +411,26 @@ void TradingPanel::Buy(int64_t amount)
 
 	amount *= Modifier();
 	const string &type = GameData::Commodities()[selectedRow].name;
-	int64_t price = system.Trade(type);
-	if(!price)
+	int64_t basePrice = system.Trade(type);
+	if(!basePrice)
 		return;
+
+	const SystemEconomy &economy = GameData::GetEconomicManager().GetSystemEconomy(&system);
+	const Government *gov = system.GetGovernment();
+	bool buying = (amount > 0);
+	bool isBlackMarket = economy.IsBlackMarketOnly();
+
+	double priceMod;
+	if(isBlackMarket)
+		priceMod = economy.GetBlackMarketModifier(buying);
+	else
+	{
+		double reputation = gov ? gov->Reputation() : 0.0;
+		double econMod = economy.GetPriceModifier(type, buying);
+		double repMod = economy.GetReputationModifier(reputation, buying);
+		priceMod = econMod * repMod;
+	}
+	int64_t price = static_cast<int64_t>(basePrice * priceMod);
 
 	if(amount > 0)
 	{
@@ -329,7 +439,6 @@ void TradingPanel::Buy(int64_t amount)
 	}
 	else
 	{
-		// Selling cargo:
 		amount = max<int64_t>(amount, -player.Cargo().Get(type));
 
 		int64_t basis = player.GetBasis(type, amount);
@@ -340,4 +449,29 @@ void TradingPanel::Buy(int64_t amount)
 	amount = player.Cargo().Add(type, amount);
 	player.Accounts().AddCredits(-amount * price);
 	GameData::AddPurchase(system, type, amount);
+
+	if(amount != 0)
+	{
+		int tons = static_cast<int>(abs(amount));
+		GameData::GetEconomicManager().RecordEvent(&system,
+			EconomicEventType::TRADE_COMPLETED, tons, type, true);
+
+		if(tons >= 500)
+		{
+			if(amount > 0)
+				GameData::GetEconomicManager().RecordEvent(&system,
+					EconomicEventType::LARGE_PURCHASE, tons, type, true);
+			else
+				GameData::GetEconomicManager().RecordEvent(&system,
+					EconomicEventType::LARGE_SALE, tons, type, true);
+		}
+
+		if(isBlackMarket && Random::Real() < economy.GetBlackMarketDetectionChance())
+		{
+			GameData::GetEconomicManager().RecordEvent(&system,
+				EconomicEventType::SMUGGLING_DETECTED, tons, type, true);
+			Messages::Add({"Your black market dealings have been detected!",
+				GameData::MessageCategories().Get("high")});
+		}
+	}
 }

@@ -99,6 +99,8 @@ target_sources(EndlessSkyLib PRIVATE
 	Distribution.h
 	Effect.cpp
 	Effect.h
+	EconomicState.cpp
+	EconomicState.h
 	Engine.cpp
 	Engine.h
 	EsUuid.cpp

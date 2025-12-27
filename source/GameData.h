@@ -57,6 +57,7 @@ class Phrase;
 class Planet;
 class PlayerInfo;
 class Point;
+class EconomicManager;
 class Politics;
 class Shader;
 class Ship;
@@ -158,6 +159,7 @@ public:
 
 	static const Government *PlayerGovernment();
 	static Politics &GetPolitics();
+	static EconomicManager &GetEconomicManager();
 	static const std::vector<StartConditions> &StartOptions();
 
 	static const std::vector<Trade::Commodity> &Commodities();
