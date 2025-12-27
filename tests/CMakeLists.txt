@@ -1,6 +1,6 @@
 add_executable(EndlessSkyTests)
 if(UNIX AND NOT APPLE)
-	set_target_properties(EndlessSkyTests PROPERTIES OUTPUT_NAME "endless-sky-tests")
+	set_target_properties(EndlessSkyTests PROPERTIES OUTPUT_NAME "godels-sky-tests")
 endif()
 
 if(NOT MSVC)
@@ -22,6 +22,7 @@ target_sources(EndlessSkyTests PRIVATE
 	unit/src/helpers/datanode-factory.cpp
 	unit/src/helpers/logger-output.cpp
 	unit/src/test_account.cpp
+	unit/src/test_actionLog.cpp
 	unit/src/test_angle.cpp
 	unit/src/test_bitset.cpp
 	unit/src/test_categoryList.cpp
@@ -33,6 +34,7 @@ target_sources(EndlessSkyTests PRIVATE
 	unit/src/test_datawriter.cpp
 	unit/src/test_dictionary.cpp
 	unit/src/test_distance_calculation_settings.cpp
+	unit/src/test_encounterRecord.cpp
 	unit/src/test_esuuid.cpp
 	unit/src/test_exclusiveItem.cpp
 	unit/src/test_firecommand.cpp
@@ -40,12 +42,14 @@ target_sources(EndlessSkyTests PRIVATE
 	unit/src/test_main.cpp
 	unit/src/test_point.cpp
 	unit/src/test_random.cpp
+	unit/src/test_reputationManager.cpp
 	unit/src/test_scrollVar.cpp
 	unit/src/test_set.cpp
 	unit/src/test_ship.cpp
 	unit/src/test_stringInterner.cpp
 	unit/src/test_template.txt
 	unit/src/test_weightedList.cpp
+	unit/src/test_witnessSystem.cpp
 	unit/src/text/test_alignment.cpp
 	unit/src/text/test_displaytext.cpp
 	unit/src/text/test_format.cpp

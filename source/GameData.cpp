@@ -448,7 +448,7 @@ void GameData::SetDate(const Date &date)
 {
 	for(auto &it : objects.systems)
 		it.second.SetDate(date);
-	politics.ResetDaily();
+	politics.ResetDaily(date);
 }
 
 

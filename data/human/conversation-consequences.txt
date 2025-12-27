@@ -1,0 +1,438 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Conversation-Based Consequence Missions
+# These missions create NPC encounters that react to the player's reputation,
+# past actions, and established patterns. NPCs remember and respond accordingly.
+
+
+
+# GRATEFUL NPC ENCOUNTERS
+# NPCs who remember the player's help
+
+mission "Encounter: Grateful Merchant"
+	invisible
+	landing
+	to offer
+		"encounter: count disposition grateful" >= 1
+		random < 15
+	on offer
+		conversation
+			`A merchant captain approaches you excitedly. "Captain <last>! I never got to thank you properly before!" They're clearly someone you helped at some point, though the details are fuzzy.`
+			choice
+				`	"I'm glad I could help."`
+				`	"Remind me what happened?"`
+					goto remind
+				`	"I help a lot of people."`
+					goto many
+			`	"You saved my ship from pirates in..." They mention a system. "I was carrying my entire savings in cargo. If you hadn't intervened, I'd have lost everything." They press a credit chip into your hand. "Please. It's the least I can do."`
+				goto reward
+			label remind
+			`	"Pirates were about to board me when you showed up. You scared them off and escorted me to safety." Their eyes are bright with gratitude. "I've been hoping to run into you ever since. I wanted to say thank you properly."`
+				goto reward
+			label many
+			`	"I know, I know. But you helped ME. And I don't forget." They smile warmly. "Here - a token of my appreciation."`
+			label reward
+			`	They transfer 5,000 credits to your account. "If you ever need anything, Captain, you know where to find me." They shake your hand firmly before departing.`
+				decline
+
+mission "Encounter: Grateful Family"
+	invisible
+	landing
+	to offer
+		"encounter: count disposition grateful" >= 3
+		"actionlog: pattern" == 4
+		random < 10
+	on offer
+		conversation
+			`A family approaches you at the spaceport - two adults and three children. "Is that... is that Captain <last>?" the mother asks, her voice trembling.`
+			choice
+				`	"That's me."`
+				`	"Can I help you?"`
+			`	The father steps forward. "You saved our lives. We were on that transport ship that was attacked. You fought off the pirates and got us to safety." He's crying now. "Our children are alive because of you."`
+			`	The children crowd around you, all talking at once about how you're their hero, how they want to be pilots like you when they grow up. The parents watch with tears streaming down their faces.`
+			choice
+				`	"I was just doing what anyone would do."`
+				`	"I'm glad you're all safe."`
+			`	"Not everyone would," the father says quietly. "But you did." He presses something into your hand - a small, hand-carved figurine. "It's not much, but... please. Take it." The family says their tearful goodbyes and departs. You realize you've made a difference in ways that can't be measured in credits.`
+				decline
+
+mission "Encounter: Indebted Captain"
+	name "A Debt Repaid"
+	description "A captain whose life you saved wants to repay their debt. Meet them on <destination>."
+	job
+	to offer
+		"encounter: count disposition indebted" >= 1
+		random < 20
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	destination
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+		distance 2 5
+	on complete
+		payment 50000
+		dialog `The captain greets you warmly. "I've built my business back up since you saved me," they say. "All of it - the ships, the contracts, the crew - it only exists because you were there that day." They transfer a substantial sum. "This doesn't cover the debt I owe you, but it's a start. And if you ever need anything - ANYTHING - you call me. I mean it."`
+
+
+
+# HOSTILE NPC ENCOUNTERS
+# NPCs who remember the player's violence
+
+mission "Encounter: Bitter Survivor"
+	invisible
+	landing
+	to offer
+		"encounter: count disposition hostile" >= 1
+		random < 20
+	on offer
+		conversation
+			`Someone is staring at you from across the spaceport. Their expression is pure hatred.`
+			choice
+				`	(Approach them.)`
+				`	(Ignore them and keep walking.)`
+					goto ignore
+			`	As you approach, their lip curls. "You don't even remember me, do you?" Their voice is thick with anger. "You destroyed my ship. Killed my crew. And you don't even REMEMBER."`
+			choice
+				`	"I'm sorry."`
+					goto apology
+				`	"I don't remember everyone I fight."`
+					goto callous
+				`	"In my defense, you probably attacked me first."`
+					goto defense
+			label ignore
+			`	As you walk past, you hear them spit on the ground behind you. "Murderer," they hiss. You've made enemies, and they don't forget.`
+				decline
+			label apology
+			`	"Sorry?" They laugh bitterly. "Sorry doesn't bring back the dead. Sorry doesn't rebuild my life." They turn and walk away. "Watch your back, Captain. Not everyone forgives as easily as the authorities."`
+				decline
+			label callous
+			`	Their face contorts with rage. "Of course you don't. We're just statistics to you. Bodies. Debris." They take a step toward you, then stop themselves. "Someday, someone will make YOU a statistic." They stalk away.`
+				decline
+			label defense
+			`	"Does it matter?" Their voice breaks. "My brother was on that ship. He was just a cargo handler. He wasn't a threat to anyone." Tears stream down their face. "But you killed him anyway." They leave before you can respond.`
+				decline
+
+mission "Encounter: Widow's Confrontation"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 5
+		"encounter: count disposition hostile" >= 3
+		random < 15
+	on offer
+		conversation
+			`A woman blocks your path in the spaceport. Her eyes are red from crying. "Captain <last>," she says, and your name sounds like a curse in her mouth.`
+			choice
+				`	"Do I know you?"`
+				`	"Is there a problem?"`
+			`	"You killed my husband. Three weeks ago. His ship was the Wandering Star." She holds up a holographic image - a smiling man with two young children. "He was a cargo hauler. He posed no threat to anyone. But you blew him out of the sky anyway."`
+			choice
+				`	"I... I'm sorry."`
+					goto sorry
+				`	"He shouldn't have been in my way."`
+					goto callous
+				`	(Say nothing.)`
+					goto silent
+			label sorry
+			`	"Your apologies won't bring him back. Your apologies won't raise his children." She shoves the image toward you. "Look at them. LOOK. These are the people you've destroyed." After a long moment, she turns and walks away, leaving you with the image. You can't bring yourself to throw it away.`
+				decline
+			label callous
+			`	Her face goes pale, then red with fury. "Monster," she whispers. "You're a monster." She spits at your feet and storms away. The other spaceport patrons are staring. None of them look sympathetic.`
+				decline
+			label silent
+			`	Your silence seems to hurt her more than any words could. "Nothing to say? Nothing at all?" She waits, tears streaming down her face. When you remain silent, she finally breaks. "I hope you remember this moment when someone takes everything from you." She walks away. You doubt you'll ever forget this.`
+				decline
+
+mission "Encounter: Nemesis Warning"
+	invisible
+	landing
+	to offer
+		"encounter: has disposition nemesis"
+		random < 30
+	on offer
+		conversation
+			`You sense danger before you see it. Someone is watching you. When you turn, you see a scarred pilot across the hangar bay, their hand resting on their weapon.`
+			choice
+				`	(Make eye contact.)`
+				`	(Prepare your own weapon.)`
+					goto weapon
+				`	(Walk the other way.)`
+					goto avoid
+			`	Your eyes meet. They don't blink. Don't look away. The message is clear: "I know what you did. I haven't forgotten. This isn't over."`
+			`	After what seems like an eternity, they turn and walk away. But you know you'll see them again.`
+				decline
+			label weapon
+			`	Your hand moves toward your weapon, and you see them tense. For a moment, you think it's about to happen right here. But security drones drift past, and the moment breaks. They walk away, but their message is clear: "Not today. But soon."`
+				decline
+			label avoid
+			`	You hear them laugh as you leave. "Running won't save you, Captain," they call out. "I've got nothing left but time. And you took everything else." You quicken your pace. Some debts can only be paid in blood.`
+				decline
+
+
+
+# WARY NPC ENCOUNTERS
+# NPCs who are cautious around the player
+
+mission "Encounter: Nervous Merchant"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" >= 2
+		"actionlog: pattern" <= 5
+		"encounter: count disposition wary" >= 2
+		random < 20
+	on offer
+		conversation
+			`A merchant glances up as you enter the bar, then quickly looks away. They gather their belongings and move to a different table.`
+			choice
+				`	(Let them go.)`
+					decline
+				`	(Approach them anyway.)`
+			`	"I - I don't want any trouble," they stammer as you approach. "I know who you are. I've heard the stories." They're visibly afraid.`
+			choice
+				`	"I'm not here to hurt anyone."`
+				`	"What stories?"`
+					goto stories
+			`	"Maybe not today. But..." They trail off, clearly unconvinced. "Look, I'll just... I'll be going now." They practically run out of the bar. Your reputation precedes you - and it's not all positive.`
+				decline
+			label stories
+			`	"Stories about ships destroyed. Crews killed. People say you're dangerous. Unpredictable." They're backing away as they talk. "I don't know what's true and what isn't. But I'd rather not find out." They leave quickly. You've earned fear, whether you wanted it or not.`
+				decline
+
+mission "Encounter: Cautious Hire"
+	name "The Reluctant Passenger"
+	description "A passenger needs transport to <destination>, but they're clearly nervous about hiring you."
+	job
+	to offer
+		"actionlog: pattern" >= 2
+		"encounter: count disposition wary" >= 1
+		random < 20
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	destination
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+		distance 2 5
+	passengers 1
+	on offer
+		conversation
+			`A potential passenger approaches hesitantly. "Are you... Captain <last>?" When you confirm, they take a step back. "I need transport to <destination>. But..." They hesitate. "I've heard things about you."`
+			choice
+				`	"I'm a professional. You'll be safe."`
+				`	"What have you heard?"`
+					goto heard
+				`	"Find another ship then."`
+					decline
+			`	They study your face for a long moment. "I don't have much choice," they finally say. "The other captains are charging three times as much." They take a deep breath. "Okay. I'll trust you. Please don't make me regret it."`
+				accept
+			label heard
+			`	"That you're... violent. Dangerous. That people who cross you don't survive." They swallow hard. "But I NEED to get to <destination>. My family is there." They look at you with desperate eyes. "Will you help me? Please?"`
+			choice
+				`	"I'll get you there safely."`
+					accept
+				`	"Find someone else."`
+					decline
+	on complete
+		payment 10000
+		dialog `The passenger practically leaps off your ship when you land. "Thank you," they say, relief evident in their voice. "I... I was wrong to be afraid." They pay you quickly and hurry away. Maybe your reputation isn't entirely deserved. Or maybe they were just lucky.`
+
+
+
+# FRIENDLY NPC ENCOUNTERS
+# NPCs who remember positive interactions
+
+mission "Encounter: Old Friend"
+	invisible
+	landing
+	to offer
+		"encounter: count disposition friendly" >= 3
+		random < 15
+	on offer
+		conversation
+			`"Captain <last>!" A familiar voice calls out across the spaceport. A pilot you've encountered before waves enthusiastically. "Fancy meeting you here!"`
+			choice
+				`	(Wave back and go meet them.)`
+				`	"Good to see you!"`
+			`	"I was just telling some new pilots about you," they say, gesturing to a group of young recruits. "This is the captain I was talking about. A REAL professional." The recruits look at you with a mixture of awe and skepticism.`
+			choice
+				`	"Happy to share some advice."`
+					goto advice
+				`	"Don't believe everything you hear."`
+					goto humble
+			label advice
+			`	You spend an hour trading stories with the pilot and dispensing wisdom to the recruits. By the end, they're hanging on your every word. "You've made their day," your friend says. "Maybe their careers. Thanks for taking the time." It feels good to be respected.`
+				decline
+			label humble
+			`	Your friend laughs. "See? That's what I mean. A real pro." They buy you a drink and you spend a pleasant hour catching up. "Safe travels, Captain. Hope to fly with you again someday."`
+				decline
+
+mission "Encounter: Grateful Fleet"
+	name "Welcome Reception"
+	description "A group of traders you've helped have organized a reception in your honor on <destination>."
+	job
+	to offer
+		"encounter: count disposition grateful" >= 5
+		"actionlog: pattern" == 4
+		random < 10
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	destination
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+		distance 2 5
+	on complete
+		payment 75000
+		dialog `The reception is overwhelming. Dozens of captains you've helped over the years have gathered to honor you. "You've saved more ships than you probably remember," the organizer says. "But we remember every one." They present you with a plaque and a substantial gift of credits. "You're a legend, Captain. A real hero." For once, you feel like you've made a difference.`
+
+
+
+# DISPOSITION-REACTIVE JOB OFFERS
+
+mission "Job: Friendly Escort"
+	name "Escort for a Friend"
+	description "A trader who remembers you fondly needs an escort to <destination>."
+	job
+	repeat
+	to offer
+		"encounter: count disposition friendly" >= 2
+		"actionlog: pattern" != 2
+		random < 25
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	destination
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+		distance 3 6
+	npc accompany save
+		government "Merchant"
+		personality escort timid
+		fleet
+			names "civilian"
+			variant
+				"Freighter"
+	on offer
+		conversation
+			`A trader approaches you. "Captain <last>! Just who I was looking for." They seem genuinely pleased to see you. "I've got a cargo run to <destination>, and I'd feel a lot safer with you watching my back. The usual rate, plus a bonus because I know you'll actually do the job right."`
+			choice
+				`	"Happy to help."`
+					accept
+				`	"I'm busy right now."`
+					decline
+	on complete
+		payment 40000
+		dialog `The trader shakes your hand warmly upon landing. "Safe and sound, just like I knew we'd be," they say. "Here's your payment, plus that bonus I promised. It's always a pleasure working with professionals."`
+
+mission "Job: Nemesis Tip"
+	name "Information Trade"
+	description "Someone with a grudge offers you information in exchange for... something else."
+	job
+	to offer
+		"encounter: has disposition nemesis"
+		random < 10
+	source
+		government "Pirate" "Independent"
+	on offer
+		conversation
+			`A figure in a dark hood approaches you. "Captain <last>," they say. "I have information you might want. About someone who's been tracking you. Someone who wants you dead."`
+			choice
+				`	"I'm listening."`
+				`	"Not interested."`
+					decline
+			`	"There's a bounty on your head. Unofficial, but substantial. Someone you wronged has put it out. I can tell you who, and where to find them." They pause. "But information isn't free."`
+			choice
+				`	"How much?"`
+				`	"I'll take my chances."`
+					decline
+			`	"Fifty thousand credits. But it'll be worth it. Better to hunt than be hunted, yes?" They extend a hand. "Deal?"`
+			choice
+				`	"Deal."`
+					accept
+				`	"That's too rich for my blood."`
+					decline
+	on accept
+		payment -50000
+	on complete
+		dialog `The hooded figure provides you with coordinates and a name. "Your nemesis is operating out of a station in the Unukalhai system," they say. "They've been gathering allies. Planning something." They slide a data chip across the table. "Everything I know is on here. What you do with it is your business." You're not sure if this information is a blessing or a curse.`
+
+
+
+# NEWS REFLECTING PLAYER ENCOUNTERS
+
+news "Grateful Citizens"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	to show
+		"encounter: count disposition grateful" >= 5
+	name
+		word
+			"Citizen"
+			"Merchant"
+			"Pilot"
+	message
+		word
+			"Did you hear about Captain <first>? "
+			"I met someone Captain <last> saved. "
+			"There's a pilot everyone talks about. "
+		word
+			"They've saved dozens of ships from pirates. "
+			"They escort merchants for fair rates. "
+			"They actually care about the little people. "
+		word
+			"It's nice to know there are still heroes out there."
+			"We need more captains like that."
+			"They're proof that not everyone is in it just for the credits."
+
+news "Feared Captain"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	to show
+		"encounter: count disposition hostile" >= 5
+	name
+		word
+			"Nervous citizen"
+			"Worried merchant"
+			"Anxious pilot"
+	message
+		word
+			"Have you heard of Captain <last>? "
+			"There's a pilot everyone avoids. "
+			"I saw that captain everyone warns about. "
+		word
+			"They say they've killed more people than they can count. "
+			"Apparently they destroyed a ship just for looking at them wrong. "
+			"People who cross them don't live to regret it. "
+		word
+			"I hope I never run into them."
+			"I'm changing my route just in case."
+			"Some people just aren't right in the head."
+
+news "Nemesis Hunting"
+	location
+		government "Pirate" "Independent"
+	to show
+		"encounter: has disposition nemesis"
+	name
+		word
+			"Scarred pilot"
+			"Dangerous-looking captain"
+			"Grim bounty hunter"
+	message
+		word
+			"I've heard Captain <last> has made some serious enemies. "
+			"Someone put an unofficial bounty on <first> <last>. "
+			"There's a pilot hunting Captain <last>. "
+		word
+			"It's not the authorities - this is personal. "
+			"Blood feuds never end well. "
+			"Someone wants revenge, badly. "
+		word
+			"I wouldn't want to be in the middle of that."
+			"Best to stay out of the crossfire."
+			"That's a situation with no winners."

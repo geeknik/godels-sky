@@ -1,0 +1,417 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Coalition Consequence Missions
+# The Coalition is a multi-species alliance (Arach, Kimek, Saryd) protected
+# by the authoritarian Heliarch military police. Consequences reflect both
+# the peaceful nature of Coalition citizens and the strict enforcement of
+# Heliarch law. The ringworld is their greatest achievement and priority.
+
+
+
+# POSITIVE CONSEQUENCES: INTEGRATION INTO COALITION SOCIETY
+
+mission "Coalition Recognition: Trusted Outsider"
+	name "Heliarch Clearance"
+	description "Your reliable service to the Coalition has been noted. Report to <destination> for a security assessment."
+	job
+	to offer
+		has "known to the heliarchs"
+		"reputation: Coalition" > 20
+		"coalition jobs" > 10
+		not "coalition trusted outsider"
+		random < 20
+	source
+		government "Coalition"
+	destination
+		government "Heliarch"
+		distance 2 5
+	on complete
+		set "coalition trusted outsider"
+		payment 50000
+		"reputation: Coalition" += 5
+		"reputation: Heliarch" += 5
+		dialog `The Heliarch security officer reviews your service record with clinical efficiency. "Your contributions to Coalition logistics have been satisfactory," they state. "Your security clearance is being upgraded. You may now access additional facilities and services." They hand you updated credentials. "Continue to serve the Coalition well, and further privileges may follow."`
+
+mission "Coalition Recognition: Ringworld Contributor"
+	name "Ringworld Commendation"
+	description "Your support for the ringworld construction project has earned recognition. A ceremony awaits on <destination>."
+	job
+	to offer
+		has "coalition trusted outsider"
+		"reputation: Coalition" > 35
+		"coalition jobs" > 25
+		random < 15
+	source
+		government "Coalition"
+	destination
+		government "Heliarch"
+		distance 2 5
+	on complete
+		set "coalition ringworld contributor"
+		payment 75000
+		"reputation: Coalition" += 10
+		dialog `Representatives from all three Coalition species attend the ceremony. An Arach presents you with a crystalline medallion, a Kimek offers a precisely-crafted tool, and a Saryd speaks the formal words. "You have contributed to the Great Work," the Saryd says. "The ringworld grows because of efforts like yours. Though you are an outsider, you have earned a place in our history."`
+
+mission "Coalition Recognition: Honorary Citizen"
+	name "Coalition Citizenship"
+	description "The Coalition Council is offering you honorary citizenship. Attend the ceremony on <destination>."
+	job
+	to offer
+		has "coalition ringworld contributor"
+		"reputation: Coalition" > 50
+		"reputation: Heliarch" > 30
+		random < 10
+	source
+		government "Coalition"
+	destination
+		government "Heliarch"
+		distance 2 5
+	on complete
+		set "coalition honorary citizen"
+		payment 100000
+		"reputation: Coalition" += 15
+		"reputation: Heliarch" += 10
+		dialog `The ceremony is solemn and beautiful. The Coalition Council formally grants you honorary citizenship, the first human to receive such an honor. "You have proven yourself a friend to all Coalition peoples," the Council speaker announces. "Our laws protect you. Our markets welcome you. Our ringworld is your home." You are given a residence permit and full access to Coalition space.`
+
+
+
+# HELIARCH CONSEQUENCES: AUTHORITARIAN RESPONSE
+
+mission "Heliarch Warning: Security Concern"
+	name "Heliarch Interrogation"
+	description "The Heliarch have flagged your activities for review. Report to <destination> immediately for questioning."
+	job
+	to offer
+		has "known to the heliarchs"
+		"reputation: Heliarch" < -5
+		"reputation: Heliarch" > -20
+		not "heliarch security concern"
+		random < 30
+	source
+		government "Coalition" "Heliarch"
+	destination
+		government "Heliarch"
+		distance 2 4
+	on complete
+		set "heliarch security concern"
+		dialog `The Heliarch interrogation is thorough and uncomfortable. Multiple officers question you about your activities, your contacts, and your intentions. "Your recent actions have raised concerns," the lead interrogator says. "The Coalition exists because of order. Disorder threatens everyone." They update your security file. "You are being monitored. Do not give us further cause for concern."`
+
+mission "Heliarch Action: Travel Restriction"
+	name "Movement Control"
+	description "The Heliarch have imposed travel restrictions on you. Report to <destination> for processing."
+	job
+	to offer
+		has "heliarch security concern"
+		"reputation: Heliarch" < -15
+		random < 30
+	source
+		government "Coalition" "Heliarch"
+	destination
+		government "Heliarch"
+		distance 2 4
+	on complete
+		set "heliarch travel restricted"
+		dialog `The Heliarch officer processes your restriction with bureaucratic efficiency. "Your freedom of movement within Coalition space is hereby limited," they announce. "You are confined to designated travel corridors. Deviation will result in immediate detention." They implant a tracking device in your ship. "The Coalition's security is paramount. Your convenience is not."`
+
+mission "Heliarch Action: Asset Seizure"
+	name "Contraband Confiscation"
+	description "The Heliarch are conducting an asset review. Report to <destination> for inspection."
+	job
+	to offer
+		has "heliarch travel restricted"
+		"reputation: Heliarch" < -30
+		"credits" > 100000
+		random < 30
+	source
+		government "Coalition" "Heliarch"
+	destination
+		government "Heliarch"
+		distance 2 4
+	on complete
+		payment -75000
+		"reputation: Heliarch" -= 5
+		dialog `The Heliarch inspection is invasive and thorough. They scan every compartment, analyze every cargo manifest, and review every transaction. "Irregular financial activity detected," an officer announces. "Assets totaling 75,000 credits are hereby seized pending investigation." They offer no appeal process. "The investigation will conclude when we determine it should conclude."`
+
+mission "Heliarch Action: Detention"
+	name "Preventive Custody"
+	description "The Heliarch have issued a detention order. Evade capture and reach sanctuary on <destination>."
+	job
+	to offer
+		"reputation: Heliarch" < -50
+		"combat rating" > 50
+		random < 40
+	source
+		government "Coalition"
+	destination
+		government "Independent" "Neutral"
+		distance 4 8
+	npc evade
+		government "Heliarch"
+		personality nemesis waiting
+		system destination
+		fleet
+			names "heliarch"
+			variant
+				"Heliarch Neutralizer"
+				"Heliarch Pursuer" 2
+			variant
+				"Heliarch Interdictor"
+	on complete
+		payment 20000
+		dialog `You escape the Heliarch patrol and reach neutral space. A contact fills you in: "They've issued a preventive detention order. That means they can hold you indefinitely without charges. Classic Heliarch - order before justice." You're safe for now, but Coalition space is effectively closed to you.`
+
+
+
+# MULTI-SPECIES CONSEQUENCES: CULTURAL REACTIONS
+
+mission "Arach Appreciation"
+	name "Builder's Gratitude"
+	description "The Arach construction guilds appreciate your support. A representative on <destination> wishes to thank you."
+	job
+	to offer
+		has "known to the heliarchs"
+		"reputation: Coalition" > 25
+		"actionlog: pattern" == 1
+		random < 20
+	source
+		government "Coalition"
+	destination
+		government "Coalition"
+		distance 2 5
+	on complete
+		payment 45000
+		dialog `The Arach guild master's multiple limbs gesture in what your translator identifies as a formal greeting. "You bring supplies, you honor contracts, you build trust," the Arach says through the translator. "This is the Arach way. We build - structures, relationships, futures." They present you with an Arach construction tool. "May you continue to build with us."`
+
+mission "Kimek Scientific Interest"
+	name "Research Subject"
+	description "Kimek scientists are interested in studying human-Coalition interactions. Participate in their study on <destination>."
+	job
+	to offer
+		has "known to the heliarchs"
+		"reputation: Coalition" > 20
+		random < 15
+	source
+		government "Coalition"
+	destination
+		government "Coalition"
+		distance 2 5
+	on complete
+		payment 35000
+		dialog `The Kimek researchers are endlessly curious. They measure your reactions, record your responses, and analyze your behavior patterns. "Fascinating," one Kimek says, their spiny form vibrating with excitement. "Human integration patterns differ significantly from Saryd or Arach. This data will improve our understanding of multi-species cooperation." They pay you handsomely for your participation.`
+
+mission "Saryd Philosophical Discussion"
+	name "Wisdom Exchange"
+	description "Saryd philosophers wish to discuss human perspectives on morality. Meet them on <destination>."
+	job
+	to offer
+		has "known to the heliarchs"
+		"reputation: Coalition" > 30
+		random < 15
+	source
+		government "Coalition"
+	destination
+		government "Coalition"
+		distance 2 5
+	on complete
+		payment 40000
+		dialog `The Saryd philosophers receive you in a peaceful garden. Their large, gentle forms radiate calm. "We seek to understand," the eldest says. "Humans are new to us. Your species has great potential, but also great danger." The discussion lasts hours, covering topics from ethics to cosmology. "You have given us much to consider," they conclude. "May your path lead to wisdom."`
+
+
+
+# WITNESS-AWARE CONSEQUENCES
+
+mission "Heliarch: Surveillance Detection"
+	name "Observed Activities"
+	description "Heliarch surveillance has detected patterns in your activities. Report for review on <destination>."
+	job
+	to offer
+		has "known to the heliarchs"
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 500
+		"reputation: Heliarch" > -20
+		random < 20
+	source
+		government "Coalition" "Heliarch"
+	destination
+		government "Heliarch"
+		distance 2 4
+	on complete
+		"reputation: Heliarch" -= 5
+		dialog `The Heliarch analyst displays a holographic timeline of your activities. "Our surveillance network has compiled a comprehensive profile of your operations," they explain. "We know where you've been. We know what you've done. We know who witnessed it." They update your file. "Remember: in Coalition space, nothing goes unobserved. Act accordingly."`
+
+mission "Heliarch: Clean Record"
+	name "Surveillance Gap"
+	description "Your ability to operate without detection has interested Heliarch intelligence. Report to <destination>."
+	job
+	to offer
+		has "known to the heliarchs"
+		"witness: unwitnessed"
+		"reputation: Heliarch" > 10
+		random < 15
+	source
+		government "Heliarch"
+	destination
+		government "Heliarch"
+		distance 2 5
+	on complete
+		set "heliarch intelligence asset"
+		payment 60000
+		"reputation: Heliarch" += 5
+		dialog `The Heliarch intelligence officer speaks carefully. "You have an unusual skill," they observe. "Our surveillance is comprehensive, yet your activities sometimes... evade observation." They offer you a role. "The Coalition faces threats that require discretion. Threats that cannot be addressed through official channels. Are you interested in serving the order we maintain?"`
+
+
+
+# PROTECTOR PATTERN: DEFENDER OF THE COALITION
+
+mission "Coalition Defender Recognition"
+	name "Shield of the Coalition"
+	description "Your pattern of protecting Coalition vessels has been recognized. A ceremony awaits on <destination>."
+	job
+	to offer
+		has "known to the heliarchs"
+		"actionlog: pattern" == 4
+		"reputation: Coalition" > 30
+		random < 20
+	source
+		government "Coalition"
+	destination
+		government "Heliarch"
+		distance 2 5
+	on complete
+		set "coalition defender"
+		payment 70000
+		"reputation: Coalition" += 10
+		"reputation: Heliarch" += 5
+		dialog `The Heliarch commander presents you with a ceremonial insignia. "You have defended Coalition citizens," they say. "This is our primary duty, and you have shared it voluntarily." Representatives from all three species add their thanks. "When danger came, you stood between the threat and the innocent. This is the highest form of service."`
+
+mission "Coalition Defender: Escort Duty"
+	name "Construction Convoy"
+	description "A convoy carrying critical ringworld materials needs protection. Escort them from <origin> to <destination>."
+	job
+	repeat
+	to offer
+		has "coalition defender"
+		"combat rating" > 75
+		random < 30
+	source
+		government "Coalition"
+	destination
+		government "Heliarch"
+		distance 3 6
+	npc accompany save
+		government "Coalition"
+		personality escort timid
+		fleet
+			names "arach"
+			variant
+				"Arach Hulk"
+			variant
+				"Arach Spindle"
+	npc
+		government "Pirate"
+		personality nemesis plunders
+		system destination
+		fleet
+			names "pirate"
+			variant
+				"Fury" 3
+			variant
+				"Corvette"
+				"Fury"
+	on complete
+		payment 60000
+		"reputation: Coalition" += 5
+		dialog `The convoy arrives safely with its precious cargo. "These materials will become part of the ringworld," the convoy master explains. "Because of you, the Great Work continues." The Heliarch patrol that meets you offers a rare nod of approval.`
+	on visit
+		dialog phrase "generic arrived-without-npc dialog"
+
+
+
+# ATROCITY CONSEQUENCES
+
+mission "Heliarch: Termination Order"
+	name "Coalition Justice"
+	description "Your atrocities have resulted in a Heliarch termination order. Survive their pursuit and escape to <destination>."
+	job
+	to offer
+		"reputation: atrocity"
+		"reputation: Coalition" < -50
+		random < 50
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Pirate" "Independent"
+		distance 4 8
+	npc evade
+		government "Heliarch"
+		personality nemesis waiting
+		system destination
+		fleet
+			names "heliarch"
+			variant
+				"Heliarch Punisher"
+				"Heliarch Interdictor"
+			variant
+				"Heliarch Hunter"
+				"Heliarch Neutralizer" 2
+	on complete
+		set "heliarch termination order"
+		payment 30000
+		dialog `You barely escape the Heliarch execution squad. These aren't capture teams - they're here to kill. A message arrives on your comm: "By order of the Heliarch Council, you are sentenced to termination for crimes against Coalition peoples. This sentence will be carried out. There is no appeal. There is no escape. There is only order." Coalition space is forever closed to you.`
+
+mission "Coalition: Eternal Exile"
+	name "Forever Forbidden"
+	description "The Coalition has issued a permanent exclusion order. A final message awaits on <destination>."
+	job
+	to offer
+		"reputation: atrocity"
+		"reputation: Heliarch" < -75
+		random < 40
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		set "coalition eternal exile"
+		dialog `The message is from the Coalition Council. "The Arach will not build with you. The Kimek will not study you. The Saryd will not speak with you. The Heliarch will destroy you if they see you. You have been erased from Coalition society as if you never existed. The ringworld will stand for millennia. Your name will be forgotten in years." The condemnation is complete and final.`
+
+
+
+# REDEMPTION PATH
+
+mission "Coalition: Probationary Service"
+	name "Earning Forgiveness"
+	description "The Coalition offers a chance at redemption through service. Complete a probationary mission to <destination>."
+	job
+	to offer
+		has "known to the heliarchs"
+		"reputation: Heliarch" < -15
+		"reputation: Heliarch" > -40
+		not "reputation: atrocity"
+		random < 15
+	source
+		government "Coalition"
+	destination
+		government "Heliarch"
+		distance 2 5
+	cargo "Construction Materials" 25 3 .1
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 30000
+		"reputation: Coalition" += 10
+		"reputation: Heliarch" += 10
+		clear "heliarch security concern"
+		dialog `You spend weeks delivering critical supplies to ringworld construction sites, working alongside Coalition citizens of all species. "Actions speak louder than records," a Heliarch supervisor says at the end. "Your file is being updated. Your restrictions are being lifted. Do not waste this second chance."`

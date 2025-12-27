@@ -1,0 +1,520 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Consequence-Reactive News - Coalition Space
+# The Coalition values order, peace, and the protection of their citizens.
+# News reflects how the three species (Saryd, Kimek, Arach) perceive the player.
+# Note: Coalition speech uses inverted sentence structure.
+
+# =============================================================================
+# COALITION TRADER PATTERN REACTIONS
+# =============================================================================
+
+news "coalition trader appreciation"
+	to show
+		"actionlog: pattern" == 1
+		"reputation: Coalition" > 20
+	location
+		government "Coalition" "Heliarch"
+	name
+		word
+			"Saryd merchant"
+			"Kimek trader"
+			"Arach captain"
+	message
+		word
+			`"`
+		word
+			"Reliable, this human captain is. Delivered on time, every shipment has been. Welcome in Coalition markets, they are."
+			"Heard of the human trader, I have. Fair prices they offer, and honest their dealings are. Rare among outsiders, this is."
+			"Met this captain at the docks, I did. Respectful of our customs, they were. Continue trading with them, I would gladly."
+			"Impressed by this human, the trade guilds are. Disrupted nothing, they have, and contributed to prosperity, they have."
+			"Unlike many outsiders, understand our system, this captain does. Trade they bring, not trouble."
+		word
+			`"`
+
+
+news "coalition trader heliarch approval"
+	to show
+		"actionlog: pattern" == 1
+		"reputation: Coalition" > 35
+	location
+		government "Heliarch"
+	name
+		word
+			"Heliarch trade inspector"
+			"Customs agent"
+	message
+		word
+			`"`
+		word
+			"Reviewed this captain's manifests, I have. In perfect order, everything always is. A model trader, they are."
+			"Suspicious of outsiders, we usually are, but earned our trust, this human has. Clean their record is."
+			"Recommended for expedited processing, this captain has been. Much time and resources, their compliance saves us."
+			"Flagged for observation, many human captains are. But removed from the watch list, this one has been. Proven their reliability, they have."
+		word
+			`"`
+
+
+# =============================================================================
+# COALITION PROTECTOR PATTERN REACTIONS
+# =============================================================================
+
+news "coalition protector recognition"
+	to show
+		"actionlog: pattern" == 4
+		"reputation: Coalition" > 30
+	location
+		government "Coalition" "Heliarch"
+	name
+		word
+			"Grateful Coalition citizen"
+			"Rescued traveler"
+	message
+		word
+			`"`
+		word
+			"Saved my convoy from outsider raiders, this human did. Expected nothing in return, they did. Grateful, my family is."
+			"Attacked by pirates, our transport was. Intervened, the human captain did. Alive because of them, we are."
+			"Protect our people, the Heliarchs do, but helped when needed, this outsider also has. Rare, such behavior is."
+			"Heard stories of this captain, I have. Defend the weak, they do. Aligned with Coalition values, their actions are."
+			"Rescued my children from a damaged ship, this human did. Pay them back somehow, I must."
+		word
+			`"`
+
+
+news "coalition protector heliarch respect"
+	to show
+		"actionlog: pattern" == 4
+		"encounter: count disposition grateful" >= 3
+	location
+		government "Heliarch"
+	name
+		word
+			"Heliarch patrol officer"
+			"Heliarch commander"
+	message
+		word
+			`"`
+		word
+			"Observed this human in combat, we have. Fight only to defend, they do. Dishonorable tactics, they use not."
+			"Assisted our patrols during an incident, this captain did. Coordinate with them again, we would gladly."
+			"Rare among outsiders, protector instincts are. But genuine, this human's actions appear to be. Watching them closely, we continue."
+			"Recommended for limited cooperation status, this captain has been. Proven their intentions, their actions have."
+		word
+			`"`
+
+
+# =============================================================================
+# COALITION PIRATE PATTERN REACTIONS
+# =============================================================================
+
+news "coalition pirate warning"
+	to show
+		"actionlog: pattern" == 2
+		"reputation: Coalition" < -10
+	location
+		government "Coalition" "Heliarch"
+	name
+		word
+			"Worried merchant"
+			"Coalition captain"
+	message
+		word
+			`"`
+		word
+			"Avoid the human pirate, you should. Attacked merchant convoys, they have. Dangerous, they are."
+			"Heard warnings about this captain, I have. Raid ships without mercy, they do. Steer clear, wise captains do."
+			"Reported to the Heliarchs, this human has been. Attacked our people, they have. Justice, they will face."
+			"A threat to trade routes, this pirate is. Increased patrols, the Heliarchs have, but still cautious, we must be."
+		word
+			`"`
+
+
+news "coalition pirate heliarch response"
+	to show
+		"actionlog: pattern" == 2
+		"reputation: Coalition" < -25
+	location
+		government "Heliarch"
+	name
+		word
+			"Heliarch enforcement officer"
+			"Heliarch magistrate"
+	message
+		word
+			`"`
+		word
+			"Wanted for piracy, this human captain is. Arrest them on sight, our forces will. Interfere with this, you should not."
+			"Documented their crimes, we have. Attacked Coalition vessels, stolen cargo, endangered lives. Severe, their punishment will be."
+			"A threat classification, this pirate has received. Maximum force, authorized against them it is."
+			"Attempted to hide their crimes, the human did. But thorough, our records are. Escape justice, they cannot."
+		word
+			`"`
+
+
+# =============================================================================
+# COALITION WARMONGER PATTERN REACTIONS
+# =============================================================================
+
+news "coalition warmonger alarm"
+	to show
+		"actionlog: pattern" == 5
+		"reputation: Coalition" < -30
+	location
+		government "Coalition" "Heliarch"
+	name
+		word
+			"Alarmed citizen"
+			"Coalition observer"
+	message
+		word
+			`"`
+		word
+			"Destroyed entire fleets, this human has. Peaceful, they are not. A danger to everyone, they are."
+			"Heard of the battles, I have. Massive destruction, the human causes. Understand such violence, I cannot."
+			"Fear this captain, many do. Attack anyone and everyone, they seem to. Safe around them, no one is."
+			"A warmonger of the worst kind, this human is. Value life, they do not. Avoid them at all costs, wise beings do."
+		word
+			`"`
+
+
+news "coalition warmonger heliarch alert"
+	to show
+		"actionlog: pattern" == 5
+		"actionlog: escalation"
+	location
+		government "Heliarch"
+	name
+		word
+			"Heliarch high command"
+			"Strategic coordinator"
+	message
+		word
+			`"`
+		word
+			"Classified as extreme threat, this human has been. Mobilized additional forces, we have. Contained, they must be."
+			"A pattern of escalating violence, our analysts have identified. Respond with overwhelming force, we are prepared to."
+			"Destroyed more ships than any outsider in records, this captain has. Historical levels of violence, this represents."
+			"Coordinate with other governments, we are attempting to. Contained, this threat must be. Alone, we may not be able to stop them."
+		word
+			`"`
+
+
+# =============================================================================
+# COALITION ATROCITY REACTIONS
+# =============================================================================
+
+news "coalition atrocity horror"
+	to show
+		"reputation: atrocity"
+	location
+		government "Coalition" "Heliarch"
+	name
+		word
+			"Horrified Saryd"
+			"Traumatized Kimek"
+			"Shocked Arach"
+	message
+		word
+			`"`
+		word
+			"Committed crimes against innocent beings, this human has. Comprehend such evil, I cannot. Haunt me, the stories do."
+			"Massacred civilians, the reports say. Believe any being could do such things, I struggle to. A monster, this captain is."
+			"Worse than terrorists, this human is. Threaten our very way of life, their actions do. Stopped, they must be."
+			"Told my children about this captain, I have. Remember this face, they will. Approach them, they must never."
+		word
+			`"`
+
+
+news "coalition atrocity heliarch judgment"
+	to show
+		"reputation: atrocity"
+		"reputation: Coalition" < -50
+	location
+		government "Heliarch"
+	name
+		word
+			"Heliarch tribunal representative"
+			"High Magistrate"
+	message
+		word
+			`"`
+		word
+			"Declared enemy of the Coalition, this human has been. Kill on sight, all forces are authorized to. No trial, necessary anymore it is."
+			"Beyond redemption, this captain is. Documented their atrocities, we have. Preserved for all time, the evidence is."
+			"The worst crimes in Coalition history, this human has committed. Priority one threat, they are. All resources, dedicated to stopping them they are."
+			"Transmitted their identity to all stations, we have. Hidden in Coalition space, they can never be. Justice, they will face."
+		word
+			`"`
+
+
+# =============================================================================
+# COALITION WITNESS REACTIONS
+# =============================================================================
+
+news "coalition witness network"
+	to show
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 400
+	location
+		government "Coalition" "Heliarch"
+	name
+		word
+			"Coalition observer"
+			"Witness coordinator"
+	message
+		word
+			`"`
+		word
+			"Extensive records on this human, we have. Observed their actions, many citizens have. Hidden, nothing is."
+			"Reports from across Coalition space, filed they have been. Know exactly what this captain has done, we do."
+			"Thorough, our witness network is. Every crime, documented it becomes. Escape our records, no one can."
+			"Compiled testimonies from dozens of witnesses, we have. Clear, the picture is. Deny their actions, the human cannot."
+		word
+			`"`
+
+
+news "coalition unwitnessed suspicion"
+	to show
+		"witness: unwitnessed"
+		"actionlog: pattern" >= 2
+	location
+		government "Heliarch"
+	name
+		word
+			"Suspicious Heliarch"
+			"Intelligence analyst"
+	message
+		word
+			`"`
+		word
+			"Interesting, this human is. Act without being seen, they manage to. Enhanced surveillance, recommended it is."
+			"Lack witnesses for suspected crimes, we do. Very careful, this captain is. Or very skilled. Either way, watching closely we are."
+			"Patterns in data, we detect, but evidence, we lack. Frustrating, this is. Improved monitoring, we require."
+			"Evade our observation networks, this human seems to. Unusual abilities, they possess. Investigate further, we must."
+		word
+			`"`
+
+
+# =============================================================================
+# COALITION LONG-TERM REACTIONS
+# =============================================================================
+
+news "coalition long-term ally"
+	to show
+		"days" > 200
+		"reputation: Coalition" > 50
+		"actionlog: pattern" <= 4
+	location
+		government "Coalition" "Heliarch"
+	name
+		word
+			"Coalition elder"
+			"Senior Heliarch"
+	message
+		word
+			`"`
+		word
+			"For years, proven themselves, this human has. One of the most trusted outsiders, they have become. Rare honor, this is."
+			"Watched this captain's career, I have. Consistent with our values, their actions have been. Recommend full cooperation, I do."
+			"In Coalition records, exemplary standing, this human has. A model for how outsiders should behave, they are."
+			"Consider them almost a citizen, some do. Too far, that goes perhaps, but earned our respect, they truly have."
+		word
+			`"`
+
+
+news "coalition long-term enemy"
+	to show
+		"days" > 200
+		"reputation: Coalition" < -50
+	location
+		government "Heliarch"
+	name
+		word
+			"Heliarch historical officer"
+			"Coalition archivist"
+	message
+		word
+			`"`
+		word
+			"Documented this human's crimes for years, we have. Filled entire databases, their record has. Reformed, they have not."
+			"In our permanent threat registry, this captain is listed. Removed, they can never be. Remember them forever, we will."
+			"Study their methods in training, we do. An example of what we protect against, they are. Valuable lesson, their evil provides."
+			"Warn future generations about this human, our records will. Long after they are gone, remembered their crimes will be."
+		word
+			`"`
+
+
+# =============================================================================
+# COALITION SPECIES-SPECIFIC REACTIONS
+# =============================================================================
+
+news "saryd philosophical reaction"
+	to show
+		"actionlog: pattern" >= 2
+		"reputation: Coalition" < 0
+	location
+		government "Coalition"
+		attributes "saryd"
+	name
+		word
+			"Saryd philosopher"
+			"Contemplative Saryd"
+	message
+		word
+			`"`
+		word
+			"Ponder the nature of this human, I do. Choose violence over peace, they have. Understand such choices, difficult it is."
+			"Long lives, we Saryd have. Seen many outsiders come and go, I have. Remembered for destruction, this one will be. Sad, this is."
+			"Teach balance and harmony, our traditions do. Lack these qualities, this human does. Pity them, I do."
+			"Believed in redemption for all beings, once I did. Challenge this belief, this captain does. Question my philosophy, they make me."
+		word
+			`"`
+
+
+news "kimek practical reaction"
+	to show
+		"actionlog: pattern" >= 2
+		"reputation: Coalition" < 0
+	location
+		government "Coalition"
+		attributes "kimek"
+	name
+		word
+			"Practical Kimek"
+			"Kimek worker"
+	message
+		word
+			`"`
+		word
+			"Disrupt our trade, this human does. Bad for business, they are. Stopped, they should be."
+			"Simple, the calculation is. Cause more harm than good, they do. Remove them, logical it is."
+			"Waste of resources, dealing with this pirate is. Better things to spend credits on, we have."
+			"Efficient, the Heliarchs should be. Dealt with quickly, this human should be. Drag on, this should not."
+		word
+			`"`
+
+
+news "arach direct reaction"
+	to show
+		"actionlog: pattern" >= 2
+		"reputation: Coalition" < 0
+	location
+		government "Coalition"
+		attributes "arach"
+	name
+		word
+			"Blunt Arach"
+			"Arach warrior"
+	message
+		word
+			`"`
+		word
+			"Fight this human, I would. Coward, they are. Attack the weak, they do. Dishonorable."
+			"Strong ships, the human has. Strong character, they lack. Defeated, they would be, in fair combat."
+			"Challenge them directly, the Heliarchs should. Hide behind patrols, the human does. Face them properly, we should."
+			"Heard of their crimes, I have. Angry, they make me. Patience, I must have. But difficult, it is."
+		word
+			`"`
+
+
+# =============================================================================
+# COALITION CROSS-FACTION REACTIONS
+# =============================================================================
+
+news "coalition quarg comparison"
+	to show
+		"reputation: Coalition" > 30
+		"reputation: Quarg" > 30
+	location
+		government "Coalition" "Heliarch"
+	name
+		word
+			"Coalition diplomat"
+			"Inter-species liaison"
+	message
+		word
+			`"`
+		word
+			"Trusted by both Coalition and Quarg, this human is. Rare bridge between our peoples, they are. Valuable, this is."
+			"Speak well of this captain, the Quarg do. High praise, coming from them this is. Trust them, we can."
+			"Helped facilitate communication between us and the Quarg, this human has. Appreciated, their diplomatic efforts are."
+		word
+			`"`
+
+
+news "coalition lunarium awareness"
+	to show
+		"actionlog: pattern" == 4
+		"reputation: Coalition" > 20
+	location
+		government "Coalition"
+	name
+		word
+			"Lunarium sympathizer"
+	message
+		word
+			`"`
+		word
+			"Protect those in need, this human does. Understand our struggles, perhaps they would. Approach them, we should consider."
+			"Unlike many outsiders, value life over profit, this captain does. Aligned with certain... alternative viewpoints, they might be."
+			"Watched this human help the vulnerable, I have. More to the Coalition than the Heliarchs show, perhaps they would understand."
+		word
+			`"`
+
+
+# =============================================================================
+# COALITION HELIARCH LICENSE REACTIONS
+# =============================================================================
+
+news "coalition license holder positive"
+	to show
+		has "Heliarch License 2: done"
+		"reputation: Coalition" > 40
+	location
+		government "Heliarch"
+	name
+		word
+			"Heliarch administrator"
+			"License coordinator"
+	message
+		word
+			`"`
+		word
+			"A model license holder, this human is. Exceeded all requirements, they have. Recommend extension, I do."
+			"Honored their commitments, this captain has. Proud to have granted them access, we are."
+			"Other outsiders, watch how this human behaves, they should. Set the standard, this captain does."
+		word
+			`"`
+
+
+news "coalition license holder negative"
+	to show
+		has "Heliarch License 2: done"
+		"reputation: Coalition" < 0
+	location
+		government "Heliarch"
+	name
+		word
+			"Heliarch enforcement"
+			"License review board"
+	message
+		word
+			`"`
+		word
+			"Violated the terms of their license, this human has. Under review, their status is. Revoked, it may be."
+			"Misplaced our trust in this captain, we have. Corrective action, recommended it is."
+			"Disappointed, we are. Granted privileges, we did. Abused them, they have. Consequences, there must be."
+		word
+			`"`

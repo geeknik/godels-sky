@@ -1,0 +1,327 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Hai Consequence Missions
+# The Hai are a peaceful, highly cultured species who value harmony.
+# Their consequence system reflects their philosophy of non-violence
+# and their sophisticated approach to conflict resolution.
+# Violence against the Hai is especially consequential because they remember.
+
+
+
+# POSITIVE CONSEQUENCES: CULTURAL INTEGRATION
+
+mission "Hai Cultural Recognition"
+	name "Cultural Ambassador"
+	description "Your peaceful interactions with the Hai have been noticed. A cultural liaison on <destination> wishes to formally welcome you to Hai society."
+	job
+	to offer
+		"reputation: Hai" > 25
+		"actionlog: pattern" == 1
+		not "hai cultural recognition"
+		random < 15
+	source
+		government "Hai"
+	destination
+		government "Hai"
+		attributes "hai tourism"
+		distance 2 5
+	on complete
+		set "hai cultural recognition"
+		payment 40000
+		"reputation: Hai" += 10
+		"reputation: Hai Merchant" += 10
+		dialog `The Hai cultural liaison performs a formal greeting ritual. "We have observed your behavior among our people," they say in their melodic voice. "You trade fairly. You do not bring violence. This is... appreciated." They present you with a decorative token. "You are welcome in Hai space. Tell other humans of our hospitality."`
+
+mission "Hai Trade Partner"
+	name "Preferred Merchant"
+	description "Your reputation as a reliable trader has spread among the Hai. A merchant consortium on <destination> wants to establish a formal partnership."
+	job
+	to offer
+		has "hai cultural recognition"
+		"reputation: Hai Merchant" > 30
+		"actionlog: pattern" == 1
+		random < 20
+	source
+		government "Hai"
+	destination
+		government "Hai"
+		distance 2 5
+	cargo "Hai Delicacies" 15 2 .1
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		set "hai trade partner"
+		payment 60000
+		"reputation: Hai Merchant" += 5
+		dialog `The Hai merchants receive their goods with evident satisfaction. "You understand commerce as we do," the lead merchant says. "No deception. No exploitation. Only fair exchange." They mark your ship's registry with a special designation. "Other Hai merchants will recognize this. You will receive priority consideration."`
+
+mission "Hai Scholar Access"
+	name "Library Privileges"
+	description "The Hai scholarly community is granting you access to their historical archives. Visit <destination> to receive your credentials."
+	job
+	to offer
+		has "hai cultural recognition"
+		"reputation: Hai" > 50
+		random < 10
+	source
+		government "Hai"
+	destination
+		government "Hai"
+		attributes "hai tourism"
+		distance 2 5
+	on complete
+		set "hai library access"
+		payment 25000
+		dialog `The Hai archivist presents you with an ornate data crystal. "Few humans have earned this privilege," they explain. "Our libraries contain knowledge spanning millennia. You have shown yourself worthy of accessing it." The crystal glows softly in your hand. "Use this knowledge wisely. It is a gift, not a right."`
+
+
+
+# NEGATIVE CONSEQUENCES: CULTURAL ISOLATION
+
+mission "Hai Disappointment"
+	name "Cultural Concern"
+	description "Your recent actions have concerned the Hai. A cultural adviser on <destination> wishes to discuss your behavior."
+	job
+	to offer
+		"reputation: Hai" < -10
+		"reputation: Hai" > -30
+		not "hai cultural concern"
+		random < 30
+	source
+		government "Hai"
+	destination
+		government "Hai"
+		distance 2 4
+	on complete
+		set "hai cultural concern"
+		dialog `The Hai adviser's ears droop with visible sadness. "We had hoped you would understand our ways," they say. "Violence is... troubling to us. We do not wish to see it in our space." They pause, choosing words carefully. "We do not seek revenge. But we remember. If you cannot embrace peace, perhaps Hai space is not the place for you."`
+
+mission "Hai Trade Suspension"
+	name "Commercial Restrictions"
+	description "Your hostile actions have resulted in trade restrictions. Report to <destination> to discuss the situation."
+	job
+	to offer
+		"reputation: Hai" < -30
+		has "hai trade partner"
+		random < 40
+	source
+		government "Hai"
+	destination
+		government "Hai"
+		distance 2 4
+	on complete
+		clear "hai trade partner"
+		"reputation: Hai Merchant" -= 20
+		dialog `The Hai merchant consortium formally revokes your partnership. "We do not trade with those who bring violence," they explain without malice. "This is not punishment. It is... separation. When you have found peace within yourself, perhaps we can speak again." Your preferred merchant status is gone.`
+
+mission "Hai Exile Warning"
+	name "Final Opportunity"
+	description "Your continued hostility has brought you to the edge of permanent exile from Hai space. A final warning awaits on <destination>."
+	job
+	to offer
+		"reputation: Hai" < -50
+		not "hai exile warning"
+		random < 30
+	source
+		government "Hai"
+	destination
+		government "Hai"
+		distance 2 5
+	on complete
+		set "hai exile warning"
+		dialog `A group of Hai elders addresses you solemnly. "We have watched your path with great sorrow," one says. "The Hai do not believe in violence as justice. But we must protect our people." Another elder speaks: "This is your final opportunity. Leave our space peacefully, and you may one day return. Continue your current path, and you will be forever unwelcome." Their eyes hold no anger - only profound sadness.`
+
+
+
+# WITNESS-AWARE CONSEQUENCES
+
+mission "Hai Witness Network"
+	name "The Remembered Deed"
+	description "Your actions, though unwitnessed by authorities, have not gone unnoticed by the Hai community. Meet a contact on <destination>."
+	job
+	to offer
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 500
+		"reputation: Hai" < -20
+		random < 20
+	source
+		government "Hai"
+	destination
+		government "Hai"
+		distance 2 5
+	on complete
+		"reputation: Hai" -= 10
+		dialog `The Hai contact speaks quietly. "We know what you have done," they say. "Perhaps human authorities did not see. But we saw. We remember." Their whiskers twitch. "The Hai share knowledge freely. Your deeds are now known to all of us. There are no secrets in Hai space."`
+
+mission "Hai Forgiveness Ritual"
+	name "Path of Redemption"
+	description "The Hai offer a path to forgiveness through a traditional ritual. Participate on <destination> if you wish to make amends."
+	job
+	to offer
+		"reputation: Hai" < -20
+		not "reputation: atrocity"
+		random < 15
+	source
+		government "Hai"
+	destination
+		government "Hai"
+		attributes "hai tourism"
+		distance 2 5
+	on complete
+		payment -30000
+		"reputation: Hai" += 25
+		dialog `The forgiveness ritual is elaborate and humbling. You spend days in meditation, learning Hai customs, and performing acts of service. "We do not believe in punishment," the ritual master explains. "Only in understanding." By the end, you feel genuinely changed. The Hai community welcomes you back with open arms. The credits you donated go to helping those affected by violence throughout the galaxy.`
+
+
+
+# PROTECTOR PATTERN: HAI APPRECIATION
+
+mission "Hai Protector Recognition"
+	name "Guardian of the Peaceful"
+	description "Your pattern of protecting others has deeply impressed the Hai. A ceremony in your honor is being held on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 4
+		"reputation: Hai" > 30
+		random < 15
+	source
+		government "Hai"
+	destination
+		government "Hai"
+		attributes "hai tourism"
+		distance 2 5
+	on complete
+		set "hai protector status"
+		payment 75000
+		"reputation: Hai" += 15
+		dialog `The Hai ceremony is unlike anything in human culture. Hundreds of Hai gather to honor you with songs and gifts. "You protect the innocent," the ceremony leader says. "This is the highest virtue. You are, in your heart, one of us." They present you with a ceremonial blade - never used for violence, only for cutting ties to the past. "May your path always lead to peace."`
+
+mission "Hai Protector: Escort Request"
+	name "Protecting the Defenseless"
+	description "A Hai convoy needs protection through dangerous space. Escort them from <origin> to <destination>."
+	job
+	repeat
+	to offer
+		has "hai protector status"
+		"combat rating" > 50
+		random < 30
+	source
+		government "Hai"
+	destination
+		government "Hai"
+		distance 3 6
+	npc accompany save
+		government "Hai Merchant"
+		personality escort timid
+		fleet
+			names "hai"
+			variant
+				"Lightning Bug"
+			variant
+				"Scarab"
+	npc
+		government "Pirate"
+		personality nemesis plunders
+		system destination
+		fleet
+			names "pirate"
+			variant
+				"Fury" 2
+			variant
+				"Berserker"
+				"Fury"
+	on complete
+		payment 50000
+		"reputation: Hai" += 5
+		"reputation: Hai Merchant" += 5
+		dialog `The Hai convoy captain expresses deep gratitude. "Without you, we would have been lost," they say. "You embody the protector spirit. The Hai will always remember your kindness." The payment is generous, and the gratitude is genuine.`
+	on visit
+		dialog phrase "generic arrived-without-npc dialog"
+
+
+
+# UNFETTERED CONSEQUENCES
+
+mission "Unfettered Approach"
+	name "A Different Path"
+	description "Your violent tendencies have attracted the attention of the Unfettered Hai. A representative on <destination> wants to meet you."
+	job
+	to offer
+		"reputation: Hai" < -50
+		"actionlog: pattern" >= 2
+		"actionlog: pattern" <= 5
+		random < 15
+	source
+		government "Hai (Unfettered)"
+	destination
+		government "Hai (Unfettered)"
+		distance 2 5
+	on complete
+		payment 50000
+		"reputation: Hai (Unfettered)" += 10
+		dialog `The Unfettered Hai regards you with interest. "The peaceful Hai shun you," they observe. "But we are not peaceful. We remember what we were before we were... tamed." Their ears flatten. "Perhaps you understand us better than those soft cousins. We could use someone with your... directness."`
+
+mission "Unfettered Partnership"
+	name "Unfettered Operations"
+	description "The Unfettered Hai are planning an operation against their peaceful cousins. Participate and prove your loyalty."
+	job
+	repeat
+	to offer
+		"reputation: Hai (Unfettered)" > 20
+		"reputation: Hai" < -30
+		"combat rating" > 75
+		random < 25
+	source
+		government "Hai (Unfettered)"
+	waypoint
+		distance 2 4
+	destination
+		government "Hai (Unfettered)"
+	npc kill
+		government "Hai"
+		personality staying
+		system waypoint
+		fleet
+			names "hai"
+			variant
+				"Lightning Bug"
+				"Aphid" 2
+			variant
+				"Shield Beetle"
+	on complete
+		payment 80000
+		"reputation: Hai (Unfettered)" += 5
+		"reputation: Hai" -= 25
+		dialog `The Unfettered commander reviews the battle data with satisfaction. "You fight well," they say. "Our soft cousins will learn to fear again. That is good." They transfer your payment. "Continue to serve the Unfettered, and you will always have a place among us."`
+
+
+
+# ATROCITY CONSEQUENCES
+
+mission "Hai Atrocity: Eternal Exile"
+	name "Forever Unwelcome"
+	description "Your atrocities against the Hai have resulted in permanent exile. A final message awaits on <destination>."
+	job
+	to offer
+		"reputation: atrocity"
+		"reputation: Hai" < -75
+		random < 40
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate" "Independent"
+		distance 2 5
+	on complete
+		set "hai eternal exile"
+		dialog `The message is from the Hai Council of Elders. "We do not believe in vengeance," they say. "But we believe in memory. Your actions have caused great suffering to our people. You will never be welcome in Hai space again. This is not anger. This is simply truth." The message ends with a Hai proverb: "Some paths, once walked, cannot be unwalked."`

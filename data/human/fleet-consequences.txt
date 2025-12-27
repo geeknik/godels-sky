@@ -1,0 +1,297 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Fleet-Based Consequence Missions
+# These missions react to the player's fleet size, composition, and combat
+# rating. A large fleet draws attention. Capital ships raise military
+# concerns. Heavy combat ratings mark you as a serious threat or asset.
+
+
+
+# FLEET SIZE CONSEQUENCES: SMALL OPERATOR
+
+mission "Fleet: Solo Captain"
+	name "Independent Spirit"
+	description "Your choice to operate with a single ship has drawn interest. A contact on <destination> appreciates your style."
+	job
+	to offer
+		"ships: Heavy Freighter" < 1
+		"ships: Light Freighter" < 2
+		"combat rating" < 50
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment 25000
+		dialog `The contact nods approvingly at your single ship. "I respect a solo operator," they say. "No complicated logistics, no crew drama, no splitting profits. Just you, your ship, and the stars." They offer a small job. "I've got work that needs discretion. Big fleets attract attention. You... don't."`
+
+
+
+# FLEET SIZE CONSEQUENCES: GROWING FLEET
+
+mission "Fleet: Emerging Fleet Owner"
+	name "Fleet Management"
+	description "Your growing fleet has caught the attention of logistics consultants. Meet them on <destination>."
+	job
+	to offer
+		"flagship crew" > 10
+		"ships: Light Warship" >= 1
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Syndicate"
+		distance 2 5
+	on complete
+		payment 30000
+		dialog `The logistics consultant reviews your growing operation. "You're transitioning from captain to fleet commander," they observe. "Different skill set. Different challenges." They offer management advice. "Coordination, maintenance schedules, crew rotation - it gets complex fast. But the earning potential scales too." They provide a welcome bonus for new fleet operators.`
+
+mission "Fleet: Small Fleet Recognition"
+	name "Fleet Commander"
+	description "Your small fleet has been recognized by the Merchant Marine. Attend registration on <destination>."
+	job
+	to offer
+		"flagship crew" > 20
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		distance 2 5
+	on complete
+		set "registered fleet commander"
+		payment 50000
+		dialog `The Merchant Marine officially registers you as a fleet commander. "You're no longer a lone captain," the registrar explains. "You're an operation. That comes with benefits and responsibilities." You receive your fleet commander credentials and a registration bonus. "Welcome to the big leagues."`
+
+
+
+# FLEET SIZE CONSEQUENCES: LARGE FLEET
+
+mission "Fleet: Major Operation"
+	name "Fleet Inspection"
+	description "Your large fleet has triggered a mandatory government inspection. Report to <destination>."
+	job
+	to offer
+		"flagship crew" > 50
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military"
+		distance 2 4
+	on complete
+		payment -20000
+		dialog `The government inspectors spend days going through your fleet. Safety standards, crew certifications, maintenance logs, cargo manifests. "A fleet this size is a significant presence in any system," the lead inspector explains. "We need to ensure you're operating legally." The inspection fees are substantial, but the alternative is worse.`
+
+mission "Fleet: Private Navy Concern"
+	name "Military Assessment"
+	description "Your fleet has reached a size that concerns military planners. A briefing awaits on <destination>."
+	job
+	to offer
+		"combat rating" > 200
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military"
+		distance 2 5
+	on complete
+		set "military assessed fleet"
+		payment 50000
+		dialog `The military officers don't hide their concern. "Your fleet represents significant combat capability," one says. "That's not inherently a problem, but it does require attention." They register your fleet in military databases. "We're not restricting you. But we're watching. Large private fleets can be destabilizing." The registration comes with a payment - essentially a reward for cooperating.`
+
+
+
+# COMBAT RATING CONSEQUENCES
+
+mission "Combat: Rising Warrior"
+	name "Combat Recognition"
+	description "Your combat achievements have been noticed. The Bounty Hunter Guild wants to discuss opportunities on <destination>."
+	job
+	to offer
+		"combat rating" > 75
+		"actionlog: pattern" == 3
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military" "station"
+		distance 2 5
+	on complete
+		payment 40000
+		"reputation: Bounty" += 5
+		dialog `The Guild representative reviews your combat record with professional interest. "Solid numbers," they approve. "Consistent kills, minimal collateral damage, good target selection." They offer priority access to higher-value bounties. "Hunters with your rating are in demand. We'll make sure you get the best contracts."`
+
+mission "Combat: Veteran Fighter"
+	name "Battle Hardened"
+	description "Your extensive combat experience has earned military respect. A commendation awaits on <destination>."
+	job
+	to offer
+		"combat rating" > 150
+		"reputation: Republic" > 25
+		random < 15
+	source
+		government "Republic"
+	destination
+		government "Republic"
+		attributes "military"
+		distance 2 5
+	on complete
+		set "republic combat veteran"
+		payment 75000
+		"reputation: Republic" += 10
+		dialog `The Republic Navy formally recognizes your combat achievements. "Your kill count rivals some of our patrol commanders," the admiral notes. "That kind of experience is valuable." You receive a veteran's commendation and associated privileges. "When the Republic needs experienced fighters, we know who to call."`
+
+mission "Combat: One-Ship Army"
+	name "Legendary Warrior"
+	description "Your combat rating has reached legendary status. Multiple factions want to discuss your future on <destination>."
+	job
+	to offer
+		"combat rating" > 300
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Neutral"
+		distance 2 5
+	on complete
+		set "legendary combat rating"
+		payment 200000
+		dialog `Representatives from multiple factions have gathered. Republic admirals, Syndicate security executives, Free Worlds militia leaders - all want your attention. "Your combat capabilities are... exceptional," one says diplomatically. "Essentially, you're a one-ship army." They offer various inducements. "Everyone wants you on their side. Or at least not against them." The bidding war is lucrative.`
+
+
+
+# COMBAT RATING CONSEQUENCES: THREATS
+
+mission "Combat: Threat Assessment"
+	name "You've Been Noticed"
+	description "Your combat capability has flagged you as a potential threat. Intelligence agencies want to evaluate you on <destination>."
+	job
+	to offer
+		"combat rating" > 100
+		"reputation: Republic" < 10
+		"reputation: Syndicate" < 10
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military"
+		distance 2 5
+	on complete
+		set "threat assessed"
+		dialog `The intelligence officers are polite but thorough. "Your combat rating puts you in a small percentile," one explains. "That's not inherently concerning. What concerns us is the lack of clear allegiance." They take detailed notes. "We're not accusing you of anything. We just want to understand who you are and what you want. Powerful ships in uncertain hands make people nervous."`
+
+mission "Combat: Preemptive Monitoring"
+	name "Under Surveillance"
+	description "Your high combat rating has triggered preemptive monitoring. Learn what this means on <destination>."
+	job
+	to offer
+		has "threat assessed"
+		"combat rating" > 150
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		distance 2 5
+	on complete
+		set "under surveillance"
+		dialog `The surveillance notification is formal but clear. "Due to your significant combat capability and uncertain political alignment, you have been placed on the preemptive monitoring list," the officer explains. "Your movements in government space will be tracked. This is not punishment - it's prudence." They offer no apology. "We'd rather watch a potential threat than be surprised by one."`
+
+
+
+# WARSHIP CONSEQUENCES
+
+mission "Fleet: Heavy Warship Attention"
+	name "Capital Ship Registry"
+	description "Your possession of heavy warships has triggered military registration requirements. Report to <destination>."
+	job
+	to offer
+		"ships: Heavy Warship" >= 1
+		random < 25
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military"
+		distance 2 4
+	on complete
+		set "capital ship registered"
+		payment -30000
+		dialog `The military registration process for capital ships is extensive. "Heavy warships in private hands require documentation," the registrar explains. "Armament specifications, crew manifests, operational history." The fees are substantial. "Consider this the price of operating the kind of firepower that could threaten a colony."`
+
+mission "Fleet: Carrier Concerns"
+	name "Carrier Classification"
+	description "Your carrier capability has raised strategic concerns. A military review awaits on <destination>."
+	job
+	to offer
+		"ships: Fighter" >= 4
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military"
+		distance 2 5
+	on complete
+		set "carrier classified"
+		payment 40000
+		dialog `The military review of your carrier operations is thorough. "Fighter capacity is a force multiplier," the officer explains. "A civilian with carrier capability is essentially a small air force." They classify your operation for regulatory purposes. "You're not banned from operating fighters. But you are now on a special list." A cooperation bonus accompanies the classification.`
+
+
+
+# MERCHANT FLEET CONSEQUENCES
+
+mission "Fleet: Merchant Empire"
+	name "Trade Magnate"
+	description "Your merchant fleet has grown to empire status. The Trade Council wants to discuss implications on <destination>."
+	job
+	to offer
+		"cargo space" > 500
+		"actionlog: pattern" == 1
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "trade" "rich"
+		distance 2 5
+	on complete
+		set "trade magnate"
+		payment 100000
+		"reputation: Merchant" += 15
+		dialog `The Trade Council receives you as an equal. "Your cargo capacity rivals some small shipping corporations," the chairman notes. "That gives you significant market influence." They offer you a seat at policy discussions. "When your fleet moves, commodity prices move with it. That's power. Use it responsibly."`
+
+mission "Fleet: Logistics Giant"
+	name "Supply Chain Power"
+	description "Your fleet's logistics capacity has made you a critical supply chain node. Discuss responsibilities on <destination>."
+	job
+	to offer
+		has "trade magnate"
+		"cargo space" > 1000
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		distance 2 5
+	on complete
+		payment 150000
+		dialog `Government and corporate representatives explain your new position. "Your fleet now handles a significant percentage of trade in several sectors," one says. "That makes you critical infrastructure." They offer contracts and subsidies. "We need you to keep operating. Reliably. If your fleet stopped tomorrow, colonies would face shortages." It's both an opportunity and a responsibility.`

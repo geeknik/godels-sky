@@ -1,0 +1,351 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Underground Missions
+# These missions leverage the witness system - crimes without witnesses have different consequences.
+# Players who operate without leaving witnesses can access special criminal opportunities.
+
+
+
+mission "Silent Professional: Introduction"
+	name "A Quiet Proposition"
+	description "Your ability to operate without witnesses has attracted attention. Someone on <destination> wants to discuss opportunities for someone with your... discretion."
+	job
+	to offer
+		"witness: unwitnessed"
+		"actionlog: pattern" >= 2
+		random < 15
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Pirate" "Independent"
+		distance 2 5
+	on complete
+		payment 25000
+		"reputation: Pirate" += 2
+		set "silent professional"
+		dialog `The contact speaks in hushed tones. "We've been watching you. Your work is clean - no witnesses, no loose ends. That's a rare skill. We have clients who pay premium rates for operators who can be trusted to leave no evidence." A credit chip slides across the table. "Consider this an advance. We'll be in touch."`
+
+mission "Silent Professional: Assassination"
+	name "Quiet Elimination"
+	description "A target needs to be eliminated in <waypoint> without witnesses. Return to <destination> after the job is done. No witnesses means bonus payment."
+	job
+	repeat
+	to offer
+		has "silent professional"
+		"witness: unwitnessed"
+		"combat rating" > 75
+		random < 25
+	source
+		government "Pirate" "Independent"
+	waypoint
+		distance 2 5
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Pirate" "Independent"
+	npc kill
+		government "Merchant"
+		personality staying coward
+		fleet
+			names "civilian"
+			variant
+				"Star Barge"
+			variant
+				"Shuttle"
+	on complete
+		payment 60000
+		dialog `Your handler reviews the mission data. "Target eliminated. No distress signals detected. Clean work." They transfer the payment. "There's always more work for someone who knows how to be invisible."`
+
+mission "Silent Professional: Evidence Destruction"
+	name "Data Purge"
+	description "A government convoy carrying evidence against our clients is passing through <waypoint>. Destroy it completely - no survivors, no wreckage recovery. Report to <destination>."
+	job
+	repeat
+	to offer
+		has "silent professional"
+		"witness: unwitnessed"
+		"combat rating" > 100
+		random < 20
+	source
+		government "Pirate" "Independent"
+	waypoint
+		distance 2 4
+	destination
+		government "Pirate" "Independent"
+	npc kill
+		government "Republic"
+		personality staying
+		fleet
+			names "republic"
+			variant
+				"Corvette"
+				"Shuttle" 2
+			variant
+				"Frigate"
+				"Flivver"
+	on complete
+		payment 100000
+		"reputation: Republic" -= 15
+		dialog `"The convoy never arrived at its destination," your handler reports with satisfaction. "The evidence has been destroyed, and our clients are very grateful. Your reputation for discretion is well-earned."`
+
+
+mission "Witness Elimination: Opportunity"
+	name "Loose Ends"
+	description "A witness to one of your previous operations is currently in <system>. Eliminate them before they can testify. Return to <destination>."
+	job
+	repeat
+	to offer
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 500
+		"actionlog: pattern" >= 2
+		random < 20
+	source
+		government "Pirate" "Independent"
+	waypoint
+		distance 1 3
+	destination
+		government "Pirate" "Independent"
+	npc kill
+		government "Merchant"
+		personality staying fleeing
+		fleet
+			names "civilian"
+			variant
+				"Shuttle"
+			variant
+				"Scout"
+	on complete
+		payment 40000
+		dialog `Your contact confirms the kill. "The witness has been silenced. One less person who can identify you. Your record is a little cleaner now."`
+
+mission "Witness Elimination: Government Agent"
+	name "The Inspector"
+	description "A government investigator has been asking questions about you. They're currently in <system>. Make sure they stop asking. Permanently."
+	job
+	repeat
+	to offer
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 700
+		"reputation: threshold hostile"
+		random < 15
+	source
+		government "Pirate" "Independent"
+	waypoint
+		distance 2 4
+	destination
+		government "Pirate" "Independent"
+	npc kill
+		government "Republic"
+		personality staying
+		fleet
+			names "republic"
+			variant
+				"Patrol Boat"
+	on complete
+		payment 75000
+		"reputation: Republic" -= 20
+		dialog `"The investigation has been... closed," your handler says with a thin smile. "Of course, eliminating a government agent will create more heat in the short term. But dead investigators don't write reports."`
+
+
+mission "Clean Record: Bribery"
+	name "Record Correction"
+	description "For a fee, certain records can be... adjusted. Meet our contact on <destination> to discuss cleaning up your history."
+	job
+	repeat
+	to offer
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 600
+		"credits" > 100000
+		random < 20
+	source
+		government "Independent" "Pirate" "Syndicate"
+	destination
+		government "Syndicate" "Independent"
+		distance 2 5
+	on complete
+		payment -75000
+		dialog `The fixer examines your criminal record and whistles. "That's quite a list. But money talks, and for 75,000 credits, I can make some of these incidents disappear from the official databases. Not all of them - that would be too obvious - but enough to take the heat off."`
+
+mission "Clean Record: Data Hack"
+	name "Digital Cleanup"
+	description "A hacker collective can erase evidence of your crimes from government databases. Meet them on <destination> if you have the credits."
+	job
+	repeat
+	to offer
+		"ship: compromised"
+		"credits" > 150000
+		random < 15
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Pirate" "Independent"
+		attributes "station"
+		distance 3 6
+	on complete
+		payment -150000
+		dialog `The hacker collective works through the night, their screens casting an eerie glow. "There," the lead hacker says finally. "We've purged your flight recorder data and corrupted several government surveillance archives. For the next few months, you're a ghost. Don't waste it."`
+
+
+mission "Underground Network: Initiation"
+	name "Network Access"
+	description "The criminal underground has taken notice of your activities. A recruiter on <destination> wants to discuss membership."
+	job
+	to offer
+		"actionlog: pattern" == 2
+		"witness: unwitnessed"
+		"pirate jobs" > 5
+		random < 10
+	source
+		government "Pirate"
+	destination
+		government "Pirate"
+		distance 2 5
+	on complete
+		payment 50000
+		set "underground network member"
+		dialog `The recruiter leads you through a series of security checks before finally sitting you down. "Welcome to the Network. We're not just pirates - we're professionals. We share intelligence, coordinate operations, and protect our own. Here's your membership fee." A substantial credit transfer appears on your screen. "Don't make us regret this."`
+
+mission "Underground Network: Information Sharing"
+	name "Network Intel"
+	description "The Network has information about valuable cargo passing through <waypoint>. Share in the profits by participating in the operation."
+	job
+	repeat
+	to offer
+		has "underground network member"
+		"combat rating" > 50
+		random < 30
+	source
+		government "Pirate"
+	waypoint
+		distance 2 4
+	destination
+		government "Pirate"
+	npc kill
+		government "Merchant"
+		personality staying harvests plunders
+		fleet
+			names "civilian"
+			variant
+				"Freighter"
+				"Heavy Shuttle"
+			variant
+				"Hauler II"
+				"Shuttle" 2
+	on complete
+		payment 45000
+		dialog `Back at the Network safe house, you split the take with your fellow operatives. "Good haul," the coordinator says. "This is what happens when we work together. The Network takes care of its own."`
+
+mission "Underground Network: Protection"
+	name "Network Defense"
+	description "A Network member is being hunted by bounty hunters near <waypoint>. Protect them and escort them to <destination>."
+	job
+	repeat
+	to offer
+		has "underground network member"
+		"combat rating" > 75
+		random < 25
+	source
+		government "Pirate"
+	waypoint
+		distance 2 4
+	destination
+		government "Pirate"
+	npc accompany save
+		government "Pirate"
+		personality escort coward
+		fleet
+			names "pirate"
+			variant
+				"Fury"
+			variant
+				"Quicksilver"
+	npc kill
+		government "Bounty Hunter"
+		personality nemesis
+		system waypoint
+		fleet
+			names "bounty hunter"
+			variant
+				"Fury"
+				"Berserker" 2
+			variant
+				"Corvette"
+	on complete
+		payment 35000
+		"reputation: Pirate" += 3
+		dialog `The rescued operative clasps your hand. "I won't forget this. The Network doesn't forget either. You've proven yourself today."`
+	on visit
+		dialog phrase "generic arrived-without-npc dialog"
+
+
+mission "Crime Syndicate: Recruitment"
+	name "An Offer You Can't Refuse"
+	description "A powerful crime syndicate has taken interest in your operations. Their representative awaits on <destination>."
+	job
+	to offer
+		has "underground network member"
+		"actionlog: pattern" == 2
+		"combat rating" > 100
+		"credits" > 200000
+		random < 10
+	source
+		government "Pirate"
+	destination
+		government "Pirate"
+		distance 3 6
+	on complete
+		payment 100000
+		set "crime syndicate member"
+		dialog `The syndicate representative is flanked by bodyguards. "We've watched your career with interest. The Network was a good start, but you've outgrown them. The Syndicate offers resources, protection, and opportunities on a scale you can't imagine. This is your signing bonus." The payment is substantial. "Welcome to the family."`
+
+mission "Crime Syndicate: Major Operation"
+	name "The Big Score"
+	description "The Syndicate is planning a major operation in <system>. Multiple targets, maximum profit. Participate and collect your share."
+	job
+	repeat
+	to offer
+		has "crime syndicate member"
+		"combat rating" > 150
+		random < 20
+	source
+		government "Pirate"
+	waypoint
+		distance 2 5
+	destination
+		government "Pirate"
+	npc kill
+		government "Merchant"
+		personality staying harvests plunders
+		fleet
+			names "civilian"
+			variant
+				"Hauler III"
+				"Freighter"
+				"Heavy Shuttle" 2
+			variant
+				"Freighter" 2
+				"Star Barge"
+	npc kill
+		government "Republic"
+		personality staying
+		system waypoint
+		fleet
+			names "republic"
+			variant
+				"Patrol Boat"
+				"Flivver"
+	on complete
+		payment 150000
+		"reputation: Republic" -= 25
+		"reputation: Merchant" -= 10
+		dialog `The Syndicate warehouse is buzzing with activity as stolen cargo is sorted and fenced. Your share is generous. "That's how we do business," the coordinator says. "Big operations, big payoffs. And the authorities? They're too busy chasing small-time pirates to notice us."`

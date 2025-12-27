@@ -1,0 +1,534 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Consequence System Integration Tests
+# These tests verify that the consequence-related conditions work correctly
+# for missions and news that react to player behavior patterns.
+
+
+
+# =============================================================================
+# TEST DATA: Basic save game for consequence testing
+# =============================================================================
+
+test-data "consequence test save"
+	category "savegame"
+	contents
+		pilot "Test Captain"
+		date 16 11 3013
+		system Sol
+		planet Earth
+		clearance
+		ship "Star Barge"
+			name "Test Ship"
+			sprite "ship/star barge"
+			attributes
+				category "Light Freighter"
+				cost 190000
+				mass 70
+				bunks 3
+				"cargo space" 50
+				drag 2.1
+				"engine capacity" 40
+				"fuel capacity" 300
+				"heat dissipation" 0.8
+				hull 1000
+				"outfit space" 130
+				"required crew" 1
+				shields 600
+				"turret mounts" 1
+				"weapon capacity" 20
+				"thrust" 50
+				"turn" 1000
+				"energy generation" 10
+			outfits
+				Hyperdrive
+			crew 1
+			fuel 300
+			shields 600
+			hull 1000
+			position 0 0
+			engine -9 38 1
+			engine 9 38 1
+			system Sol
+			planet Earth
+		account
+			credits 1000000
+			score 400
+			history
+		visited Sol
+		"visited planet" Earth
+
+
+test-data "trader pattern save"
+	category "savegame"
+	contents
+		pilot "Trader Captain"
+		date 16 11 3013
+		system Sol
+		planet Earth
+		clearance
+		ship "Bulk Freighter"
+			name "Trade Runner"
+			sprite "ship/bulk freighter"
+			attributes
+				category "Heavy Freighter"
+				cost 950000
+				mass 450
+				bunks 18
+				"cargo space" 600
+				drag 11.5
+				"engine capacity" 70
+				"fuel capacity" 500
+				"heat dissipation" 0.5
+				hull 4800
+				"outfit space" 350
+				"required crew" 6
+				shields 3200
+				"turret mounts" 4
+				"weapon capacity" 120
+				"thrust" 50
+				"turn" 1000
+				"energy generation" 10
+			outfits
+				Hyperdrive
+			crew 6
+			fuel 500
+			shields 3200
+			hull 4800
+			position 0 0
+			engine -17 123 1
+			engine 17 123 1
+			system Sol
+			planet Earth
+		account
+			credits 5000000
+			score 400
+			history
+		visited Sol
+		"visited planet" Earth
+		conditions
+			"actionlog: pattern" 1
+			"reputation: Merchant" 50
+
+
+
+test-data "pirate pattern save"
+	category "savegame"
+	contents
+		pilot "Pirate Captain"
+		date 16 11 3013
+		system Aldebaran
+		planet "Matar Wilderness"
+		clearance
+		ship "Falcon"
+			name "Black Corsair"
+			sprite "ship/falcon"
+			attributes
+				category "Medium Warship"
+				cost 2400000
+				mass 170
+				bunks 28
+				"cargo space" 40
+				drag 3.7
+				"engine capacity" 100
+				"fuel capacity" 500
+				"heat dissipation" 0.7
+				hull 3300
+				"outfit space" 340
+				"required crew" 9
+				shields 5800
+				"turret mounts" 2
+				"weapon capacity" 140
+				"thrust" 100
+				"turn" 2000
+				"energy generation" 20
+			outfits
+				Hyperdrive
+			crew 9
+			fuel 500
+			shields 5800
+			hull 3300
+			position 0 0
+			system Aldebaran
+			planet "Matar Wilderness"
+		account
+			credits 2000000
+			score 400
+			history
+		visited Aldebaran
+		"visited planet" "Matar Wilderness"
+		conditions
+			"actionlog: pattern" 2
+			"reputation: Pirate" 40
+			"reputation: Republic" -30
+
+
+
+test-data "protector pattern save"
+	category "savegame"
+	contents
+		pilot "Protector Captain"
+		date 16 11 3013
+		system Sol
+		planet Earth
+		clearance
+		ship "Dreadnought"
+			name "Guardian Angel"
+			sprite "ship/dreadnought"
+			attributes
+				category "Heavy Warship"
+				cost 7200000
+				mass 630
+				bunks 147
+				"cargo space" 80
+				drag 12.6
+				"engine capacity" 180
+				"fuel capacity" 600
+				"heat dissipation" 0.45
+				hull 9600
+				"outfit space" 740
+				"required crew" 67
+				shields 14000
+				"turret mounts" 6
+				"weapon capacity" 300
+				"thrust" 100
+				"turn" 2000
+				"energy generation" 50
+			outfits
+				Hyperdrive
+			crew 67
+			fuel 600
+			shields 14000
+			hull 9600
+			position 0 0
+			system Sol
+			planet Earth
+		account
+			credits 10000000
+			score 400
+			history
+		visited Sol
+		"visited planet" Earth
+		conditions
+			"actionlog: pattern" 4
+			"encounter: count disposition grateful" 5
+			"reputation: Republic" 60
+
+
+
+test-data "atrocity save"
+	category "savegame"
+	contents
+		pilot "War Criminal"
+		date 16 11 3013
+		system Aldebaran
+		planet "Matar Wilderness"
+		clearance
+		ship "Bactrian"
+			name "Death Dealer"
+			sprite "ship/bactrian"
+			attributes
+				category "Heavy Warship"
+				cost 17600000
+				mass 940
+				bunks 245
+				"cargo space" 530
+				drag 16.1
+				"engine capacity" 180
+				"fuel capacity" 700
+				"heat dissipation" 0.45
+				hull 14400
+				"outfit space" 870
+				"required crew" 70
+				shields 17500
+				"turret mounts" 6
+				"weapon capacity" 370
+				"thrust" 100
+				"turn" 2000
+				"energy generation" 50
+			outfits
+				Hyperdrive
+			crew 70
+			fuel 700
+			shields 17500
+			hull 14400
+			position 0 0
+			system Aldebaran
+			planet "Matar Wilderness"
+		account
+			credits 50000000
+			score 400
+			history
+		visited Aldebaran
+		"visited planet" "Matar Wilderness"
+		conditions
+			"actionlog: pattern" 5
+			"actionlog: escalation" 1
+			"reputation: atrocity" 1
+			"reputation: Republic" -100
+			"reputation: Free Worlds" -100
+			"reputation: Syndicate" -100
+
+
+
+# =============================================================================
+# CONDITION TESTS: Verify consequence conditions work
+# =============================================================================
+
+test "Consequence - Pattern Condition Arithmetic"
+	status active
+	description "Test that actionlog pattern conditions can be set and compared."
+	sequence
+		apply
+			"actionlog: pattern" = 0
+		assert
+			"actionlog: pattern" == 0
+		apply
+			"actionlog: pattern" = 1
+		assert
+			"actionlog: pattern" == 1
+		apply
+			"actionlog: pattern" = 2
+		assert
+			"actionlog: pattern" == 2
+		apply
+			"actionlog: pattern" = 3
+		assert
+			"actionlog: pattern" == 3
+		apply
+			"actionlog: pattern" = 4
+		assert
+			"actionlog: pattern" == 4
+		apply
+			"actionlog: pattern" = 5
+		assert
+			"actionlog: pattern" == 5
+
+
+test "Consequence - Reputation Conditions"
+	status active
+	description "Test that faction reputation conditions work correctly."
+	sequence
+		apply
+			"reputation: Republic" = 50
+			"reputation: Syndicate" = -30
+			"reputation: Free Worlds" = 25
+		assert
+			"reputation: Republic" == 50
+			"reputation: Syndicate" == -30
+			"reputation: Free Worlds" == 25
+		assert
+			"reputation: Republic" > 40
+			"reputation: Syndicate" < 0
+			"reputation: Free Worlds" > 20
+
+
+test "Consequence - Encounter Disposition Conditions"
+	status active
+	description "Test that encounter disposition counting conditions work."
+	sequence
+		apply
+			"encounter: count disposition grateful" = 5
+			"encounter: count disposition hostile" = 3
+		assert
+			"encounter: count disposition grateful" == 5
+			"encounter: count disposition hostile" == 3
+		assert
+			"encounter: count disposition grateful" >= 3
+			"encounter: count disposition hostile" < 5
+
+
+test "Consequence - Witness Conditions"
+	status active
+	description "Test that witness-related conditions work."
+	sequence
+		apply
+			"actionlog: witnessed" = 500
+			"witness: unwitnessed" = 0
+		assert
+			"actionlog: witnessed" == 500
+			"witness: unwitnessed" == 0
+		apply
+			"witness: unwitnessed" = 1
+		assert
+			"witness: unwitnessed" == 1
+
+
+test "Consequence - Atrocity Flag"
+	status active
+	description "Test that the atrocity reputation flag works."
+	sequence
+		apply
+			"reputation: atrocity" = 0
+		assert
+			"reputation: atrocity" == 0
+		apply
+			"reputation: atrocity" = 1
+		assert
+			"reputation: atrocity" == 1
+			"reputation: atrocity" != 0
+
+
+test "Consequence - Escalation Flag"
+	status active
+	description "Test that the escalation flag works."
+	sequence
+		apply
+			"actionlog: escalation" = 0
+		assert
+			"actionlog: escalation" == 0
+		apply
+			"actionlog: escalation" = 1
+		assert
+			"actionlog: escalation" == 1
+
+
+
+# =============================================================================
+# PATTERN DETECTION TESTS: Verify mission triggers based on patterns
+# =============================================================================
+
+test "Consequence - Trader Pattern Triggers"
+	status active
+	description "Test that trader pattern conditions trigger correctly."
+	sequence
+		inject "trader pattern save"
+		call "Load First Savegame"
+		assert
+			"actionlog: pattern" == 1
+			"reputation: Merchant" >= 50
+
+
+test "Consequence - Pirate Pattern Triggers"
+	status active
+	description "Test that pirate pattern conditions trigger correctly."
+	sequence
+		inject "pirate pattern save"
+		call "Load First Savegame"
+		assert
+			"actionlog: pattern" == 2
+			"reputation: Pirate" >= 40
+			"reputation: Republic" < 0
+
+
+test "Consequence - Protector Pattern Triggers"
+	status active
+	description "Test that protector pattern conditions trigger correctly."
+	sequence
+		inject "protector pattern save"
+		call "Load First Savegame"
+		assert
+			"actionlog: pattern" == 4
+			"encounter: count disposition grateful" >= 5
+			"reputation: Republic" > 50
+
+
+test "Consequence - Atrocity State Triggers"
+	status active
+	description "Test that atrocity conditions trigger correctly."
+	sequence
+		inject "atrocity save"
+		call "Load First Savegame"
+		assert
+			"actionlog: pattern" == 5
+			"actionlog: escalation" == 1
+			"reputation: atrocity" == 1
+			"reputation: Republic" < -50
+			"reputation: Free Worlds" < -50
+			"reputation: Syndicate" < -50
+
+
+
+# =============================================================================
+# COMBINED CONDITION TESTS: Complex multi-condition scenarios
+# =============================================================================
+
+test "Consequence - Multi-Faction Trust"
+	status active
+	description "Test that multiple faction reputations can be checked together."
+	sequence
+		apply
+			"reputation: Republic" = 50
+			"reputation: Hai" = 40
+			"reputation: Coalition" = 30
+		assert
+			"reputation: Republic" > 40
+			"reputation: Hai" > 30
+			"reputation: Coalition" > 20
+		# Test cross-faction diplomacy scenario
+		apply
+			"actionlog: pattern" = 4
+		assert
+			"actionlog: pattern" == 4
+			"reputation: Republic" > 40
+			"reputation: Hai" > 30
+
+
+test "Consequence - Reputation Threshold Combinations"
+	status active
+	description "Test reputation thresholds with pattern combinations."
+	sequence
+		apply
+			"reputation: Merchant" = 60
+			"actionlog: pattern" = 1
+		assert
+			"actionlog: pattern" == 1
+			"reputation: Merchant" > 50
+		# Trader magnate scenario
+		apply
+			"cargo space" = 1000
+		assert
+			"cargo space" >= 500
+			"reputation: Merchant" > 50
+
+
+test "Consequence - Witness and Crime Combination"
+	status active
+	description "Test witness conditions combined with crime patterns."
+	sequence
+		apply
+			"actionlog: pattern" = 2
+			"actionlog: witnessed" = 800
+			"witness: unwitnessed" = 0
+		assert
+			"actionlog: pattern" == 2
+			"actionlog: witnessed" > 600
+			"witness: unwitnessed" == 0
+		# Unwitnessed crimes scenario
+		apply
+			"witness: unwitnessed" = 1
+			"actionlog: witnessed" = 100
+		assert
+			"witness: unwitnessed" == 1
+			"actionlog: witnessed" < 200
+
+
+test "Consequence - Long-Term Reputation Evolution"
+	status active
+	description "Test time-based reputation conditions."
+	sequence
+		apply
+			"days" = 365
+			"reputation: Republic" = 70
+			"actionlog: pattern" = 4
+		assert
+			"days" > 200
+			"reputation: Republic" > 50
+			"actionlog: pattern" == 4
+		# Long-term enemy scenario
+		apply
+			"reputation: Republic" = -60
+		assert
+			"days" > 200
+			"reputation: Republic" < -50

@@ -15,6 +15,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include "ReputationManager.h"
+
 #include <map>
 #include <set>
 #include <string>
@@ -70,7 +72,12 @@ public:
 	void SetReputation(const Government *gov, double value);
 
 	// Reset any temporary effects (typically because a day has passed).
-	void ResetDaily();
+	// If a date is provided, also steps the reputation decay/recovery system.
+	void ResetDaily(const Date &date = Date());
+
+	// Gödel's Sky: Access the reputation manager for decay/recovery tracking.
+	const ReputationManager &GetReputationManager() const;
+	ReputationManager &GetReputationManager();
 
 
 private:
@@ -85,4 +92,7 @@ private:
 	std::map<const Planet *, bool> bribedPlanets;
 	std::set<const Planet *> dominatedPlanets;
 	std::set<const Government *> fined;
+
+	// Gödel's Sky: Tracks reputation decay, recovery, and history.
+	ReputationManager reputationManager;
 };

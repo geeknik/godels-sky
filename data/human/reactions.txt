@@ -1,0 +1,404 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Pattern-Based Missions
+# These missions react to the player's behavioral pattern as detected by the ActionLog.
+# Pattern values: UNKNOWN=0, TRADER=1, PIRATE=2, BOUNTY_HUNTER=3, PROTECTOR=4, WARMONGER=5, SABOTEUR=6
+
+
+
+mission "Trader's Consortium Contact"
+	name "Consortium Invitation"
+	description "A merchant consortium has noticed your reliable trading record. Meet their representative on <destination> to discuss business opportunities."
+	job
+	repeat
+	to offer
+		"actionlog: pattern" == 1
+		"cargo space" > 50
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+		attributes "rich" "core" "trade"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "rich" "trade"
+		distance 3 8
+	on complete
+		payment 25000
+		"reputation: Merchant" += 2
+		dialog `The consortium representative greets you warmly. "We've been tracking shipping manifests, and your name keeps coming up. Reliable, on-time, no 'lost' cargo. That's rare these days." They hand you a credit chip. "Consider this a signing bonus. We'll have more lucrative routes for you soon."`
+
+mission "Trader's Premium Route [0]"
+	name "Premium cargo to <planet>"
+	description "The Merchant Consortium wants you to deliver <cargo> to <destination>. This high-value shipment pays <payment>."
+	job
+	repeat
+	deadline 6
+	to offer
+		"actionlog: pattern" == 1
+		has "Trader's Consortium Contact: done"
+		random < 40
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "rich" "trade"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "rich" "core"
+		distance 2 5
+	cargo "Luxury Goods" 15 2 .15
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 8000 220
+		dialog `The receiving agent inspects the cargo carefully, then nods with satisfaction. "Pristine condition, as expected from you. The consortium appreciates reliability."`
+
+mission "Trader's Premium Route [1]"
+	name "Urgent shipment to <planet>"
+	description "Time-sensitive cargo needs to reach <destination> before <date>. The Consortium is offering <payment> for this rush delivery."
+	job
+	repeat
+	deadline 4
+	to offer
+		"actionlog: pattern" == 1
+		has "Trader's Consortium Contact: done"
+		random < 30
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade" "rich"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		distance 2 4
+	cargo "Medical" 8 2 .1
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 12000 280
+		dialog `You made it just in time. The receiving dock is already prepped, and workers swarm your cargo bay the moment you touch down. "Lives depend on this shipment," the dock supervisor says. "Thank you for getting here so fast."`
+
+
+mission "Pirate Contact: Black Market"
+	name "A Certain Opportunity"
+	description "Someone has noticed your... flexible approach to property rights. A contact on <destination> wants to discuss mutually profitable arrangements."
+	job
+	repeat
+	to offer
+		"actionlog: pattern" == 2
+		random < 25
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate"
+		distance 2 6
+	on complete
+		payment 15000
+		"reputation: Pirate" += 3
+		dialog `The contact meets you in a dimly lit cantina. "Word gets around when someone's good at making cargo... disappear. We could use someone with your talents. Consider this a welcome gift." A credit chip slides across the table. "There's plenty more where that came from."`
+
+mission "Pirate Raid Opportunity [0]"
+	name "Cargo Liberation"
+	description "Your pirate contacts have information about a merchant convoy passing through <waypoint>. Liberate their cargo and bring it to <destination> for <payment>."
+	job
+	repeat
+	to offer
+		"actionlog: pattern" == 2
+		has "Pirate Contact: Black Market: done"
+		"combat rating" > 50
+		random < 35
+	source
+		government "Pirate"
+	waypoint
+		distance 1 3
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Pirate"
+	npc kill
+		government "Merchant"
+		personality staying nemesis harvests plunders
+		fleet
+			names "civilian"
+			variant
+				"Freighter"
+			variant
+				"Heavy Shuttle"
+			variant
+				"Hauler"
+	on complete
+		payment 30000 150
+		"reputation: Pirate" += 2
+		"reputation: Merchant" -= 5
+		dialog `Your fence examines the salvaged cargo with satisfaction. "Clean work. No witnesses, I assume?" You nod. "Good. The less attention, the better for everyone."`
+	on fail
+		"reputation: Pirate" -= 3
+		dialog `Your fence looks disappointed. "I heard about your little adventure. Next time, don't leave witnesses who can identify you."`
+
+
+mission "Bounty Hunter's Guild Invitation"
+	name "Guild Invitation"
+	description "The Bounty Hunter's Guild has taken notice of your work eliminating pirates. Meet their recruiter on <destination>."
+	job
+	repeat
+	to offer
+		"actionlog: pattern" == 3
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "station" "military"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military" "station"
+		distance 2 6
+	on complete
+		payment 20000
+		"reputation: Bounty" += 3
+		dialog `The recruiter reviews your combat logs with approval. "Impressive kill count against criminal elements. The Guild could use hunters like you. We'll put you on the priority list for bounty postings."`
+
+mission "Bounty Hunter Contract [0]"
+	name "Bounty: Pirate Captain"
+	description "A pirate captain with a 50,000 credit bounty has been spotted near <waypoint>. Eliminate them and return to <destination> for payment."
+	job
+	repeat
+	to offer
+		"actionlog: pattern" == 3
+		has "Bounty Hunter's Guild Invitation: done"
+		"combat rating" > 75
+		random < 30
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military"
+	waypoint
+		distance 1 4
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military"
+	npc kill
+		government "Pirate"
+		personality staying nemesis
+		fleet
+			names "pirate"
+			variant
+				"Fury" 2
+				"Berserker"
+			variant
+				"Corvette"
+				"Fury"
+			variant
+				"Quicksilver"
+				"Berserker" 2
+	on complete
+		payment 50000
+		"reputation: Republic" += 1
+		"reputation: Pirate" -= 3
+		dialog `The guild representative confirms the kill. "Target eliminated. Clean work, hunter. Your payment has been transferred, and your reputation precedes you."`
+
+mission "Bounty Hunter Contract [1]"
+	name "Bounty: Syndicate Defector"
+	description "A former Syndicate operative has gone rogue and is now running smuggling operations. Eliminate them near <waypoint> for a <payment> bounty."
+	job
+	repeat
+	to offer
+		"actionlog: pattern" == 3
+		has "Bounty Hunter's Guild Invitation: done"
+		"combat rating" > 100
+		random < 25
+	source
+		government "Syndicate"
+		attributes "core"
+	waypoint
+		distance 2 5
+	destination
+		government "Syndicate"
+	npc kill
+		government "Pirate"
+		personality staying nemesis
+		fleet
+			names "pirate"
+			variant
+				"Clipper"
+				"Fury" 2
+			variant
+				"Mule"
+				"Berserker" 2
+	on complete
+		payment 75000
+		"reputation: Syndicate" += 3
+		dialog `The Syndicate handler reviews the mission footage. "The defector has been neutralized. Your discretion in this matter is appreciated, and compensated."`
+
+
+mission "Protector's Reputation"
+	name "Escort Request"
+	description "Your reputation for protecting ships in need has spread. A merchant captain on <planet> needs an escort to <destination>."
+	job
+	repeat
+	deadline 8
+	to offer
+		"actionlog: pattern" == 4
+		"combat rating" > 25
+		random < 30
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "rim" "frontier"
+		distance 3 6
+	npc accompany save
+		government "Merchant"
+		personality escort timid
+		fleet
+			names "civilian"
+			variant
+				"Freighter"
+			variant
+				"Hauler II"
+	npc
+		government "Pirate"
+		personality nemesis plunders
+		system destination
+		fleet
+			names "pirate"
+			variant
+				"Fury"
+				"Sparrow" 2
+			variant
+				"Berserker"
+				"Fury"
+	on complete
+		payment 25000
+		"reputation: Merchant" += 2
+		dialog `The merchant captain shakes your hand warmly. "I've heard stories about captains who help those in need. Now I know they're true. Thank you for getting us here safely."`
+	on visit
+		dialog phrase "generic arrived-without-npc dialog"
+
+mission "Protector's Gratitude"
+	name "A Favor Returned"
+	description "Someone you helped in the past wants to express their gratitude. Meet them on <destination>."
+	job
+	repeat
+	to offer
+		"actionlog: pattern" == 4
+		"encounter: count disposition grateful" > 0
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment 40000
+		dialog `A familiar face greets you at the spaceport. "You probably don't remember me, but you saved my ship once. I never forgot. I've done well for myself since then, and I wanted to share some of that fortune with you."`
+
+
+mission "Warmonger's Notoriety"
+	name "Mercenary Opportunity"
+	description "Your combat record against multiple governments has attracted attention. A private military contractor on <destination> wants to discuss employment."
+	job
+	repeat
+	to offer
+		"actionlog: pattern" == 5
+		"combat rating" > 100
+		random < 20
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Independent" "Pirate"
+		distance 2 6
+	on complete
+		payment 30000
+		dialog `The contractor reviews your combat statistics with professional interest. "You've made enemies of... quite a few governments. That's either incredibly stupid or incredibly useful. For us, it's the latter. Here's a retainer. We'll be in touch."`
+
+mission "Warmonger Contract [0]"
+	name "Destabilization Operation"
+	description "A client wants you to attack <government> shipping near <waypoint>. Destroy the targets and return to <destination>."
+	job
+	repeat
+	to offer
+		"actionlog: pattern" == 5
+		has "Warmonger's Notoriety: done"
+		"combat rating" > 150
+		random < 25
+	source
+		government "Independent" "Pirate"
+	waypoint
+		distance 2 5
+	destination
+		government "Independent" "Pirate"
+	npc kill
+		government "Syndicate"
+		personality staying
+		fleet
+			names "civilian"
+			variant
+				"Hauler II"
+				"Shuttle" 2
+			variant
+				"Freighter"
+				"Heavy Shuttle"
+	on complete
+		payment 80000
+		"reputation: Syndicate" -= 10
+		dialog `The contractor reviews your gun camera footage. "Excellent work. Our client is pleased. The Syndicate will be scrambling to figure out who's behind these attacks. That's exactly what we want."`
+
+
+mission "Crime Leak Warning"
+	name "An Anonymous Tip"
+	description "Someone aboard your ship has leaked information about your activities. Meet a contact on <destination> who claims to know who it is."
+	job
+	to offer
+		"witness: crime leaked"
+		"crew: trustworthiness" < 600
+		random < 50
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent" "Pirate"
+	destination
+		government "Independent" "Pirate"
+		distance 2 5
+	on complete
+		payment -10000
+		dialog `Your contact leans in conspiratorially. "Word on the street is someone on your crew has been talking to the authorities. Loose lips, you know? For 10,000 credits, I can make sure those lips stay sealed... permanently." You hand over the credits, hoping this solves your problem.`
+
+mission "Crew Loyalty Test"
+	name "Trust Issues"
+	description "Your crew's loyalty is questionable. A security consultant on <destination> offers discreet vetting services."
+	job
+	repeat
+	to offer
+		"crew: trustworthiness" < 500
+		"unpaid salaries" > 5000
+		random < 30
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Syndicate" "Independent"
+		attributes "station"
+		distance 2 6
+	on complete
+		payment -25000
+		dialog `The security consultant runs background checks on your crew and installs monitoring systems on your ship. "There," she says, pocketing your payment. "I've identified the malcontents. They've been... dealt with. Your secrets are safer now." You're not sure you want to know what 'dealt with' means.`
+
+
+mission "Hostile Territory Warning"
+	name "Unwelcome Attention"
+	description "Your actions have made you enemies. Intelligence suggests hostile forces are looking for you. Lay low on <destination> until things cool down."
+	job
+	to offer
+		"actionlog: escalation"
+		"reputation: threshold hostile"
+		random < 40
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Independent" "Pirate"
+		attributes "rim" "frontier"
+		distance 4 8
+	on complete
+		payment 5000
+		dialog `You spend a few days in this backwater, keeping a low profile. The local bartender mentions he's seen government agents asking about ships matching your description. "Good thing you're here and not there," he says. "Those guys don't ask politely."`

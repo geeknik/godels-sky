@@ -1,0 +1,481 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Consequence-Reactive News - Remnant Space
+# The Remnant are human descendants who survived Korath attacks and developed
+# a society based on resource efficiency, military readiness, and sign language.
+# They are practical, survival-focused, and wary of outsiders.
+
+# =============================================================================
+# REMNANT TRADER PATTERN REACTIONS
+# =============================================================================
+
+news "remnant trader appreciation"
+	to show
+		has "remnant: sign studies complete"
+		"actionlog: pattern" == 1
+		"reputation: Remnant" > 20
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant quartermaster"
+			"Supply coordinator"
+			"Trade liaison"
+	message
+		word
+			"A Remnant "
+		word
+			"approaches"
+			"signals"
+			"gestures to"
+		word
+			" you. Their signs are clear: "
+		word
+			`"The outsider brings goods, takes nothing by force. Useful. Continue."`
+			`"Trade patterns analyzed. This captain: reliable supply source. Resource efficiency: positive."`
+			`"Your cargo manifests are clean. Your dealings, fair. You understand our ways."`
+			`"We track all trade. Your numbers add up. Your reputation: stable. Continue operations."`
+			`"Outsider captain proves useful. Supplies arrive intact. No security incidents. Noted."`
+
+
+news "remnant trader resource praise"
+	to show
+		has "remnant: sign studies complete"
+		"actionlog: pattern" == 1
+		"reputation: Remnant" > 35
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant logistics officer"
+			"Resource analyst"
+	message
+		word
+			"You notice a Remnant signing to colleagues while gesturing toward you. You catch: "
+		word
+			`"This outsider understands efficiency. Cargo space maximized. Waste minimized. Study their methods."`
+			`"Trade data shows optimal routing from this captain. Fuel consumption: minimal. Value delivered: high."`
+			`"Resource allocation improved since this trader arrived. Recommend priority docking access."`
+			`"Analysis complete. This captain's trade operations: net positive for Remnant resources. Continue monitoring."`
+
+
+# =============================================================================
+# REMNANT PROTECTOR PATTERN REACTIONS
+# =============================================================================
+
+news "remnant protector recognition"
+	to show
+		has "remnant: sign studies complete"
+		"actionlog: pattern" == 4
+		"reputation: Remnant" > 30
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant pilot"
+			"Defense coordinator"
+			"Remnant veteran"
+	message
+		word
+			"A Remnant veteran approaches and signs: "
+		word
+			`"Observed your combat patterns. You defend, not attack. Protect civilians, not just cargo. Rare among outsiders."`
+			`"Intel reports: you engaged Korath raiders to protect civilian vessels. No payment requested. Why?"`
+			`"Your combat data shows protective formations. You shield the weak. This aligns with our purpose."`
+			`"We fight to survive. You fight to protect. Not the same, but compatible. You have earned respect."`
+			`"Many outsiders flee from Korath. You engage to protect others. This is noted. This is valued."`
+
+
+news "remnant protector military respect"
+	to show
+		has "remnant: sign studies complete"
+		"actionlog: pattern" == 4
+		"encounter: count disposition grateful" >= 3
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant commander"
+			"Defense council member"
+	message
+		word
+			"A high-ranking Remnant signs formally: "
+		word
+			`"Your protection of Remnant vessels is documented. Three confirmed defensive engagements. Combat effectiveness: adequate."`
+			`"Defense council has reviewed your actions. Protective pattern confirmed. Limited tactical coordination: authorized."`
+			`"You have saved Remnant lives. This debt is recorded. When you need assistance, we will consider it."`
+			`"Your combat style mirrors our own: maximum protection, minimum waste. We recognize a kindred spirit."`
+
+
+# =============================================================================
+# REMNANT PIRATE PATTERN REACTIONS
+# =============================================================================
+
+news "remnant pirate warning"
+	to show
+		has "remnant: sign studies complete"
+		"actionlog: pattern" == 2
+		"reputation: Remnant" < -10
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant security"
+			"Threat analyst"
+	message
+		word
+			"A Remnant security officer signs sharply: "
+		word
+			`"Outsider pirate identified. Threat level: elevated. All vessels: implement defensive protocols."`
+			`"This captain attacks cargo vessels. Resources stolen. Lives endangered. Hostility confirmed."`
+			`"Piracy detected. Resource theft documented. This outsider is no longer welcome. Weapons hot."`
+			`"Analysis complete. This captain's pattern: predatory. Treat as hostile. Engage if necessary."`
+
+
+news "remnant pirate military response"
+	to show
+		has "remnant: sign studies complete"
+		"actionlog: pattern" == 2
+		"reputation: Remnant" < -25
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant tactical officer"
+			"Defense fleet commander"
+	message
+		word
+			"Military channels broadcast: "
+		word
+			`"Pirate captain designated Priority Target. All defense assets: authorized engagement. Capture preferred; destruction acceptable."`
+			`"This outsider has stolen resources needed for survival. Defense council has issued termination order. Execute."`
+			`"Hostile captain's attack patterns analyzed. Counter-tactics distributed. Next encounter will be different."`
+			`"We survive by protecting what's ours. This pirate threatens our survival. They must be stopped."`
+
+
+# =============================================================================
+# REMNANT WARMONGER PATTERN REACTIONS
+# =============================================================================
+
+news "remnant warmonger assessment"
+	to show
+		has "remnant: sign studies complete"
+		"actionlog: pattern" == 5
+		"reputation: Remnant" < -30
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant analyst"
+			"Strategic observer"
+	message
+		word
+			"Intelligence reports circulate: "
+		word
+			`"This outsider destroys without purpose. Wastes resources on pointless violence. Inefficient. Dangerous. Avoid."`
+			`"Combat data shows excessive force. This captain seeks conflict. Motive unclear. Threat level: critical."`
+			`"We fight to survive. This outsider fights to destroy. They are chaos. We are order. Incompatible."`
+			`"Destruction metrics for this captain exceed all known records. They are a force of entropy. Contain if possible."`
+
+
+news "remnant warmonger military alert"
+	to show
+		has "remnant: sign studies complete"
+		"actionlog: pattern" == 5
+		"actionlog: escalation"
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant high command"
+			"Defense council"
+	message
+		word
+			"Emergency alert: "
+		word
+			`"Warmonger captain designated existential threat. All stations: maximum alert. All ships: weapons free."`
+			`"This outsider has destroyed more than the Korath take in raids. They must be eliminated. Priority one."`
+			`"Survival requires eliminating threats. This captain is the largest threat we've faced since the Korath. Respond accordingly."`
+			`"Analysis: this captain could devastate Remnant fleet capabilities. Pre-emptive strike: recommended."`
+
+
+# =============================================================================
+# REMNANT ATROCITY REACTIONS
+# =============================================================================
+
+news "remnant atrocity horror"
+	to show
+		has "remnant: sign studies complete"
+		"reputation: atrocity"
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant survivor"
+			"Remnant elder"
+	message
+		word
+			"An elderly Remnant signs with trembling hands: "
+		word
+			`"We survived the Korath. We will survive this monster too. But their crimes... they rival the machines that hunted us."`
+			`"I have seen the reports. This outsider kills without reason. They are not human anymore. They are something else."`
+			`"We fled Earth's destruction. We hid from the Korath. Now this? Another destroyer? The universe is cruel."`
+			`"My grandchildren asked about this captain. I had to explain that some humans choose to become monsters. They didn't understand."`
+
+
+news "remnant atrocity military response"
+	to show
+		has "remnant: sign studies complete"
+		"reputation: atrocity"
+		"reputation: Remnant" < -50
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant supreme commander"
+			"Defense council chair"
+	message
+		word
+			"The highest authority signs gravely: "
+		word
+			`"This captain is designated Kill On Sight. No negotiations. No prisoners. They have forfeited any claim to mercy."`
+			`"We have survived extinction events. We will survive this monster. But they will not survive us. This is vowed."`
+			`"All resources authorized for elimination. This is not revenge. This is survival. They cannot be allowed to continue."`
+			`"The atrocities committed cannot be forgiven or forgotten. Our children's children will remember this name with horror."`
+
+
+# =============================================================================
+# REMNANT WITNESS REACTIONS
+# =============================================================================
+
+news "remnant witness documentation"
+	to show
+		has "remnant: sign studies complete"
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 400
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant intelligence"
+			"Information analyst"
+	message
+		word
+			"A Remnant analyst signs: "
+		word
+			`"Your actions have been observed and documented. Multiple witness reports. Data integrity: confirmed. Patterns: established."`
+			`"Our sensor networks are extensive. Our crews are observant. Nothing happens in Remnant space without record."`
+			`"We track everything. Survival requires it. Your actions are known. Your patterns are understood. Act accordingly."`
+			`"Intelligence has compiled comprehensive files on your activities. You cannot hide what you have done."`
+
+
+news "remnant unwitnessed analysis"
+	to show
+		has "remnant: sign studies complete"
+		"witness: unwitnessed"
+		"actionlog: pattern" >= 2
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant analyst"
+			"Counter-intelligence"
+	message
+		word
+			"A puzzled Remnant signs: "
+		word
+			`"Anomaly detected. Incidents occur in your vicinity. No witnesses. Sensor gaps. Statistical improbability: high."`
+			`"You operate outside normal observation parameters. This is either remarkable skill or remarkable luck. We are watching."`
+			`"Our networks should have detected more. You are either innocent or extremely careful. Analysis: ongoing."`
+			`"Something is unusual about your operations. Data is incomplete. This bothers us. Investigation: authorized."`
+
+
+# =============================================================================
+# REMNANT LONG-TERM REACTIONS
+# =============================================================================
+
+news "remnant long-term ally"
+	to show
+		has "remnant: sign studies complete"
+		"days" > 200
+		"reputation: Remnant" > 50
+		"actionlog: pattern" <= 4
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant council elder"
+			"Senior commander"
+	message
+		word
+			"A respected elder approaches and signs formally: "
+		word
+			`"Years of data confirm: you are ally, not threat. Council has discussed. Full cooperation status: granted."`
+			`"Your consistency is noted. Many outsiders betray trust. You have not. This makes you valuable."`
+			`"In Remnant culture, trust is earned through time and action. You have earned it. Welcome, friend."`
+			`"We have few allies beyond our borders. You have proven yourself. We will remember this when you need us."`
+
+
+news "remnant long-term enemy"
+	to show
+		has "remnant: sign studies complete"
+		"days" > 200
+		"reputation: Remnant" < -50
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant historian"
+			"Archive keeper"
+	message
+		word
+			"Historical records note: "
+		word
+			`"This outsider has been enemy for extended period. Pattern shows no change. Permanent threat classification: confirmed."`
+			`"We have documented years of hostile actions. No redemption arc detected. Permanent enemy status: appropriate."`
+			`"Our archives will preserve this captain's crimes for future generations. A cautionary tale of outsider treachery."`
+			`"Time has not softened this threat. If anything, they grow more dangerous. Vigilance must be eternal."`
+
+
+# =============================================================================
+# REMNANT KORATH-RELATED REACTIONS
+# =============================================================================
+
+news "remnant korath fighter respect"
+	to show
+		has "remnant: sign studies complete"
+		"reputation: Remnant" > 40
+		"combat rating" > 100
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant veteran"
+			"Korath war survivor"
+	message
+		word
+			"A scarred veteran signs: "
+		word
+			`"You fight Korath like we do. Not for glory. For survival. You understand what we face every day."`
+			`"Seen your combat reports against the automata. Impressive. You fight smart, not just hard. We value this."`
+			`"The Korath destroyed our world. You help us fight back. This makes you more than ally. This makes you family."`
+			`"Many outsiders flee from Korath raids. You engage. You win. You understand our struggle. Welcome, warrior."`
+
+
+news "remnant korath tech interest"
+	to show
+		has "remnant: sign studies complete"
+		"reputation: Remnant" > 30
+	location
+		government "Remnant"
+	name
+		word
+			"Remnant engineer"
+			"Tech analyst"
+	message
+		word
+			"A curious engineer signs: "
+		word
+			`"Your ship shows interesting modifications. Korath-derived technology detected. Share technical specifications?"`
+			`"We study everything we can salvage from Korath wrecks. Your ship contains tech we haven't documented. Collaboration possible?"`
+			`"Resource efficiency in your systems: noteworthy. We could improve our own designs by studying yours. Consider it?"`
+
+
+# =============================================================================
+# REMNANT OUTSIDER REACTIONS
+# =============================================================================
+
+news "remnant outsider suspicion"
+	to show
+		not "remnant: sign studies complete"
+		"reputation: Remnant" < 10
+	location
+		government "Remnant"
+	name
+		word
+			"Spaceport"
+			"Loading dock"
+			"Landing pad"
+	message
+		word
+			"Several Remnant sign to each other while glancing at you. "
+		word
+			"You cannot understand their signs, but their body language suggests wariness."
+			"Their gestures are sharp and frequent. They seem to be discussing you."
+			"One of them points at your ship. The others nod. They don't seem pleased."
+			"Whatever they're saying, it doesn't look friendly. Perhaps learning their language would help."
+
+
+news "remnant outsider curiosity"
+	to show
+		not "remnant: sign studies complete"
+		"reputation: Remnant" > 20
+	location
+		government "Remnant"
+	name
+		word
+			"Spaceport"
+			"Cafeteria"
+	message
+		word
+			"A group of Remnant watch you with apparent curiosity. "
+		word
+			"Their signs are rapid but their expressions seem friendly. Perhaps they're discussing your adventures."
+			"One of them waves in your direction. The gesture seems welcoming, even if you can't understand the rest."
+			"They seem to be debating something about you. Whatever conclusion they reach, they nod approvingly."
+			"You catch what might be a compliment in their gestures. Learning their language would let you know for sure."
+
+
+# =============================================================================
+# REMNANT MILITARY CULTURE REACTIONS
+# =============================================================================
+
+news "remnant combat efficiency praise"
+	to show
+		has "remnant: sign studies complete"
+		"combat rating" > 75
+		"reputation: Remnant" > 30
+	location
+		government "Remnant"
+	name
+		word
+			"Tactical instructor"
+			"Combat analyst"
+	message
+		word
+			"A military instructor signs approvingly: "
+		word
+			`"Combat efficiency metrics for this outsider: exceptional. Ammunition expenditure per kill: optimal. Study their methods."`
+			`"Battle data shows clean kills, minimal collateral. This captain wastes nothing. Our recruits could learn from them."`
+			`"Reviewed engagement recordings. Professional work. No wasted shots, no unnecessary damage. This is how we fight."`
+			`"The outsider fights like a Remnant. Maximum effect, minimum expenditure. They understand survival warfare."`
+
+
+news "remnant resource consciousness"
+	to show
+		has "remnant: sign studies complete"
+		"reputation: Remnant" > 40
+	location
+		government "Remnant"
+	name
+		word
+			"Resource allocator"
+			"Efficiency coordinator"
+	message
+		word
+			"A Remnant official signs: "
+		word
+			`"Your operations show resource consciousness. No waste. No excess. You would fit in here. Consider staying."`
+			`"In a universe of waste, you conserve. In a culture of excess, you optimize. We recognize our own."`
+			`"The outsider understands scarcity. They know resources are finite. They act accordingly. Rare quality."`

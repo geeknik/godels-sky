@@ -1,0 +1,467 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Consequence News
+# These news items react to the player's reputation, behavior patterns,
+# and actions across the galaxy. They make the player's reputation feel
+# real and consequential by having NPCs comment on it.
+
+
+
+# PLAYER REPUTATION: POSITIVE - TRADER
+
+phrase "player trader praise names"
+	word
+		"Merchant"
+		"Trader"
+		"Spaceport"
+		"Freighter"
+		"Cargo"
+	word
+		" "
+	word
+		"captain"
+		"pilot"
+		"worker"
+
+news "player is famous trader"
+	to show
+		"actionlog: pattern" == 1
+		"reputation: Merchant" > 30
+	location
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	name
+		phrase
+			"player trader praise names"
+	message
+		word
+			`"`
+		word
+			"Have you heard of Captain <first>? They say that ship never misses a delivery deadline. I wish I could hire them for my cargo."
+			"I've been trying to get on Captain <last>'s preferred shipper list. They have the best rates in the sector!"
+			"Captain <first> <last> is who I want to be when I grow up. A trading legend!"
+			"Word is that Captain <last> has never lost a cargo to pirates. Not once. How do they do it?"
+			"The Merchant Guild can't stop talking about Captain <first>. Apparently they're one of the most reliable traders in human space."
+		word
+			`"`
+
+
+
+# PLAYER REPUTATION: POSITIVE - PROTECTOR
+
+phrase "grateful citizen names"
+	word
+		"Grateful"
+		"Relieved"
+		"Thankful"
+		"Rescued"
+	word
+		" "
+	word
+		"citizen"
+		"traveler"
+		"merchant"
+		"passenger"
+
+news "player is known protector"
+	to show
+		"actionlog: pattern" == 4
+		"encounter: count disposition grateful" >= 3
+	location
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	name
+		phrase
+			"grateful citizen names"
+	message
+		word
+			`"`
+		word
+			"Captain <first> saved my convoy from pirates last month. A real hero!"
+			"I owe my life to Captain <last>. When those raiders attacked, they came out of nowhere to protect us."
+			"Have you heard of <first> <last>? They've saved more ships than the Navy's whole patrol fleet!"
+			"If you're ever in trouble out there, pray that Captain <first> is nearby. They always help those in need."
+			"The Protector, they call them. Captain <last> has a reputation for defending the defenseless."
+		word
+			`"`
+
+
+
+# PLAYER REPUTATION: NEGATIVE - PIRATE
+
+phrase "worried merchant names"
+	word
+		"Worried"
+		"Nervous"
+		"Anxious"
+		"Frightened"
+	word
+		" "
+	word
+		"merchant"
+		"trader"
+		"captain"
+		"pilot"
+
+news "player is known pirate"
+	to show
+		"actionlog: pattern" == 2
+		"reputation: Pirate" > 25
+	location
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	name
+		phrase
+			"worried merchant names"
+	message
+		word
+			`"`
+		word
+			"I heard Captain <first> has been attacking merchant convoys. Steer clear of that one!"
+			"Watch out for a ship called <ship>. Piloted by some pirate named <last>. Very dangerous."
+			"The insurance companies are tracking Captain <first> <last>'s movements. Premiums go up whenever that ship is in the area."
+			"They say <first> <last> has never left a witness. If you see that ship, run."
+			"There's a bounty on Captain <last>, but no one's collected it yet. That should tell you something."
+		word
+			`"`
+
+
+
+# PLAYER REPUTATION: NEGATIVE - WARMONGER
+
+phrase "terrified civilian names"
+	word
+		"Terrified"
+		"Horrified"
+		"Panicking"
+	word
+		" "
+	word
+		"civilian"
+		"citizen"
+		"refugee"
+
+news "player is known warmonger"
+	to show
+		"actionlog: pattern" == 5
+		"actionlog: escalation"
+	location
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	name
+		phrase
+			"terrified civilian names"
+	message
+		word
+			`"`
+		word
+			"Captain <first> doesn't discriminate. They'll attack anyone. Republic, Syndicate, Free Worlds - no one is safe!"
+			"I heard <last> has been declared an enemy by every major government. How is that even possible?"
+			"When <first> <last>'s ship enters a system, everyone runs. Smart move."
+			"That warmonger <last> is single-handedly responsible for dozens of destroyed ships. Stay away from that psychopath!"
+			"I don't know what Captain <first>'s problem is, but they seem to want to fight the entire galaxy."
+		word
+			`"`
+
+
+
+# PLAYER REPUTATION: ATROCITY
+
+phrase "horrified witness names"
+	word
+		"Haunted"
+		"Traumatized"
+		"Shattered"
+	word
+		" "
+	word
+		"survivor"
+		"witness"
+		"refugee"
+
+news "player committed atrocities"
+	to show
+		"reputation: atrocity"
+	location
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	name
+		phrase
+			"horrified witness names"
+	message
+		word
+			`"`
+		word
+			"<first> <last>... that name haunts my nightmares. What they did... I can never forget."
+			"War criminal. That's what Captain <last> is. A war criminal. And somehow they're still flying free."
+			"I lost family because of <first> <last>. Innocent people. Children. There's no redemption for someone like that."
+			"They say every major government has a kill order on Captain <first>. Good. That monster deserves worse."
+			"Don't even speak that name - <last>. Just the sound of it makes me sick."
+		word
+			`"`
+
+
+
+# BOUNTY HUNTER RECOGNITION
+
+phrase "impressed bounty hunter names"
+	word
+		"Veteran"
+		"Seasoned"
+		"Professional"
+	word
+		" "
+	word
+		"bounty hunter"
+		"hunter"
+
+news "player is bounty hunter"
+	to show
+		"actionlog: pattern" == 3
+		"reputation: Bounty" > 20
+	location
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "military" "station"
+	name
+		phrase
+			"impressed bounty hunter names"
+	message
+		word
+			`"`
+		word
+			"Captain <first> has a serious kill count. Pirates know to avoid that one."
+			"I've seen <last>'s work. Clean, professional, efficient. That's a proper bounty hunter."
+			"The Guild is always talking about Captain <first>. Top tier hunter."
+			"Don't try to run from <last>. I've heard they always get their target. Always."
+			"If I ever go rogue, I hope <first> <last> isn't the one who comes after me."
+		word
+			`"`
+
+
+
+# FACTION-SPECIFIC REPUTATION NEWS
+
+phrase "republic citizen names"
+	word
+		"Republic"
+		"Navy"
+		"Patriotic"
+	word
+		" "
+	word
+		"citizen"
+		"officer"
+		"veteran"
+
+news "player liked by republic"
+	to show
+		"reputation: Republic" > 40
+	location
+		government "Republic"
+	name
+		phrase
+			"republic citizen names"
+	message
+		word
+			`"`
+		word
+			"Captain <first> is a true patriot. Always there when the Republic needs help."
+			"I served with <last> once. One of the good ones."
+			"The Navy speaks highly of Captain <first> <last>. High praise from them."
+			"If more captains were like <first>, we wouldn't need such a large fleet."
+			"<last> is proof that independent captains can be trusted. A true friend of the Republic."
+		word
+			`"`
+
+news "player hated by republic"
+	to show
+		"reputation: Republic" < -40
+	location
+		government "Republic"
+	name
+		phrase
+			"republic citizen names"
+	message
+		word
+			`"`
+		word
+			"Captain <first> is an enemy of the Republic. If you see that ship, report it immediately!"
+			"There's a substantial bounty on <last>. The Navy wants that criminal brought to justice."
+			"I can't believe <first> <last> is still flying. The Navy should have dealt with that traitor by now."
+			"Stay away from Captain <first>. They're dangerous and hostile to Republic interests."
+			"<last> attacked Republic ships. Our ships! That's unforgivable."
+		word
+			`"`
+
+
+
+phrase "syndicate employee names"
+	word
+		"Corporate"
+		"Syndicate"
+		"Executive"
+	word
+		" "
+	word
+		"employee"
+		"executive"
+		"representative"
+
+news "player liked by syndicate"
+	to show
+		"reputation: Syndicate" > 40
+	location
+		government "Syndicate"
+	name
+		phrase
+			"syndicate employee names"
+	message
+		word
+			`"`
+		word
+			"Captain <first> understands business. Reliable, efficient, profitable partnerships."
+			"The quarterly reports speak highly of <last>'s contribution margins."
+			"Captain <first> <last> is on the preferred contractor list. That's not easy to achieve."
+			"<first> delivers results. That's what the Syndicate values."
+			"I've heard the board personally approves contracts with Captain <last>."
+		word
+			`"`
+
+news "player hated by syndicate"
+	to show
+		"reputation: Syndicate" < -40
+	location
+		government "Syndicate"
+	name
+		phrase
+			"syndicate employee names"
+	message
+		word
+			`"`
+		word
+			"Captain <first> is flagged in the corporate security database. Do not engage."
+			"<last> has cost the Syndicate millions. Legal is preparing litigation."
+			"Anyone caught doing business with <first> <last> will face termination."
+			"Corporate has issued an asset seizure order against Captain <first>. Avoid association."
+			"<last> is a threat to shareholder value. The board has authorized... remedial action."
+		word
+			`"`
+
+
+
+phrase "free worlds citizen names"
+	word
+		"Free Worlds"
+		"Liberation"
+		"Freedom"
+	word
+		" "
+	word
+		"citizen"
+		"volunteer"
+		"patriot"
+
+news "player liked by free worlds"
+	to show
+		"reputation: Free Worlds" > 40
+	location
+		government "Free Worlds"
+	name
+		phrase
+			"free worlds citizen names"
+	message
+		word
+			`"`
+		word
+			"Captain <first> stood with us for freedom. We won't forget that."
+			"<last> is welcome in any Free Worlds port. A true friend of liberty."
+			"The Council gives regular commendations to Captain <first> <last>."
+			"When we needed help, <first> was there. That's what community means."
+			"<last> proves that not all independent captains are pirates. Some believe in something."
+		word
+			`"`
+
+news "player hated by free worlds"
+	to show
+		"reputation: Free Worlds" < -40
+	location
+		government "Free Worlds"
+	name
+		phrase
+			"free worlds citizen names"
+	message
+		word
+			`"`
+		word
+			"Captain <first> betrayed the principles we fought for. Don't trust that one."
+			"The militia is watching for <last>. If they show up here, we're ready."
+			"<first> <last> is no friend of freedom. They're just another oppressor."
+			"I lost friends because of Captain <first>. The Free Worlds won't forget."
+			"<last> thinks they can hurt our people and get away with it. They're wrong."
+		word
+			`"`
+
+
+
+# WITNESS-AWARE NEWS
+
+phrase "gossiping traveler names"
+	word
+		"Gossiping"
+		"Chatty"
+		"Talkative"
+	word
+		" "
+	word
+		"traveler"
+		"spacer"
+		"pilot"
+
+news "player crimes witnessed"
+	to show
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 600
+		"actionlog: pattern" >= 2
+	location
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	name
+		phrase
+			"gossiping traveler names"
+	message
+		word
+			`"`
+		word
+			"I've heard stories about Captain <first>. Lots of people have seen things. Things that aren't good."
+			"Word gets around about <last>. Too many witnesses for it to be rumors."
+			"Everyone's talking about what <first> <last> has been doing. The authorities must know by now."
+			"You can't hide forever, they say. Captain <first> has been seen doing... questionable things."
+			"<last>'s activities are an open secret. Just a matter of time before the law catches up."
+		word
+			`"`
+
+news "player operates unseen"
+	to show
+		"witness: unwitnessed"
+		"actionlog: pattern" >= 2
+	location
+		government "Independent" "Pirate"
+	name
+		phrase
+			"gossiping traveler names"
+	message
+		word
+			`"`
+		word
+			"I've heard whispers about Captain <first>. Just whispers though. No one seems to actually see anything."
+			"<last> is like a ghost. Things happen, but no one can prove anything."
+			"They say <first> <last> moves without being seen. That's a valuable skill in this business."
+			"Captain <first>? Never heard of them. And that's probably exactly what they want."
+			"No witnesses means no problems. <last> seems to understand that better than most."
+		word
+			`"`

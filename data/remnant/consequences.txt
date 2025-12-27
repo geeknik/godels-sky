@@ -1,0 +1,356 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Remnant Consequence Missions
+# The Remnant are isolated human descendants who fled ancient Earth to escape
+# a terrible threat. They value secrecy, self-reliance, and their ongoing
+# struggle against the Korath. Consequences reflect their paranoia about
+# outsiders and their pragmatic approach to survival.
+
+
+
+# POSITIVE CONSEQUENCES: EARNING TRUST
+
+mission "Remnant Trust: Initial Assessment"
+	name "Security Evaluation"
+	description "The Remnant security council wants to evaluate your trustworthiness. Report to <destination> for assessment."
+	job
+	to offer
+		"reputation: Remnant" > 15
+		not "remnant trust level 1"
+		random < 20
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 4
+	on complete
+		set "remnant trust level 1"
+		payment 30000
+		"reputation: Remnant" += 5
+		dialog `The Remnant security officer reviews your file with professional detachment. "Your record is... acceptable," they say. "You've assisted our operations without compromising our security. That's rare for an outsider." They update your clearance status. "You're now authorized for additional missions. Don't make us regret this decision."`
+
+mission "Remnant Trust: Proven Ally"
+	name "Operational Clearance"
+	description "Your continued reliability has earned you higher trust with the Remnant. A security briefing awaits on <destination>."
+	job
+	to offer
+		has "remnant trust level 1"
+		"reputation: Remnant" > 30
+		random < 15
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 5
+	on complete
+		set "remnant trust level 2"
+		payment 50000
+		"reputation: Remnant" += 10
+		dialog `The briefing is conducted in a secure facility. "You've demonstrated operational security awareness," the commander says. "That's essential for working with us." They grant you access to more sensitive information about Remnant operations. "We don't trust easily. But we reward loyalty."`
+
+mission "Remnant Trust: Inner Circle"
+	name "Strategic Asset"
+	description "The Remnant Council has designated you a strategic asset. A formal recognition ceremony is being held on <destination>."
+	job
+	to offer
+		has "remnant trust level 2"
+		"reputation: Remnant" > 50
+		random < 10
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 5
+	on complete
+		set "remnant inner circle"
+		payment 100000
+		"reputation: Remnant" += 15
+		dialog `The Council chamber is austere but impressive. "Few outsiders have earned this recognition," the Council speaker says. "You've proven yourself not just useful, but trustworthy. You now have access to our most sensitive operations." They hand you encrypted credentials. "Use them wisely. The survival of our people may depend on it."`
+
+
+
+# NEGATIVE CONSEQUENCES: SECURITY BREACH
+
+mission "Remnant Security Concern"
+	name "Security Review"
+	description "Your recent actions have raised security concerns with the Remnant. Report to <destination> for debriefing."
+	job
+	to offer
+		"reputation: Remnant" < -5
+		"reputation: Remnant" > -20
+		not "remnant security warning"
+		random < 30
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 4
+	on complete
+		set "remnant security warning"
+		dialog `The security officer's questions are pointed and thorough. "We've noticed... irregularities in your activities," they say. "The Remnant have survived by being careful. We don't tolerate threats to our security - intentional or otherwise." They mark your file. "Consider this a warning. We're watching you now."`
+
+mission "Remnant Access Revoked"
+	name "Clearance Suspension"
+	description "Your security clearance with the Remnant has been suspended. Report to <destination> for processing."
+	job
+	to offer
+		has "remnant trust level 1"
+		"reputation: Remnant" < -15
+		random < 40
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 4
+	on complete
+		clear "remnant trust level 1"
+		clear "remnant trust level 2"
+		clear "remnant inner circle"
+		dialog `The security officer collects your credentials with cold efficiency. "Your clearance has been revoked," they state. "All access to sensitive Remnant facilities and information is suspended." They don't explain why - they don't have to. "You may apply for reinstatement after a probationary period. If you survive that long."`
+
+mission "Remnant Hostile: Isolation Protocol"
+	name "Persona Non Grata"
+	description "The Remnant have activated isolation protocols against you. A final notification awaits on <destination>."
+	job
+	to offer
+		"reputation: Remnant" < -40
+		not "remnant isolation protocol"
+		random < 30
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		set "remnant isolation protocol"
+		dialog `The message is encrypted with Remnant military codes. "You are hereby designated a security threat," it reads. "All Remnant personnel and facilities are forbidden from contact with you. Any attempt to enter Remnant space will be treated as hostile action." The message is unsigned - standard Remnant security procedure. You've been completely cut off.`
+
+
+
+# KORATH HUNTER PATTERN
+
+mission "Remnant: Korath Hunter Recognition"
+	name "Enemy of Our Enemy"
+	description "Your pattern of hunting Korath has not gone unnoticed by the Remnant. Meet a military liaison on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 3
+		"reputation: Remnant" > 10
+		random < 20
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 5
+	on complete
+		set "remnant korath hunter"
+		payment 75000
+		"reputation: Remnant" += 10
+		dialog `The Remnant military officer reviews your combat logs with evident approval. "The Korath are our eternal enemy," they say. "Anyone who hunts them is a friend to the Remnant." They grant you access to Remnant military intelligence on Korath movements. "Help us push them back, and you'll always have a place among us."`
+
+mission "Remnant: Korath Raid Support"
+	name "Coordinated Strike"
+	description "The Remnant are planning a coordinated strike against Korath forces in <system>. Join the operation."
+	job
+	repeat
+	to offer
+		has "remnant korath hunter"
+		"combat rating" > 100
+		random < 30
+	source
+		government "Remnant"
+	waypoint
+		distance 2 4
+	destination
+		government "Remnant"
+	npc kill
+		government "Korath"
+		personality staying heroic
+		system waypoint
+		fleet
+			names "korath"
+			variant
+				"Palavret"
+				"Tek Far 109"
+			variant
+				"Rano'erek (Crippled)"
+	on complete
+		payment 150000
+		"reputation: Remnant" += 5
+		dialog `The Remnant commander reviews the operation results. "Korath forces eliminated," they confirm. "Minimal casualties on our side. That's what coordination achieves." They transfer a substantial payment. "Keep hunting them. Every Korath ship we destroy is one less threat to our people."`
+
+
+
+# WITNESS-AWARE CONSEQUENCES
+
+mission "Remnant: Intelligence Leak"
+	name "Compromised Information"
+	description "The Remnant have detected that information about your activities has leaked. Report for counterintelligence briefing on <destination>."
+	job
+	to offer
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 600
+		"reputation: Remnant" > 0
+		random < 20
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 4
+	on complete
+		payment -20000
+		dialog `The counterintelligence officer is not pleased. "Your operational security has been compromised," they say. "Others know what you've been doing. That creates risks for everyone you've worked with." They implement new security protocols. "This cleanup costs resources. Resources you're paying for." The deduction from your account is non-negotiable.`
+
+mission "Remnant: Clean Operator"
+	name "Ghost Status"
+	description "Your ability to operate without leaving witnesses has impressed Remnant intelligence. They want to discuss special operations work."
+	job
+	to offer
+		"witness: unwitnessed"
+		"reputation: Remnant" > 20
+		random < 15
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 5
+	on complete
+		set "remnant ghost operative"
+		payment 60000
+		"reputation: Remnant" += 10
+		dialog `The intelligence officer speaks in hushed tones. "You know how to disappear," they observe. "No witnesses, no traces. That's a valuable skill." They offer you access to classified operations. "We have work for someone who can move without being seen. Interested?"`
+
+mission "Remnant: Ghost Operation"
+	name "Invisible Strike"
+	description "Remnant intelligence needs a target eliminated in <system> without witnesses. No one can know the Remnant were involved."
+	job
+	repeat
+	to offer
+		has "remnant ghost operative"
+		"witness: unwitnessed"
+		"combat rating" > 75
+		random < 25
+	source
+		government "Remnant"
+	waypoint
+		distance 2 4
+	destination
+		government "Remnant"
+	npc kill
+		government "Korath"
+		personality staying coward
+		system waypoint
+		fleet
+			names "korath"
+			variant
+				"Tek Far 109"
+			variant
+				"Palavret (Crippled)"
+	on complete
+		payment 100000
+		dialog `The intelligence handler reviews your mission data. "No distress signals detected. No witness reports. Clean work." They transfer your payment through an untraceable account. "The Korath will never know what happened. As far as they're concerned, that ship simply... vanished."`
+
+
+
+# ESCALATION PATTERN
+
+mission "Remnant: Warmonger Assessment"
+	name "Destructive Potential"
+	description "The Remnant military has taken interest in your aggressive combat pattern. Report to <destination> for tactical assessment."
+	job
+	to offer
+		"actionlog: pattern" == 5
+		"reputation: Remnant" > 0
+		"combat rating" > 100
+		random < 20
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 5
+	on complete
+		payment 80000
+		"reputation: Remnant" += 5
+		dialog `The Remnant tactical officer reviews your combat history with professional interest. "You're not subtle," they observe. "But you're effective." They transfer a payment. "The Remnant value precision. But sometimes, overwhelming force is what's needed. We might have use for your... approach."`
+
+mission "Remnant: Escalating Response"
+	name "Proportional Force"
+	description "Your escalating violence has triggered Remnant security protocols. Explain yourself on <destination>."
+	job
+	to offer
+		"actionlog: escalation"
+		"reputation: Remnant" < -20
+		random < 30
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 4
+	on complete
+		"reputation: Remnant" -= 10
+		dialog `The security tribunal is brief and to the point. "Your pattern of escalating violence is concerning," the presiding officer states. "The Remnant survived by choosing our battles carefully. Uncontrolled aggression draws attention we don't want." They update your threat assessment. "We'll be watching you more closely now."`
+
+
+
+# ATROCITY CONSEQUENCES
+
+mission "Remnant: War Crimes Database"
+	name "Permanent Record"
+	description "Your atrocities have been entered into the Remnant's war crimes database. A notification awaits on <destination>."
+	job
+	to offer
+		"reputation: atrocity"
+		"reputation: Remnant" < -50
+		random < 40
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		set "remnant war criminal"
+		dialog `The notification is terse: "Your actions have been recorded in the Remnant War Crimes Database. This is a permanent record. All Remnant personnel are authorized to use lethal force against you on sight. There is no appeal process. There is no statute of limitations. The Remnant never forget." You are now hunted by an entire civilization.`
+
+
+
+# REDEMPTION PATH
+
+mission "Remnant: Probationary Service"
+	name "Earning Trust Again"
+	description "The Remnant are offering you a chance to rebuild trust through dangerous service. Report to <destination> for your assignment."
+	job
+	to offer
+		"reputation: Remnant" < -10
+		"reputation: Remnant" > -40
+		not "reputation: atrocity"
+		random < 15
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 5
+	npc kill
+		government "Korath"
+		personality nemesis waiting
+		system destination
+		fleet
+			names "korath"
+			variant
+				"Palavret"
+			variant
+				"Tek Far 109"
+	on complete
+		payment 50000
+		"reputation: Remnant" += 15
+		dialog `The Korath patrol is destroyed, and you've proven your value. The Remnant officer nods with grudging respect. "You did what was asked," they say. "That counts for something." Your file is updated. "Keep it up, and we might trust you again someday. Might."`

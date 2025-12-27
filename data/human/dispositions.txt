@@ -1,0 +1,523 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Disposition-Based Missions
+# These missions react to NPC dispositions from the EncounterLog.
+# NPCs remember their interactions with the player and respond accordingly.
+# Dispositions: FRIENDLY, HOSTILE, WARY, GRATEFUL, INDEBTED, NEMESIS
+
+
+
+# GRATEFUL NPCs - NPCs the player has saved or significantly helped
+# These NPCs become valuable contacts who offer opportunities
+
+mission "Grateful Contact: Gift"
+	name "A Friend Remembers"
+	description "Someone you helped in the past wants to meet you on <destination>. They mentioned something about repaying a debt."
+	job
+	repeat
+	to offer
+		"encounter: has disposition grateful"
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment 35000
+		dialog `A captain you once saved from certain death greets you at the spaceport. "I never forgot what you did for me," they say, pressing a credit chip into your hand. "I've done well since then. This is the least I can do." The amount is substantial, and you can see genuine gratitude in their eyes.`
+
+mission "Grateful Contact: Trade Tip"
+	name "Insider Information"
+	description "A contact on <destination> has a tip about a lucrative trade opportunity. They want to share it with you as thanks for past help."
+	job
+	repeat
+	to offer
+		"encounter: count disposition grateful" >= 2
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade" "rich"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade"
+		distance 2 6
+	on complete
+		payment 50000
+		dialog `Your grateful contact meets you in a quiet corner of the spaceport bar. "The commodity prices on <planet> are about to spike - insider knowledge," they whisper. "I owe you my life. This information should help even the score." They slide you a data chip with detailed market predictions.`
+
+mission "Grateful Contact: Ship Upgrade"
+	name "A Mechanic's Thanks"
+	description "A mechanic whose ship you once saved wants to repay you with some free maintenance work. Meet them at <destination>."
+	job
+	to offer
+		"encounter: has disposition grateful"
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "shipyard"
+		distance 2 5
+	on complete
+		payment 25000
+		dialog `The mechanic greets you warmly. "You saved my bacon out there. Let me return the favor." They spend several hours tuning your ship's systems, refusing any payment. "Consider us even," they say with a smile. "Actually, take this too - surplus from my shop." They hand you a credit chip.`
+
+mission "Grateful Contact: Safe Harbor"
+	name "A Place to Hide"
+	description "A contact on <destination> has heard you're in trouble. They're offering a safe place to lie low, no questions asked."
+	job
+	to offer
+		"encounter: has disposition grateful"
+		"reputation: threshold hostile"
+		random < 25
+	source
+		government "Independent" "Pirate" "Neutral"
+	destination
+		government "Independent" "Pirate"
+		distance 3 6
+	on complete
+		payment 10000
+		dialog `Your grateful contact meets you at a quiet dock. "I heard things are hot for you right now. Stay here as long as you need. I owe you my life - this is nothing." They press a small credit chip into your hand. "For expenses. And remember - you were never here."`
+
+
+
+# INDEBTED NPCs - NPCs the player has helped multiple times
+# These represent deep relationships built over time
+
+mission "Indebted Contact: Business Partner"
+	name "Partnership Opportunity"
+	description "A captain you've helped many times wants to discuss a business partnership. Meet them on <destination>."
+	job
+	to offer
+		"encounter: has disposition indebted"
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		distance 2 5
+	on complete
+		payment 75000
+		set "indebted partner"
+		dialog `The captain you've helped so many times waits for you in a private booth. "I've been thinking. Every time I'm in trouble, you appear. I trust you more than anyone in the galaxy." They slide a contract across the table. "I want you as a partner in my shipping company. Here's your initial share of our latest profits."`
+
+mission "Indebted Contact: Rescue Request"
+	name "A Friend in Need"
+	description "Someone deeply indebted to you has sent a distress call. Their ship is stranded in <system>. Rescue them and escort them to <destination>."
+	job
+	repeat
+	to offer
+		"encounter: count disposition indebted" >= 1
+		"combat rating" > 50
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	waypoint
+		distance 2 4
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	npc accompany save
+		government "Merchant"
+		personality escort coward
+		fleet
+			names "civilian"
+			variant
+				"Shuttle (Damaged)"
+			variant
+				"Flivver (Disabled)"
+	npc
+		government "Pirate"
+		personality nemesis
+		system waypoint
+		fleet
+			names "pirate"
+			variant
+				"Fury" 2
+			variant
+				"Berserker"
+				"Fury"
+	on complete
+		payment 40000
+		dialog `Your friend embraces you at the spaceport. "You came. Of course you came. You always come." They're shaking with relief. "I'll never be able to repay everything you've done for me. But I'll keep trying." They transfer a substantial sum to your account.`
+	on visit
+		dialog phrase "generic arrived-without-npc dialog"
+
+mission "Indebted Contact: Family Request"
+	name "A Personal Favor"
+	description "Someone deeply indebted to you needs help with a family matter. Their relative needs transport from <origin> to <destination>."
+	job
+	repeat
+	to offer
+		"encounter: has disposition indebted"
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 3 6
+	passengers 1 3
+	on visit
+		dialog phrase "generic passenger on visit"
+	on complete
+		payment 30000
+		dialog `Your contact's family members disembark, clearly relieved. A message arrives on your comm: "Thank you for taking care of them. I know you're busy, but I didn't know who else to trust. This is more than just a favor - it means everything to me." A generous payment follows.`
+
+
+
+# FRIENDLY NPCs - NPCs with positive interaction history
+# These create a network of acquaintances who recognize you
+
+mission "Friendly Encounter: Recognition"
+	name "A Familiar Face"
+	description "You've been recognized by someone you've helped before. They want to buy you a drink on <destination>."
+	job
+	repeat
+	to offer
+		"encounter: count disposition friendly" >= 3
+		random < 25
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 1 3
+	on complete
+		payment 5000
+		dialog `At the spaceport bar, you're approached by a captain who looks vaguely familiar. "Hey, I know you! You helped me with those pirates a while back." They insist on buying rounds and refuse to let you pay. "It's the least I can do. Good captains look out for each other." They slip you some credits "for fuel."`
+
+mission "Friendly Encounter: Job Referral"
+	name "Word of Mouth"
+	description "Your good reputation has spread. A contact on <destination> has a job that specifically requires 'that captain everyone trusts.'"
+	job
+	repeat
+	to offer
+		"encounter: count disposition friendly" >= 5
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		distance 2 5
+	cargo "Sensitive Documents" 5 2 .05
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 45000
+		dialog `The client examines your credentials with satisfaction. "You come highly recommended. Multiple captains I trust have vouched for you." The job turns out to be straightforward, but the pay is exceptional. "Quality costs," the client explains. "And you're quality."`
+
+mission "Friendly Network: Collective Aid"
+	name "Friends in High Places"
+	description "Your network of friendly contacts has organized a collection to help you out. Pick up your 'community gift' on <destination>."
+	job
+	to offer
+		"encounter: count disposition friendly" >= 10
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "rich" "core"
+		distance 2 6
+	on complete
+		payment 100000
+		dialog `A group of captains you've helped over the years has gathered at the spaceport. "We've been talking," one of them says. "About all the times you've come through for us. We wanted to do something in return." They present you with a collective gift - a substantial credit transfer from dozens of contributors. "The spacelanes are better with you in them."`
+
+
+
+# WARY NPCs - NPCs who have had some negative interactions but not outright hostility
+# These represent strained relationships that could go either way
+
+mission "Wary Encounter: Avoidance"
+	name "Uncomfortable Silence"
+	description "Someone you've wronged in the past is spreading rumors about you. Meet a reputation fixer on <destination> to handle the situation."
+	job
+	repeat
+	to offer
+		"encounter: has disposition wary"
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Independent" "Syndicate"
+		distance 2 5
+	on complete
+		payment -20000
+		dialog `The reputation fixer reviews your situation. "You've made some people nervous," they say. "Not enemies yet, but they're watching you. For 20,000 credits, I can smooth things over - make sure those stories don't spread." You pay, hoping this will prevent the situation from escalating.`
+
+mission "Wary Encounter: Reconciliation"
+	name "Making Amends"
+	description "A captain you've had friction with is willing to talk. Meet them on <destination> to clear the air."
+	job
+	to offer
+		"encounter: has disposition wary"
+		"encounter: count disposition wary" >= 2
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment -10000
+		dialog `The meeting is tense at first. "I don't trust you," the other captain says bluntly. "But I've heard you've been doing good work lately. Maybe I was wrong about you." After a long conversation, you agree to buy them dinner and drinks - a small price for repairing a damaged relationship. They leave looking more relaxed.`
+
+mission "Wary Encounter: Second Chance"
+	name "Proving Yourself"
+	description "A wary contact is willing to give you a second chance. Complete a job for them to rebuild trust. Deliver their cargo to <destination>."
+	job
+	repeat
+	to offer
+		"encounter: has disposition wary"
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 4
+	cargo "Industrial" 15 2 .1
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 15000
+		dialog `The contact watches carefully as their cargo is unloaded. When everything checks out, they nod slowly. "You did good work. Maybe I was too harsh on you before." They pay you fairly - not generously, but fairly. It's a start.`
+
+
+
+# HOSTILE NPCs - NPCs with significant negative history
+# These actively work against the player
+
+mission "Hostile Encounter: Sabotage"
+	name "Mechanical Problems"
+	description "Your ship has been sabotaged! Someone you've wronged has paid to have your systems tampered with. Get emergency repairs on <destination>."
+	job
+	to offer
+		"encounter: has disposition hostile"
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "shipyard"
+		distance 1 3
+	on complete
+		payment -30000
+		dialog `The mechanic examines your ship with concern. "Someone really doesn't like you," they say, pointing to the sabotage. "This was professional work. If you'd jumped to hyperspace, your drive would have failed mid-transit." The repairs are expensive, but cheaper than dying in hyperspace.`
+
+mission "Hostile Encounter: Bounty"
+	name "Price on Your Head"
+	description "Someone you've wronged has put a bounty on you. Bounty hunters are tracking you. Evade them and reach safety on <destination>."
+	job
+	repeat
+	to offer
+		"encounter: has disposition hostile"
+		"encounter: count disposition hostile" >= 2
+		random < 25
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Independent" "Pirate"
+		distance 3 6
+	npc
+		government "Bounty Hunter"
+		personality nemesis waiting
+		fleet
+			names "bounty hunter"
+			variant
+				"Fury"
+				"Berserker"
+			variant
+				"Corvette"
+	on complete
+		payment 5000
+		dialog `You manage to lose your pursuers and reach the relative safety of <planet>. A local informs you that someone matching the description of a captain you've wronged has been offering good money for your capture. "Made some enemies, have you?" they say. "Best watch your back."`
+
+mission "Hostile Encounter: Blockade"
+	name "Unwelcome in <system>"
+	description "Captains you've wronged have organized an unofficial blockade. Find an alternate route or fight through to <destination>."
+	job
+	to offer
+		"encounter: count disposition hostile" >= 3
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	waypoint
+		distance 2 4
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	npc
+		government "Merchant"
+		personality nemesis staying
+		system waypoint
+		fleet
+			names "civilian"
+			variant
+				"Freighter (Heavy Warship)"
+			variant
+				"Hauler III (Heavy Warship)"
+	on complete
+		payment 20000
+		dialog `You make it through the blockade, but it's clear that your enemies are organizing against you. A friendly contact on <planet> fills you in: "Word is you've made enough people angry that they're coordinating. Might want to think about making some amends before this gets worse."`
+
+
+
+# NEMESIS NPCs - NPCs who are the player's personal enemies
+# These represent ongoing feuds and vendettas
+
+mission "Nemesis Encounter: Assassination Attempt"
+	name "Close Call"
+	description "Someone is trying to kill you. Your nemesis has hired an assassin. Survive the ambush in <system> and escape to <destination>."
+	job
+	repeat
+	to offer
+		"encounter: has disposition nemesis"
+		random < 30
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	waypoint
+		distance 1 3
+	destination
+		government "Independent" "Pirate"
+		distance 2 5
+	npc
+		government "Bounty Hunter"
+		personality nemesis waiting target
+		system waypoint
+		fleet
+			names "bounty hunter"
+			variant
+				"Corvette"
+				"Fury" 2
+			variant
+				"Quicksilver"
+				"Berserker" 2
+	on complete
+		payment 10000
+		dialog `You barely escape the assassination attempt. At <planet>, a contact fills you in: "That was a professional hit. Someone with deep pockets and a deep grudge." You recall the face of your nemesis - this isn't over. It may never be over.`
+
+mission "Nemesis Encounter: Vendetta Warning"
+	name "A Message Delivered"
+	description "Your nemesis has sent a message through intermediaries. Meet the messenger on <destination> to hear what they have to say."
+	job
+	to offer
+		"encounter: has disposition nemesis"
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		payment -5000
+		dialog `The messenger is nervous. "I'm just the delivery person," they insist. "The message is: 'I haven't forgotten. I will never forget. And when you least expect it, I'll be there.'" They hand you a data chip with surveillance footage of your ship at various ports. Your nemesis has been tracking you. This isn't just a grudge anymore - it's an obsession.`
+
+mission "Nemesis Encounter: Final Confrontation"
+	name "End This"
+	description "Your nemesis has challenged you to a duel in <system>. End this feud once and for all."
+	job
+	to offer
+		"encounter: has disposition nemesis"
+		"combat rating" > 100
+		random < 10
+	source
+		government "Independent" "Pirate" "Neutral"
+	waypoint
+		distance 2 4
+	destination
+		government "Independent" "Pirate"
+	npc kill
+		government "Merchant"
+		personality nemesis staying heroic
+		system waypoint
+		fleet
+			names "civilian"
+			variant
+				"Corvette"
+			variant
+				"Fury (Heavy Warship)"
+	on complete
+		payment 50000
+		dialog `Your nemesis's ship explodes in a brilliant flash. The feud is over - one way or another. Salvaging what you can from the wreckage, you find a data chip containing their personal logs. The obsession with destroying you had consumed their entire life. You're not sure how to feel about that.`
+
+mission "Nemesis Encounter: Mutual Exhaustion"
+	name "A Tired Truce"
+	description "Your nemesis has sent word that they want to negotiate an end to your feud. Meet them on neutral ground at <destination>."
+	job
+	to offer
+		"encounter: has disposition nemesis"
+		"encounter: count disposition nemesis" == 1
+		random < 5
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent" "Neutral"
+		distance 3 6
+	on complete
+		payment -50000
+		dialog `Your nemesis looks as exhausted as you feel. "This is destroying both of us," they say. "I've spent everything I have trying to hurt you. And for what?" After hours of tense negotiation, you reach an agreement. It costs you 50,000 credits in reparations, but the vendetta is officially over. Neither of you will ever be friends, but at least you can stop looking over your shoulders.`
+
+
+
+# MIXED DISPOSITION MISSIONS - Leveraging multiple disposition types
+
+mission "Reputation Complexity: Witnesses"
+	name "Character Witness"
+	description "You're being investigated. Grateful contacts have agreed to vouch for you, but hostile ones are testifying against you. Meet the investigator on <destination>."
+	job
+	to offer
+		"encounter: has disposition grateful"
+		"encounter: has disposition hostile"
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military"
+		distance 2 5
+	on complete
+		payment 20000
+		dialog `The investigator reviews the conflicting testimonies. "You're a complicated person," they conclude. "Some captains swear you're a hero. Others call you a menace." In the end, your grateful contacts outweigh your hostile ones, and you're cleared of the more serious allegations. "Try to make fewer enemies," the investigator advises.`
+
+mission "Reputation Complexity: Loyalty Test"
+	name "Who Do You Trust?"
+	description "A contact claims one of your friendly acquaintances has betrayed you. Investigate on <destination>."
+	job
+	to offer
+		"encounter: count disposition friendly" >= 3
+		"encounter: has disposition wary"
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment 15000
+		dialog `After careful investigation, you discover the accusation was false - a manipulation attempt by someone who wants to isolate you from your allies. Your friend is relieved when you explain. "I knew you'd figure it out," they say. "Someone's playing games with us both." They reward your trust with a generous payment and a warning to watch your back.`
+
+mission "Reputation Complexity: Network Effects"
+	name "Reputation Cascade"
+	description "Your interconnected reputation is causing complications. Too many people know too much about you. A fixer on <destination> can help manage the situation."
+	job
+	to offer
+		"encounter: count disposition friendly" >= 5
+		"encounter: count disposition hostile" >= 2
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Syndicate" "Independent"
+		distance 2 6
+	on complete
+		payment -40000
+		dialog `The reputation fixer reviews your situation with concern. "You've got a lot of history out there," they say. "Friends, enemies, and everything in between. Everyone's talking about you - and not always the same things." For a fee, they promise to manage the flow of information, ensuring your enemies hear less and your friends hear more. It's an expensive service, but in a galaxy this connected, reputation is everything.`

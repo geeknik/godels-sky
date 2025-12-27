@@ -1,0 +1,428 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Consequence-Reactive News - Wanderer Space
+# The Wanderers are devoted to ecological restoration and view all actions through
+# the lens of growth vs. destruction. Their news reflects their unique philosophy.
+
+# =============================================================================
+# WANDERER TRADER PATTERN REACTIONS
+# =============================================================================
+
+news "wanderer trader appreciation"
+	to show
+		has "language: Wanderer"
+		"actionlog: pattern" == 1
+		"reputation: Wanderer" > 20
+	location
+		government "Wanderer"
+		not attributes "evacuation"
+	name
+		word
+			"Wanderer merchant"
+			"Wanderer ecologist"
+			"Trade observer"
+	message
+		word
+			`"`
+		word
+			"The human captain trades without [destruction, violence]. Goods flow, life continues. This is the [Way, Path] of Growing."
+			"We have observed this human's [pattern, behavior]. They bring commerce, not conflict. A [rare, precious] quality among their kind."
+			"The human's trade routes bring [prosperity, abundance] without ecological damage. Their ships are [clean, respectful] in our space."
+			"Unlike many of their species, this captain [understands, perceives] that trade should [nurture, support] rather than [exploit, harm]."
+			"The human conducts business as we do: with [consideration, mindfulness] for all living things. They are welcome in Wanderer markets."
+		word
+			`"`
+
+
+news "wanderer trader environmental"
+	to show
+		has "language: Wanderer"
+		"actionlog: pattern" == 1
+		"reputation: Wanderer" > 35
+	location
+		government "Wanderer"
+		attributes "farming"
+	name
+		word
+			"Wanderer farmer"
+			"Agricultural specialist"
+	message
+		word
+			`"`
+		word
+			"The human trader has carried our [seedlings, specimens] with [care, reverence]. They [understand, appreciate] that cargo is more than goods - it is [life, potential]."
+			"I entrusted rare plant samples to this captain. They arrived in [perfect, pristine] condition. The human treats living cargo with [respect, honor]."
+			"Our [terraforming, restoration] supplies reach distant worlds because this human is [reliable, trustworthy]. Growth [spreads, expands] where they travel."
+			"The human captain asked about our agricultural [methods, techniques]. Genuine [curiosity, interest], not exploitation. A mind open to [learning, growth]."
+		word
+			`"`
+
+
+# =============================================================================
+# WANDERER PROTECTOR PATTERN REACTIONS
+# =============================================================================
+
+news "wanderer protector recognition"
+	to show
+		has "language: Wanderer"
+		"actionlog: pattern" == 4
+		"reputation: Wanderer" > 30
+	location
+		government "Wanderer"
+	name
+		word
+			"Wanderer elder"
+			"Defense council member"
+			"Wanderer historian"
+	message
+		word
+			`"`
+		word
+			"The human [defends, protects] others without seeking [conquest, domination]. This is not the human way we expected. They are [unusual, remarkable]."
+			"We have watched this captain fight. They strike only to [defend, shield], never to [destroy, annihilate] unnecessarily. A [guardian, protector] spirit."
+			"The human understands what many of their kind do not: that [violence, force] should [preserve, protect] life, not [end, extinguish] it."
+			"Our Defense Council has noted this captain's [pattern, behavior]. They use strength for [protection, shielding], not [aggression, conquest]. We honor this."
+			"The Unfettered learned to [fear, respect] this human. Not because they are [cruel, savage], but because they [shield, defend] those who cannot fight."
+		word
+			`"`
+
+
+news "wanderer protector gratitude"
+	to show
+		has "language: Wanderer"
+		"actionlog: pattern" == 4
+		"encounter: count disposition grateful" >= 2
+	location
+		government "Wanderer"
+	name
+		word
+			"Grateful Wanderer"
+			"Rescued Wanderer"
+	message
+		word
+			`"`
+		word
+			"The human captain [saved, rescued] my convoy from Unfettered [attackers, raiders]. They asked for no [payment, reward]. A true [guardian, protector]."
+			"When my ship was [damaged, crippled], this human [defended, protected] me until repairs were complete. They [understand, comprehend] duty to life."
+			"I was [trapped, stranded] in hostile space. The human captain risked their own [safety, existence] to [escort, guide] me home. I am [grateful, indebted]."
+			"My family would not exist if not for Captain <first>. They [intervened, acted] when others would have [fled, ignored]. Life owes them a [debt, tribute]."
+		word
+			`"`
+
+
+# =============================================================================
+# WANDERER PIRATE PATTERN REACTIONS
+# =============================================================================
+
+news "wanderer pirate sorrow"
+	to show
+		has "language: Wanderer"
+		"actionlog: pattern" == 2
+		"reputation: Wanderer" < 0
+	location
+		government "Wanderer"
+	name
+		word
+			"Saddened Wanderer"
+			"Wanderer observer"
+	message
+		word
+			`"`
+		word
+			"The human [takes, steals] from others. This brings [entropy, decay] to the systems they visit. A path of [diminishment, reduction]."
+			"We had hoped humans could [learn, grow]. This captain [preys, feeds] on the [weak, vulnerable]. They walk the Sterile Path."
+			"Piracy is [waste, entropy]. Destroying to [take, steal] what could be [traded, earned]. The human does not [understand, perceive] this."
+			"The captain's actions [diminish, reduce] the total [growth, prosperity] of all. Every raid is a small [death, ending] in the cosmic garden."
+			"We do not hate this human. We [grieve, mourn] for the potential [lost, wasted] to destruction."
+		word
+			`"`
+
+
+news "wanderer pirate warning"
+	to show
+		has "language: Wanderer"
+		"actionlog: pattern" == 2
+		"reputation: Wanderer" < -20
+	location
+		government "Wanderer"
+	name
+		word
+			"Wanderer merchant captain"
+			"Wanderer patrol"
+	message
+		word
+			`"`
+		word
+			"The human pirate has been [sighted, observed] in our trade lanes. All ships should [exercise, maintain] extreme [caution, vigilance]."
+			"Our defense council has [flagged, marked] this captain as a [threat, danger] to Wanderer commerce. Avoid [contact, engagement] if possible."
+			"The human's [pattern, behavior] is [predatory, parasitic]. They [consume, destroy] without [creating, nurturing]. Our patrols are [alert, watchful]."
+			"Do not be [fooled, deceived] by this human's [appearance, manner]. They have [raided, attacked] our ships before. They will do so again."
+		word
+			`"`
+
+
+# =============================================================================
+# WANDERER WARMONGER PATTERN REACTIONS
+# =============================================================================
+
+news "wanderer warmonger horror"
+	to show
+		has "language: Wanderer"
+		"actionlog: pattern" == 5
+		"reputation: Wanderer" < -30
+	location
+		government "Wanderer"
+	name
+		word
+			"Horrified Wanderer"
+			"Wanderer philosopher"
+	message
+		word
+			`"`
+		word
+			"The human seeks [conflict, war] as if it were [purpose, meaning]. They bring [entropy, destruction] wherever they [travel, go]. This is [madness, tragedy]."
+			"We have seen the [aftermath, wreckage] of this captain's [battles, wars]. Entire [fleets, systems] reduced to [debris, nothing]. Pure [waste, devastation]."
+			"The Wanderer way is to [grow, create]. This human's way is to [destroy, annihilate]. Our paths could not be more [opposed, different]."
+			"Every ship destroyed is a [loss, tragedy]. Every crew killed is [potential, growth] ended. The human seems to [revel, delight] in this."
+			"We have documented this captain's [violence, aggression]. The scale of [destruction, entropy] they cause is [staggering, overwhelming]. They must be [stopped, contained]."
+		word
+			`"`
+
+
+news "wanderer warmonger response"
+	to show
+		has "language: Wanderer"
+		"actionlog: pattern" == 5
+		"actionlog: escalation"
+	location
+		government "Wanderer"
+	name
+		word
+			"Wanderer defense commander"
+			"Military Wanderer"
+	message
+		word
+			`"`
+		word
+			"We do not [choose, prefer] violence, but we will [defend, protect] ourselves. This human forces our [hand, response]."
+			"Our [warships, defenders] are [ancient, powerful] designs, created for [times, eras] we hoped would never [return, recur]. This captain has brought such times."
+			"The Wanderer have faced [extinction, destruction] before. We [survived, endured]. This human's [aggression, violence] will not [break, destroy] us."
+			"We will [defend, shield] our [worlds, gardens] with whatever [force, strength] is required. Even against one who [enjoys, craves] conflict."
+		word
+			`"`
+
+
+# =============================================================================
+# WANDERER ATROCITY REACTIONS
+# =============================================================================
+
+news "wanderer atrocity response"
+	to show
+		has "language: Wanderer"
+		"reputation: atrocity"
+	location
+		government "Wanderer"
+	name
+		word
+			"Wanderer elder council"
+			"Wanderer spiritual leader"
+	message
+		word
+			`"`
+		word
+			"The human has committed acts beyond [redemption, forgiveness]. They have [killed, destroyed] without [purpose, meaning], simply for the [satisfaction, pleasure] of it."
+			"We name this captain [Life-Ender, Destroyer of Growth]. They bring [entropy, death] as naturally as we bring [growth, life]. They are our [antithesis, opposite]."
+			"There can be no [reconciliation, peace] with one who [massacres, slaughters] the [innocent, helpless]. The Wanderer will [oppose, resist] them eternally."
+			"The cosmic garden weeps for what this human has [destroyed, ended]. Entire [lineages, species] of potential, erased for [nothing, emptiness]."
+			"Our ancestors faced the [sterile, dead] worlds left by ancient [conquerors, destroyers]. This human creates the same [waste, devastation]. History [repeats, cycles]."
+		word
+			`"`
+
+
+# =============================================================================
+# WANDERER WITNESS REACTIONS
+# =============================================================================
+
+news "wanderer witness network"
+	to show
+		has "language: Wanderer"
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 400
+	location
+		government "Wanderer"
+	name
+		word
+			"Wanderer observer"
+			"Network coordinator"
+	message
+		word
+			`"`
+		word
+			"Our observation networks have [documented, recorded] this human's actions. Every [deed, act] is [preserved, stored] in our collective [memory, records]."
+			"The Wanderer see what [transpires, occurs] in our space. This captain's [pattern, behavior] has been thoroughly [analyzed, studied]. We know their [nature, character]."
+			"Multiple [witnesses, observers] have confirmed reports about this human. The [truth, reality] of their actions cannot be [hidden, concealed]."
+			"Our ecological monitoring systems [track, follow] all ships. This captain's [impact, effect] on the systems they visit is [quantified, measured]. We know precisely what they do."
+		word
+			`"`
+
+
+news "wanderer unwitnessed suspicion"
+	to show
+		has "language: Wanderer"
+		"witness: unwitnessed"
+		"actionlog: pattern" >= 2
+	location
+		government "Wanderer"
+	name
+		word
+			"Suspicious Wanderer"
+			"Wanderer analyst"
+	message
+		word
+			`"`
+		word
+			"This human moves through space without being [observed, witnessed]. Ecological [anomalies, disturbances] follow in their wake, yet no one sees [anything, nothing]."
+			"Curious. Ships [disappear, vanish], cargo goes [missing, lost], yet this captain has no [witnesses, observers] to their actions. Too [convenient, suspicious]."
+			"The absence of evidence is not evidence of [innocence, virtue]. This human operates in ways that [avoid, evade] our sensors. We are [concerned, wary]."
+			"Living things [sense, feel] disturbance even when they cannot [see, observe] it. Something about this captain's presence makes the [plants, life] around them [wilt, shrink]."
+		word
+			`"`
+
+
+# =============================================================================
+# WANDERER LONG-TERM REACTIONS
+# =============================================================================
+
+news "wanderer long-term ally"
+	to show
+		has "language: Wanderer"
+		"days" > 200
+		"reputation: Wanderer" > 60
+		"actionlog: pattern" <= 4
+	location
+		government "Wanderer"
+	name
+		word
+			"Wanderer chronicler"
+			"Elder Wanderer"
+	message
+		word
+			`"`
+		word
+			"For [seasons, cycles], this human has walked the [Growing, Living] Path among us. They have [proven, demonstrated] their commitment to [life, growth]."
+			"The captain's [pattern, behavior] over [time, years] shows [consistency, reliability]. They are not merely [visiting, passing through] - they have become [part, member] of our community."
+			"Our [stories, legends] now include tales of this human. A rare being who [chose, embraced] the Way of Growing rather than the Sterile Path."
+			"The Wanderer council has [discussed, debated] granting this human [permanent, eternal] welcome. Their [record, history] speaks of [growth, nurturing], not destruction."
+		word
+			`"`
+
+
+news "wanderer long-term enemy"
+	to show
+		has "language: Wanderer"
+		"days" > 200
+		"reputation: Wanderer" < -50
+	location
+		government "Wanderer"
+	name
+		word
+			"Wanderer historian"
+			"Wanderer warning system"
+	message
+		word
+			`"`
+		word
+			"This human has [opposed, fought] us for [seasons, cycles]. Their [pattern, behavior] is [unchanging, consistent] - only destruction, never growth."
+			"We have [documented, recorded] this captain's actions over [years, time]. The evidence is [overwhelming, conclusive]. They are a [persistent, eternal] threat to life."
+			"Our [children, hatchlings] are taught to [recognize, identify] this human's ship. They are a [lesson, example] in what happens when beings [reject, abandon] the Way of Growing."
+			"The captain has had [countless, numerous] opportunities to [change, grow]. They have [refused, rejected] each one. Some beings simply [choose, embrace] entropy."
+		word
+			`"`
+
+
+# =============================================================================
+# WANDERER CROSS-FACTION REACTIONS
+# =============================================================================
+
+news "wanderer hai alliance"
+	to show
+		has "language: Wanderer"
+		"reputation: Wanderer" > 40
+		"reputation: Hai" > 40
+	location
+		government "Wanderer"
+	name
+		word
+			"Wanderer diplomat"
+			"Cross-species liaison"
+	message
+		word
+			`"`
+		word
+			"This human is [trusted, respected] by both Wanderer and Hai. A [rare, exceptional] bridge between our peoples."
+			"The captain [understands, appreciates] both our species. They help [facilitate, enable] cooperation between Wanderer and Hai [communities, settlements]."
+			"When disputes arise between our peoples, this human has [mediated, helped]. They see both [perspectives, viewpoints] clearly."
+			"The Hai speak [well, favorably] of this captain. We have [confirmed, verified] their accounts. A being of [genuine, true] honor."
+		word
+			`"`
+
+
+news "wanderer korath sympathy"
+	to show
+		has "language: Wanderer"
+		has "wanderers sestor done"
+		"reputation: Wanderer" > 30
+	location
+		government "Wanderer"
+	name
+		word
+			"Wanderer refugee worker"
+			"Korath rehabilitation specialist"
+	message
+		word
+			`"`
+		word
+			"The human has helped with Korath [rehabilitation, recovery]. They see past the [violence, destruction] to the [potential, possibility] for growth."
+			"Our work with the Korath requires [patience, understanding]. This captain demonstrates both. They see [survivors, beings], not [enemies, threats]."
+			"The Korath worlds are [devastated, ruined], but not [beyond, past] redemption. This human [understands, perceives] that, and helps us [restore, renew] them."
+			"Terraforming Korath space is the [greatest, most significant] challenge we have faced. This captain has [contributed, helped] meaningfully to our efforts."
+		word
+			`"`
+
+
+# =============================================================================
+# WANDERER MOLT / TRANSFORMATION REACTIONS
+# =============================================================================
+
+news "wanderer molt observer"
+	to show
+		has "language: Wanderer"
+		has "event: wanderers: the eye opens"
+		"reputation: Wanderer" > 50
+	location
+		government "Wanderer"
+	name
+		word
+			"Molting Wanderer"
+			"Transformed elder"
+	message
+		word
+			`"`
+		word
+			"I have [undergone, experienced] the Molt, and in my [new, transformed] form I can [perceive, sense] things differently. This human has a [bright, vibrant] aura of growth."
+			"The Eye opened in my lifetime, and I was [transformed, changed]. I can now [see, sense] the human's [spirit, essence]. It is aligned with [life, growth]."
+			"Those of us who have [Molted, transformed] can [perceive, understand] beings on a [deeper, more profound] level. This captain's [pattern, nature] is [genuine, authentic]."
+			"My Molt has given me [new, enhanced] senses. I can [feel, detect] the [impact, effect] beings have on the cosmic [garden, web]. This human [nurtures, helps] it."
+		word
+			`"`

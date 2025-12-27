@@ -61,9 +61,9 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT EndlessSky)
 set(CMAKE_VS_JUST_MY_CODE_DEBUGGING ON)
 
-project("Endless Sky" VERSION 0.10.17
-	DESCRIPTION "Space exploration, trading, and combat game."
-	HOMEPAGE_URL https://endless-sky.github.io/
+project("Gödel's Sky" VERSION 0.10.17
+	DESCRIPTION "Space exploration with meaningful consequences. A fork of Endless Sky."
+	HOMEPAGE_URL https://github.com/geeknik/godels-sky
 	LANGUAGES CXX)
 
 # Find the needed library dependencies.
@@ -264,11 +264,11 @@ if(APPLE AND ES_CREATE_BUNDLE)
 	set_target_properties(EndlessSky PROPERTIES
 		MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_LIST_DIR}/resources/EndlessSky-Info.plist"
 		XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME endless-sky)
-	set(OUTPUT_NAME "Endless Sky")
+	set(OUTPUT_NAME "Gödel's Sky")
 	set_target_properties(EndlessSky PROPERTIES OUTPUT_NAME ${OUTPUT_NAME})
 elseif(WIN32)
 	add_executable(EndlessSky WIN32 source/main.cpp source/windows/WinApp.rc)
-	set_target_properties(EndlessSky PROPERTIES OUTPUT_NAME "Endless Sky")
+	set_target_properties(EndlessSky PROPERTIES OUTPUT_NAME "Gödel's Sky")
 	if(MINGW)
 		target_link_options(EndlessSky PRIVATE "-Wl,--major-subsystem-version,5,--minor-subsystem-version,1")
 	endif()
@@ -277,7 +277,7 @@ elseif(WIN32)
 	endif()
 else()
 	add_executable(EndlessSky source/main.cpp)
-	set_target_properties(EndlessSky PROPERTIES OUTPUT_NAME "endless-sky")
+	set_target_properties(EndlessSky PROPERTIES OUTPUT_NAME "godels-sky")
 endif()
 
 # Link with the library dependencies.

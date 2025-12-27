@@ -75,3 +75,8 @@ CMakeUserPresets.json
 
 # static code analysis
 /.scannerwork
+
+# Misc
+.claude
+CLAUDE.md
+.pf

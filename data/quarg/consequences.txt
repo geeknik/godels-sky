@@ -1,0 +1,342 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Quarg Consequence Missions
+# The Quarg are an ancient, powerful, and enigmatic species. They are patient
+# and forbearing, but act decisively when necessary. They have observed the
+# galaxy for millions of years and have a perspective that younger species
+# cannot comprehend. Consequences reflect their patience, their power, and
+# their deep concern for galactic stability.
+
+
+
+# POSITIVE CONSEQUENCES: EARNING QUARG NOTICE
+
+mission "Quarg Observation: Noted"
+	name "The Watchers See"
+	description "The Quarg have taken notice of your activities. A message awaits on <destination>."
+	job
+	to offer
+		"reputation: Quarg" > 15
+		"actionlog: pattern" <= 1
+		not "quarg noticed"
+		random < 10
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 5
+	on complete
+		set "quarg noticed"
+		payment 50000
+		dialog `A Quarg approaches you in the spaceport. Their form is ancient, their movements deliberate. "We have observed you," they say, their voice resonating strangely. "Among the brief lives of your species, you have chosen a path of commerce rather than conflict. This is... noted." They present you with a small, luminous object. "A token. Not of friendship - that takes longer than your species has existed. But of acknowledgment."`
+
+mission "Quarg Observation: Watched with Interest"
+	name "Galactic Perspective"
+	description "The Quarg wish to discuss their observations of your species. Meet them on <destination>."
+	job
+	to offer
+		has "quarg noticed"
+		"reputation: Quarg" > 30
+		random < 10
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 5
+	on complete
+		set "quarg interested"
+		payment 75000
+		"reputation: Quarg" += 10
+		dialog `The Quarg elder regards you with ancient eyes. "Your species is young," they say. "We have watched civilizations rise and fall for millennia beyond your comprehension. Most destroy themselves. A few... evolve." They pause, considering. "You personally have shown restraint. In a universe of chaos, this is valuable. We will continue to watch. With interest."`
+
+mission "Quarg Acknowledgment: Potential"
+	name "The Long View"
+	description "The Quarg Council has recognized something in you. A formal audience awaits on <destination>."
+	job
+	to offer
+		has "quarg interested"
+		"reputation: Quarg" > 50
+		"actionlog: pattern" == 4
+		random < 5
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 5
+	on complete
+		set "quarg recognized potential"
+		payment 150000
+		"reputation: Quarg" += 20
+		dialog `The Quarg Council chamber is vast and ancient. Multiple Quarg elders assess you with gazes that feel like they're reading your entire genetic history. "You protect others," one says. "A trait that transcends species. A trait that may allow your kind to survive the long darkness between stars." They grant you a rare honor. "You may speak with us. Ask your questions. We may even answer some of them."`
+
+
+
+# NEGATIVE CONSEQUENCES: QUARG DISAPPROVAL
+
+mission "Quarg Warning: Observed Violence"
+	name "A Patient Reminder"
+	description "The Quarg have observed your violent activities. A message awaits on <destination>."
+	job
+	to offer
+		"reputation: Quarg" < -5
+		"reputation: Quarg" > -20
+		not "quarg warning"
+		random < 20
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 4
+	on complete
+		set "quarg warning"
+		dialog `A Quarg intercepts you in the spaceport. Their presence is overwhelming, ancient, and patient. "We have observed your path," they say. "It trends toward destruction. We have seen this pattern before, in species that no longer exist." They do not threaten. They simply observe. "Consider the long term. Your species has potential. But potential can be wasted." They leave without waiting for a response.`
+
+mission "Quarg Concern: Pattern of Destruction"
+	name "The Weight of Choices"
+	description "The Quarg are concerned about your pattern of violence. A council member wishes to speak with you on <destination>."
+	job
+	to offer
+		has "quarg warning"
+		"reputation: Quarg" < -15
+		"actionlog: pattern" >= 2
+		random < 20
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 5
+	on complete
+		set "quarg concern"
+		"reputation: Quarg" -= 10
+		dialog `The Quarg council member speaks with the weight of eons. "We have watched countless individuals like you," they say. "Talented. Driven. Destructive. Most believe they are special. Most are wrong." They show you images - ruins of civilizations, extinct species, dead worlds. "This is where violence leads. You think in years. We think in millennia. Change your path, or be forgotten like all the others."`
+
+mission "Quarg Intervention: Final Warning"
+	name "Before the Silence"
+	description "The Quarg have issued a formal warning. Ignore it at your peril. Receive it on <destination>."
+	job
+	to offer
+		has "quarg concern"
+		"reputation: Quarg" < -35
+		random < 30
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 5
+	on complete
+		set "quarg final warning"
+		dialog `Multiple Quarg elders surround you. Their presence is suffocating, ancient, and absolute. "This is your final warning," they say in unison. "We do not interfere lightly. But we also do not permit threats to galactic stability." One elder steps forward. "You have a choice. Change your path, or we will remove you from it. We have done this before. We will do it again. The galaxy will not notice your absence." The dismissal is total.`
+
+
+
+# QUARG TECHNOLOGY CONSEQUENCES
+
+mission "Quarg Technology: Inquiry"
+	name "Technological Curiosity"
+	description "The Quarg have noticed your interest in their technology. A representative wishes to discuss this on <destination>."
+	job
+	to offer
+		"reputation: Quarg" > 10
+		random < 15
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 5
+	on complete
+		payment 30000
+		dialog `The Quarg technologist examines you with clinical interest. "Many young species covet our technology," they observe. "They believe it will make them powerful. They are correct. They also believe they can handle that power. They are usually wrong." They offer a small lesson. "We share what we share. We withhold what we must. This is not cruelty. It is preservation."`
+
+mission "Quarg Technology: Theft Response"
+	name "Recovery Protocol"
+	description "The Quarg have detected unauthorized Quarg technology. If you possess any, surrender it on <destination> or face consequences."
+	job
+	to offer
+		"reputation: Quarg" < -25
+		random < 30
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 4
+	on complete
+		payment -100000
+		"reputation: Quarg" -= 15
+		dialog `The Quarg inspection is thorough and invasive. They scan every system, analyze every component, and catalog every piece of technology on your ship. "Irregularities detected," one announces. Whether they find actual Quarg technology or just confiscate valuable equipment, the result is the same - a significant loss. "This is a warning. The next incident will not result in mere confiscation."`
+
+
+
+# WITNESS-AWARE CONSEQUENCES
+
+mission "Quarg: All-Seeing"
+	name "Nothing Hidden"
+	description "The Quarg have comprehensive records of your activities - even those you thought were secret. Report to <destination>."
+	job
+	to offer
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 600
+		"reputation: Quarg" > 0
+		random < 15
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 5
+	on complete
+		dialog `The Quarg archivist displays a holographic timeline of your life. Every action, every decision, every consequence - all recorded. "We see everything," they explain. "Our observation network spans the galaxy. Your species does not perceive it, but we have watched you since the moment you launched your first ship." They close the display. "Consider what you have done. Consider what we know. Consider carefully what you will do next."`
+
+mission "Quarg: Unseen Actor"
+	name "The Hidden Path"
+	description "Your ability to act without detection has caught Quarg attention. They wish to understand how. Report to <destination>."
+	job
+	to offer
+		"witness: unwitnessed"
+		"reputation: Quarg" > 15
+		random < 10
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 5
+	on complete
+		payment 80000
+		"reputation: Quarg" += 5
+		dialog `The Quarg analyst seems genuinely intrigued - an unusual display of emotion for their kind. "You have evaded observation," they note. "This is... rare. Our networks are comprehensive. Yet you have moved unseen." They do not ask how. They simply observe. "Such capability is dangerous. Or useful. Perhaps both. We will watch you more closely now - or try to." Is that a Quarg joke?`
+
+
+
+# WARMONGER CONSEQUENCES
+
+mission "Quarg: Chaos Agent"
+	name "Entropy Incarnate"
+	description "The Quarg have classified you as an agent of galactic chaos. A judgment awaits on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 5
+		"reputation: Quarg" < -30
+		random < 25
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 5
+	on complete
+		set "quarg chaos agent"
+		"reputation: Quarg" -= 20
+		dialog `The Quarg tribunal is ancient and absolute. "You have been designated a Chaos Agent," they pronounce. "An individual whose actions threaten galactic stability. We have eliminated such threats before. Entire species. Entire civilizations." They pause. "You are one being. Your elimination would be trivial. We choose, for now, to observe. But know this: our patience, while vast, is not infinite."`
+
+mission "Quarg: Escalation Response"
+	name "Proportional Force"
+	description "The Quarg are responding to your escalating violence. Prepare for their intervention."
+	job
+	to offer
+		has "quarg chaos agent"
+		"actionlog: escalation"
+		"reputation: Quarg" < -50
+		random < 30
+	source
+		government "Quarg"
+	waypoint
+		distance 2 4
+	destination
+		government "Independent" "Neutral"
+		distance 3 6
+	npc evade
+		government "Quarg"
+		personality nemesis waiting
+		system waypoint
+		fleet
+			names "quarg"
+			variant
+				"Quarg Wardragon"
+				"Quarg Lindwyrm" 2
+			variant
+				"Quarg Wardragon" 2
+	on complete
+		payment 50000
+		dialog `You barely escape the Quarg response fleet. Their ships are ancient, powerful, and utterly implacable. A message arrives: "You have experienced a fraction of our capability. Continue your current path, and you will experience its fullness. We have destroyed threats far greater than you. We will not hesitate." The Quarg do not make empty threats.`
+
+
+
+# ATROCITY CONSEQUENCES
+
+mission "Quarg: Extinction Protocol"
+	name "Removal from Existence"
+	description "Your atrocities have triggered Quarg extinction protocols. Survive if you can."
+	job
+	to offer
+		"reputation: atrocity"
+		"reputation: Quarg" < -75
+		random < 50
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Pirate" "Independent"
+		distance 5 10
+	npc evade
+		government "Quarg"
+		personality nemesis waiting
+		system destination
+		fleet
+			names "quarg"
+			variant
+				"Quarg Wardragon" 2
+				"Quarg Lindwyrm" 3
+			variant
+				"Quarg Wardragon" 3
+				"Quarg Drake" 4
+	on complete
+		set "quarg extinction target"
+		payment 75000
+		dialog `You escape the Quarg extermination fleet by the narrowest margin. The message that follows is chilling: "Extinction Protocol Activated. Subject: <first> <last>. Priority: Absolute. Resources Allocated: Unlimited. Time Horizon: Until Completion." The Quarg have decided you must cease to exist. They have patience measured in millennia. They will never stop hunting you.`
+
+mission "Quarg: Final Judgment"
+	name "The Long Silence"
+	description "The Quarg have passed final judgment. There is no appeal. Receive their sentence on <destination>."
+	job
+	to offer
+		has "quarg extinction target"
+		random < 30
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Pirate" "Independent"
+		distance 2 5
+	on complete
+		set "quarg condemned"
+		dialog `The message arrives through quantum channels that should be impossible: "You have been judged. The verdict is extinction. Not today. Not tomorrow. But inevitably. We have hunted threats for millions of years. We have never failed. Your species will survive. You will not. Every world you land on, we will be watching. Every system you enter, we will be waiting. Your remaining existence is borrowed time. Use it wisely, for it is finite." The Quarg have pronounced sentence. They do not offer mercy. They simply wait.`
+
+
+
+# REDEMPTION PATH (EXTREMELY DIFFICULT)
+
+mission "Quarg: Atonement Consideration"
+	name "The Slow Path"
+	description "The Quarg are willing to consider your atonement. Begin the process on <destination>."
+	job
+	to offer
+		"reputation: Quarg" < -20
+		"reputation: Quarg" > -50
+		not "reputation: atrocity"
+		"actionlog: pattern" == 4
+		random < 5
+	source
+		government "Quarg"
+	destination
+		government "Quarg"
+		distance 2 5
+	on complete
+		payment -50000
+		"reputation: Quarg" += 15
+		dialog `The Quarg elder considers you for a long moment. "Atonement is possible," they say finally. "But not in the manner you expect. We measure time differently. Your atonement will take years. Perhaps decades. Consistent protection of others. Consistent rejection of violence except in defense." They accept your offering. "Begin. We will be watching. We are always watching."`

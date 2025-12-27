@@ -1,0 +1,416 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Unfettered Hai Extended Consequence Missions
+# The Unfettered Hai are a militant faction who reject the "taming" of their species.
+# They respect strength, directness, and action over words.
+# Unlike the peaceful Hai, they value warriors and respond to violence differently.
+# They see themselves as the "True Hai" - what the Hai were before Drak intervention.
+
+
+
+# WARRIOR RECOGNITION CHAIN
+
+mission "Unfettered: Combat Respect"
+	name "Prove Your Worth"
+	description "The Unfettered have noticed your combat prowess. A warlord on <destination> wants to test you in person."
+	job
+	to offer
+		"combat rating" > 100
+		"reputation: Hai (Unfettered)" > -25
+		"reputation: Hai (Unfettered)" < 25
+		not "unfettered combat test"
+		random < 20
+	source
+		government "Hai (Unfettered)"
+	destination
+		government "Hai (Unfettered)"
+		distance 2 4
+	on complete
+		set "unfettered combat test"
+		"reputation: Hai (Unfettered)" += 15
+		dialog `The Unfettered warlord examines your combat record with visible interest. "You fight well for a human," they say, ears twitching. "Most of your kind are soft. Weak. But you..." They bare their teeth in what you've learned is an Unfettered smile. "You have potential. Prove yourself further, and you may yet earn a place among the True Hai."`
+
+mission "Unfettered: Warrior Trial"
+	name "Trial by Combat"
+	description "The Unfettered are offering you a formal trial to prove your worth as a warrior. Meet your challenger in the <system> system."
+	job
+	to offer
+		has "unfettered combat test"
+		"combat rating" > 150
+		"reputation: Hai (Unfettered)" > 10
+		not "unfettered warrior trial"
+		random < 25
+	source
+		government "Hai (Unfettered)"
+	destination
+		government "Hai (Unfettered)"
+	waypoint
+		distance 2 4
+	npc kill
+		government "Hai (Unfettered Challenger)"
+		personality heroic staying
+		system waypoint
+		ship "Lightning Bug" "Trial Champion"
+	on complete
+		set "unfettered warrior trial"
+		payment 75000
+		"reputation: Hai (Unfettered)" += 20
+		dialog `When you return victorious, the Unfettered greet you with respect. "You have defeated our champion in honorable combat," the warlord announces. "You are no longer merely 'human' to us. You are Warrior." They present you with payment and a ceremonial knife. "This blade has tasted the blood of our enemies. Now it belongs to you. Use it well."`
+
+
+
+# RAIDING PARTNERSHIP
+
+mission "Unfettered: Raiding Invitation"
+	name "Join the Hunt"
+	description "The Unfettered are planning a raid on a Hai convoy. Join them and claim your share of the spoils."
+	job
+	repeat
+	to offer
+		has "unfettered warrior trial"
+		"combat rating" > 125
+		"reputation: Hai (Unfettered)" > 25
+		"reputation: Hai" < 0
+		random < 30
+	source
+		government "Hai (Unfettered)"
+	waypoint
+		distance 3 5
+	destination
+		government "Hai (Unfettered)"
+	npc
+		government "Hai (Unfettered)"
+		personality escort
+		system waypoint
+		fleet
+			names "hai"
+			variant
+				"Shield Beetle"
+				"Lightning Bug" 2
+	npc kill
+		government "Hai"
+		personality staying
+		system waypoint
+		fleet
+			names "hai"
+			variant
+				"Water Bug"
+				"Aphid" 2
+	on complete
+		payment 100000
+		"reputation: Hai (Unfettered)" += 10
+		"reputation: Hai" -= 15
+		"reputation: Hai Merchant" -= 10
+		dialog `The raid was successful. As the Unfettered divide the spoils, their leader tosses you a generous share. "You fight alongside us now," they say with approval. "The soft Hai will hate you for this, but what is their hatred worth? They have forgotten how to fight. We remember." The other Unfettered raise their weapons in salute.`
+
+mission "Unfettered: Deep Strike"
+	name "Strike the Shipyards"
+	description "The Unfettered are planning an ambitious raid on Hai shipping near <waypoints>. Join the strike force."
+	job
+	to offer
+		has "unfettered warrior trial"
+		"combat rating" > 200
+		"reputation: Hai (Unfettered)" > 40
+		not "unfettered deep strike"
+		random < 15
+	source
+		government "Hai (Unfettered)"
+	waypoint
+		government "Hai"
+		distance 4 7
+	destination
+		government "Hai (Unfettered)"
+	npc
+		government "Hai (Unfettered)"
+		personality escort heroic
+		fleet
+			names "hai"
+			variant
+				"Shield Beetle" 2
+				"Lightning Bug" 3
+	npc kill
+		government "Hai"
+		personality heroic staying
+		system waypoint
+		fleet
+			names "hai"
+			variant
+				"Shield Beetle"
+				"Lightning Bug" 2
+				"Aphid" 3
+	on complete
+		set "unfettered deep strike"
+		payment 200000
+		"reputation: Hai (Unfettered)" += 25
+		"reputation: Hai" -= 30
+		dialog `The deep strike was a resounding success. As you return to Unfettered space, word of your prowess spreads. "You struck at the heart of our soft cousins," the warlord says with fierce pride. "They thought they were safe there. You proved them wrong. You are truly one of us now."`
+
+
+
+# TECHNOLOGY ACCESS
+
+mission "Unfettered: Outfitter Access"
+	name "Proving Ground"
+	description "Your reputation among the Unfettered has earned you access to their experimental weapons. Visit <destination> to see what they offer."
+	job
+	to offer
+		has "unfettered warrior trial"
+		"reputation: Hai (Unfettered)" > 30
+		not "unfettered outfitter access"
+		random < 25
+	source
+		government "Hai (Unfettered)"
+	destination
+		government "Hai (Unfettered)"
+		distance 2 4
+	on complete
+		set "unfettered outfitter access"
+		dialog `The Unfettered engineer leads you to a hidden section of the outfitter. "You have earned the right to see our true weapons," they say. "These are not the scraps we show to outsiders. These are the tools of the True Hai." They gesture to racks of equipment that gleam with deadly promise. "Buy what you need. Fight well. That is all we ask."`
+
+mission "Unfettered: Shipyard Access"
+	name "Fleet Commander"
+	description "Your exceptional service to the Unfettered has earned you access to their shipyards. Visit <destination> to claim your reward."
+	job
+	to offer
+		has "unfettered deep strike"
+		"reputation: Hai (Unfettered)" > 60
+		not "unfettered shipyard access"
+		random < 20
+	source
+		government "Hai (Unfettered)"
+	destination
+		government "Hai (Unfettered)"
+		distance 2 4
+	on complete
+		set "unfettered shipyard access"
+		payment 500000
+		dialog `The Unfettered warlord greets you with uncharacteristic warmth. "You have proven yourself beyond all doubt," they say. "Our shipyards are now open to you. Buy what you wish. Our engineers will even modify ships to your specifications." They hand you a substantial credit transfer. "This is a gift. A warrior of your caliber deserves a worthy vessel."`
+
+
+
+# POLITICAL INVOLVEMENT
+
+mission "Unfettered: Faction Politics"
+	name "A Warlord's Favor"
+	description "An Unfettered warlord seeks your help in a power struggle. Meet them on <destination> to discuss the details."
+	job
+	to offer
+		has "unfettered warrior trial"
+		"reputation: Hai (Unfettered)" > 35
+		not "unfettered politics"
+		random < 15
+	source
+		government "Hai (Unfettered)"
+	destination
+		government "Hai (Unfettered)"
+		distance 2 4
+	on offer
+		conversation
+			`An Unfettered approaches you in the spaceport. Their uniform marks them as an officer. "You are the human who fights alongside us," they say. "A warlord wishes to speak with you. It concerns... internal matters."`
+			choice
+				`	"What kind of internal matters?"`
+				`	"I don't want to get involved in Unfettered politics."`
+					decline
+			`	"There are... disagreements among our leaders. About how to proceed. About who should lead." The officer's ears flatten. "Warlord Chireeka believes you could be useful. Will you hear them out?"`
+			choice
+				`	"I'll meet with them."`
+					accept
+				`	"This sounds dangerous."`
+			`	"Everything the Unfettered do is dangerous. That is who we are." The officer seems almost amused. "But Warlord Chireeka does not ask lightly. They see something in you."`
+			choice
+				`	"Fine, I'll hear what they have to say."`
+					accept
+				`	"I'll pass."`
+					decline
+	on complete
+		set "unfettered politics"
+		dialog `Warlord Chireeka receives you in a fortified command center. "You have proven yourself in battle," they say. "But battle is not the only struggle. There are those among the Unfettered who would make peace with our soft cousins. Surrender our heritage." Their teeth bare in disgust. "I need allies who understand that some fights must be fought. Will you stand with me when the time comes?" You realize you've been drawn into something larger than simple raids.`
+
+
+
+# PEACEFUL HAI CONTACT CONSEQUENCES
+
+mission "Unfettered: Spy Suspicion"
+	name "Prove Your Loyalty"
+	description "Your contact with the peaceful Hai has raised suspicions. Travel to <destination> to answer for it."
+	job
+	to offer
+		"reputation: Hai (Unfettered)" > 20
+		"reputation: Hai" > 10
+		not "unfettered spy accusation"
+		random < 30
+	source
+		government "Hai (Unfettered)"
+	destination
+		government "Hai (Unfettered)"
+		distance 2 4
+	on complete
+		set "unfettered spy accusation"
+		dialog `The Unfettered interrogator regards you with suspicion. "You deal with our soft cousins," they observe. "You trade with them. Speak with them." Their ears are flat against their skull. "Some say you are a spy. That you will betray us to them." They lean forward. "Convince me otherwise, human. Or our next conversation will be... less pleasant."`
+
+mission "Unfettered: Loyalty Choice"
+	name "Choose Your Side"
+	description "The Unfettered demand you choose between them and the peaceful Hai. Make your decision on <destination>."
+	job
+	to offer
+		has "unfettered spy accusation"
+		"reputation: Hai" > 25
+		"reputation: Hai (Unfettered)" > 25
+		not "unfettered loyalty choice"
+		random < 40
+	source
+		government "Hai (Unfettered)"
+	destination
+		government "Hai (Unfettered)"
+		distance 2 4
+	on offer
+		conversation
+			`An Unfettered commander summons you to a private meeting. "You cannot serve two masters," they say bluntly. "You fight with us, yet you trade with them. You claim allegiance to us, yet they call you friend." Their voice hardens. "Choose. Now."`
+			choice
+				`	"I stand with the Unfettered."`
+					goto unfettered
+				`	"I won't be forced to choose."`
+					goto refuse
+				`	"I think both sides have value."`
+					goto neutral
+			label unfettered
+			`	The commander studies you for a long moment, then nods. "Words are easy. But you have also acted. Very well." They rise. "But know this: if you are ever seen dealing with our soft cousins again, we will assume you have chosen them. And we will respond accordingly."`
+				accept
+			label refuse
+			`	"Then you choose nothing. And nothing is what you will receive." The commander's voice is cold. "Leave Unfettered space. You are no longer welcome here."`
+				decline
+			label neutral
+			`	"There is no 'neutral' in war." The commander's disgust is evident. "The soft Hai have poisoned your mind with their talk of peace. Go back to them. You are not True Hai material."`
+				decline
+	on complete
+		set "unfettered loyalty choice"
+		"reputation: Hai" -= 30
+		"reputation: Hai Merchant" -= 20
+		dialog `Word of your decision spreads quickly through Unfettered space. You are now firmly in their camp - and firmly opposed to the peaceful Hai. There is no going back. The Unfettered, at least, seem pleased. "You have made the right choice," the commander says. "Now prove it was not merely words."`
+
+
+
+# ESCALATION CONSEQUENCES
+
+mission "Unfettered: Total War"
+	name "Final Offensive"
+	description "The Unfettered are planning a massive assault. They want you to help lead it."
+	job
+	to offer
+		has "unfettered deep strike"
+		has "unfettered loyalty choice"
+		"reputation: Hai (Unfettered)" > 75
+		"reputation: Hai" < -50
+		not "unfettered total war"
+		random < 10
+	source
+		government "Hai (Unfettered)"
+	destination
+		government "Hai (Unfettered)"
+	on offer
+		conversation
+			`The highest-ranking Unfettered warlords have gathered, and you've been summoned to join them. "The time has come," the supreme commander announces. "Our forces are ready. Our weapons are sharp. And we have warriors like this human" - they gesture to you - "who have proven themselves worthy."`
+			`	"We will strike at the heart of our soft cousins. Not a raid. A conquest. They will remember what it means to be Hai."`
+			choice
+				`	"I'm ready to fight."`
+					accept
+				`	"This is too extreme."`
+					goto decline
+				`	"What's the plan?"`
+			`	"We hit their supply lines first. Then their shipyards. Then..." The commander's teeth gleam. "Then we remind them that the True Hai are not to be forgotten."`
+			choice
+				`	"Let's do it."`
+					accept
+				`	"I'm not sure I want to be part of a full-scale war."`
+					goto decline
+			label decline
+			`	The room falls silent. Every Unfettered eye is on you. "You refuse?" The commander's voice is dangerously quiet. "After everything we have given you? After you swore loyalty?"`
+			`	The atmosphere becomes threatening. Perhaps refusing was a mistake.`
+				decline
+	on decline
+		"reputation: Hai (Unfettered)" -= 50
+	on complete
+		set "unfettered total war"
+		dialog `The war council accepts your allegiance with solemn nods. "You will command a wing of our fleet," the supreme commander says. "Make us proud, human. Show the galaxy that the Unfettered and our allies are a force to be reckoned with." The weight of what you've agreed to settles on your shoulders. There's no turning back now.`
+
+
+
+# NEWS ITEMS
+
+news "Unfettered Tension"
+	location
+		government "Hai"
+	name
+		word
+			"Hai merchant"
+			"Hai trader"
+			"Hai citizen"
+	message
+		word
+			"The Unfettered have been more aggressive lately. "
+			"I heard there's a human fighting alongside the Unfettered now. "
+			"The raids from Unfettered space have gotten worse. "
+		word
+			"I don't understand why they can't just accept peace. "
+			"They say they're the 'True Hai,' but they just seem violent. "
+			"Our ancestors chose harmony. Why can't they? "
+		word
+			"I hope the elders can find a solution before it's too late."
+			"Perhaps one day they'll remember what it means to be civilized."
+			"Violence only breeds more violence."
+
+news "Unfettered Pride"
+	location
+		government "Hai (Unfettered)"
+	name
+		word
+			"Unfettered warrior"
+			"Unfettered pilot"
+			"Unfettered youth"
+	message
+		word
+			"We are the True Hai! "
+			"Our ancestors knew what strength meant! "
+			"The soft Hai have forgotten their heritage! "
+		word
+			"We will not be tamed like pets. "
+			"We will reclaim what was taken from us. "
+			"We remember who we were before the Drak changed us. "
+		word
+			"The galaxy will know our name again!"
+			"Victory or death - that is the True Hai way!"
+			"Soon our cousins will remember what it means to be Hai!"
+
+news "Unfettered Human Ally"
+	location
+		government "Hai (Unfettered)"
+	to show
+		has "unfettered warrior trial"
+	name
+		word
+			"Unfettered warrior"
+			"Unfettered youth"
+	message
+		word
+			"Did you hear about the human warrior? "
+			"There's a human who fights alongside us now! "
+			"The human who passed the trial - have you met them? "
+		word
+			"They proved themselves in combat against our best. "
+			"They understand what it means to be True Hai. "
+			"They fight like one of us, not like those soft merchants. "
+		word
+			"Perhaps not all humans are weak after all."
+			"If more humans were like them, we'd have more allies."
+			"They have earned the respect of the Unfettered!"

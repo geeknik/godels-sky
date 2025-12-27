@@ -1,0 +1,559 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Galactic Event Consequences
+# These missions trigger large-scale events based on player behavior patterns.
+# The player's actions ripple outward to affect the entire galaxy.
+# Events can be positive (stabilizing) or negative (destabilizing).
+
+
+
+# PIRATE ACTIVITY SURGE
+# Triggered when player acts as a pirate, inspiring others
+
+mission "Event: Pirate Surge Warning"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 2
+		"days" > 30
+		not "event pirate surge"
+		random < 15
+	on offer
+		set "event pirate surge"
+		log "Heard rumors that pirate activity is increasing across human space. Some say a notorious captain has been inspiring copycat attacks."
+		conversation
+			`As you land, you overhear merchants talking nervously. "Did you hear? Pirate attacks are up thirty percent this quarter," one says. Another nods grimly. "Ever since that captain started making a name for themselves, every wannabe pirate thinks they can do the same."`
+			`	You realize they might be talking about you.`
+				decline
+
+event "Pirate Activity Increase"
+	system "Almaaz"
+		fleet "Small Core Pirates" 800
+	system "Alcyone"
+		fleet "Small Core Pirates" 800
+	system "Alioth"
+		fleet "Small Core Pirates" 800
+	system "Markab"
+		fleet "Small Core Pirates" 800
+
+mission "Event: Pirate Surge Active"
+	invisible
+	landing
+	to offer
+		has "event pirate surge"
+		"days" > 45
+		not "event pirate surge active"
+	on offer
+		set "event pirate surge active"
+		event "Pirate Activity Increase"
+		fail
+
+mission "Event: Pirate Legend"
+	name "Pirate Gathering"
+	description "Your reputation as a pirate has attracted attention. A gathering of pirates on <destination> wants to meet the legend."
+	job
+	to offer
+		has "event pirate surge"
+		"actionlog: pattern" == 2
+		"combat rating" > 100
+		random < 20
+	source
+		government "Pirate"
+	destination
+		government "Pirate"
+		distance 3 6
+	on complete
+		payment 50000
+		dialog `The pirates gather around you like you're a celebrity. "You're the one they talk about on the Navy channels," a scarred captain says with admiration. "The one who made fools of them all." They raise drinks in your honor. "You've given us all hope. If you can do it, maybe we can too." You've become a symbol - whether you wanted to or not.`
+
+
+
+# TRADE ROUTE PROSPERITY
+# Triggered when player acts as a trader, stabilizing routes
+
+mission "Event: Trade Prosperity"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 1
+		"days" > 30
+		"credits" > 1000000
+		not "event trade prosperity"
+		random < 15
+	on offer
+		set "event trade prosperity"
+		log "Trade seems to be flourishing. Merchants are reporting safer routes and better profits, and some credit reliable captains like yourself."
+		conversation
+			`A group of merchants at the spaceport bar waves you over. "You're that trader, aren't you? The reliable one," their leader says. "Thanks to captains like you, the trade routes are safer than they've been in years. Pirates think twice when they see ships actually defend themselves."`
+			`	They buy you a drink. "Keep it up. You're good for business."`
+				decline
+
+event "Trade Route Stabilization"
+	system "Rigel"
+		fleet "Small Northern Merchants" 500
+	system "Aldebaran"
+		fleet "Small Northern Merchants" 500
+	system "Betelgeuse"
+		fleet "Small Northern Merchants" 500
+	system "Alphard"
+		fleet "Small Northern Merchants" 500
+
+mission "Event: Trade Prosperity Active"
+	invisible
+	landing
+	to offer
+		has "event trade prosperity"
+		"days" > 45
+		not "event trade prosperity active"
+	on offer
+		set "event trade prosperity active"
+		event "Trade Route Stabilization"
+		fail
+
+mission "Event: Merchant Guild Invitation"
+	name "Guild Membership"
+	description "Your trading reputation has earned you an invitation to the Merchant Guild. Attend their meeting on <destination>."
+	job
+	to offer
+		has "event trade prosperity"
+		"actionlog: pattern" == 1
+		"credits" > 2000000
+		not "merchant guild member"
+		random < 25
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		distance 3 6
+	on complete
+		set "merchant guild member"
+		payment 100000
+		dialog `The Merchant Guild's representative welcomes you formally. "Your trading record speaks for itself," they say. "You've established reliable routes, maintained fair prices, and even defended fellow merchants from pirates." They present you with a guild seal. "You are now a full member. This seal will grant you priority docking and preferential treatment at guilded spaceports across human space."`
+
+
+
+# BOUNTY HUNTER CRACKDOWN
+# Triggered when player acts as a bounty hunter, reducing crime
+
+mission "Event: Crime Reduction"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 3
+		"days" > 30
+		not "event crime reduction"
+		random < 15
+	on offer
+		set "event crime reduction"
+		log "Crime rates are dropping across several systems. Authorities are crediting the work of bounty hunters and private security contractors."
+		conversation
+			`A Navy officer approaches you at the spaceport. "You're one of the bounty hunters, aren't you?" they say, not unkindly. "We've noticed crime rates dropping in the systems you frequent. The brass is taking notice."`
+			`	They nod approvingly. "Keep up the good work. The Navy could use more people like you."`
+				decline
+
+event "Crime Rate Reduction"
+	system "Sol"
+		fleet "Small Core Pirates" 1500
+	system "Vega"
+		fleet "Small Core Pirates" 1500
+	system "Capella"
+		fleet "Small Core Pirates" 1500
+
+mission "Event: Crime Reduction Active"
+	invisible
+	landing
+	to offer
+		has "event crime reduction"
+		"days" > 45
+		not "event crime reduction active"
+	on offer
+		set "event crime reduction active"
+		event "Crime Rate Reduction"
+		fail
+
+mission "Event: Security Contract"
+	name "System Security Contract"
+	description "Your bounty hunting reputation has earned you a lucrative security contract. Report to <destination> for details."
+	job
+	to offer
+		has "event crime reduction"
+		"actionlog: pattern" == 3
+		"combat rating" > 150
+		random < 20
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		distance 2 5
+	on complete
+		payment 150000
+		dialog `The security contractor reviews your record with satisfaction. "Impressive. You've cleared more bounties than most hunters do in a lifetime." They slide a contract across the table. "We want you on retainer. Guaranteed payments plus bounties. You've earned it." This is the big leagues now.`
+
+
+
+# PROTECTOR MOVEMENT
+# Triggered when player acts as a protector, inspiring others
+
+mission "Event: Protector Movement"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 4
+		"days" > 30
+		"combat rating" > 100
+		not "event protector movement"
+		random < 15
+	on offer
+		set "event protector movement"
+		log "A grassroots movement of citizen protectors is spreading across human space. They cite your example as inspiration."
+		conversation
+			`A young pilot runs up to you at the spaceport. "You're them! The protector!" They're practically vibrating with excitement. "I started escorting merchants because of you! A whole bunch of us did!"`
+			`	Before you can respond, they continue: "We call ourselves the Shields. We protect traders from pirates, just like you do. You're our hero!"`
+			`	You've apparently started a movement.`
+				decline
+
+event "Protector Fleet Emergence"
+	system "Rutilicus"
+		fleet "Small Militia" 400
+	system "Menkent"
+		fleet "Small Militia" 400
+	system "Zubenelgenubi"
+		fleet "Small Militia" 400
+
+mission "Event: Protector Movement Active"
+	invisible
+	landing
+	to offer
+		has "event protector movement"
+		"days" > 45
+		not "event protector movement active"
+	on offer
+		set "event protector movement active"
+		event "Protector Fleet Emergence"
+		fail
+
+mission "Event: Shield Leadership"
+	name "Lead the Shields"
+	description "The Shields, a movement you inspired, want you to lead them. Meet their representatives on <destination>."
+	job
+	to offer
+		has "event protector movement"
+		"actionlog: pattern" == 4
+		"combat rating" > 175
+		not "shield leader"
+		random < 20
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	destination
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+		distance 3 6
+	on complete
+		set "shield leader"
+		payment 75000
+		"reputation: Republic" += 10
+		"reputation: Syndicate" += 5
+		"reputation: Free Worlds" += 10
+		dialog `The Shields have organized themselves into a proper volunteer fleet. "We're over two hundred ships strong now," their coordinator says proudly. "All because of you. We need leadership. Real leadership." They offer you a formal position. "Will you guide us? Help us become something greater?" You accept, knowing this is just the beginning.`
+
+
+
+# WARMONGER DESTABILIZATION
+# Triggered when player acts as a warmonger, causing chaos
+
+mission "Event: Regional Tension"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 5
+		"days" > 30
+		not "event regional tension"
+		random < 15
+	on offer
+		set "event regional tension"
+		log "Tensions between factions are rising. Reports suggest a particularly aggressive captain has been destabilizing the region."
+		conversation
+			`News reports on the spaceport screens show worried analysts. "...and this latest wave of violence has only increased tensions between the major factions. Intelligence suggests a single actor may be responsible for much of the recent instability..."`
+			`	You recognize some of the battle footage. It's you.`
+				decline
+
+event "Regional Tension Increase"
+	system "Rutilicus"
+		fleet "Small Republic" 600
+	system "Arcturus"
+		fleet "Small Syndicate" 600
+	system "Alioth"
+		fleet "Small Free Worlds" 600
+
+mission "Event: Regional Tension Active"
+	invisible
+	landing
+	to offer
+		has "event regional tension"
+		"days" > 45
+		not "event regional tension active"
+	on offer
+		set "event regional tension active"
+		event "Regional Tension Increase"
+		fail
+
+mission "Event: Warlord Recruitment"
+	name "A Dark Offer"
+	description "Your reputation for violence has attracted the attention of dangerous people. Someone on <destination> wants to make you an offer."
+	job
+	to offer
+		has "event regional tension"
+		"actionlog: pattern" == 5
+		"combat rating" > 200
+		random < 15
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate" "Independent"
+		distance 3 6
+	on offer
+		conversation
+			`A hooded figure approaches you. "You are the one they call 'The Scourge' on Navy channels," they say quietly. "You have caused more chaos than anyone in recent memory. My employers are... impressed."`
+			choice
+				`	"Who are your employers?"`
+				`	"I'm not interested."`
+					decline
+			`	"People who appreciate talent. People who pay well. People who could use someone like you." They slide a data chip across the table. "The location is here. Come alone. Or don't come at all." They disappear into the crowd.`
+				accept
+	on complete
+		payment 200000
+		dialog `The meeting takes place in a secure bunker. The people here are clearly wealthy, clearly powerful, and clearly dangerous. "We've watched your work," their leader says. "You have a gift for destruction. We can give you targets, resources, protection. All we ask is that you continue doing what you do best." They transfer a substantial payment. "Consider this an advance. There's much more where that came from."`
+
+
+
+# ATROCITY CONSEQUENCES
+# Galactic-scale reaction to unforgivable acts
+
+mission "Event: Galactic Condemnation"
+	invisible
+	landing
+	to offer
+		"reputation: atrocity"
+		not "event galactic condemnation"
+	on offer
+		set "event galactic condemnation"
+		log "Your atrocities have become galactic news. Multiple factions have issued condemnations and bounties."
+		conversation
+			`Every screen in the spaceport is showing the same thing: your face, accompanied by the word "WANTED." The news anchor's voice is grim: "...the captain known as <first> <last> has been formally condemned by the Republic, Syndicate, and Free Worlds governments. A combined bounty of five million credits has been placed on their head..."`
+			`	People are staring at you. Some with fear. Some with disgust. A few are reaching for weapons.`
+				decline
+
+event "Galactic Manhunt"
+	system "Sol"
+		fleet "Large Republic" 300
+	system "Aldebaran"
+		fleet "Large Syndicate" 300
+	system "Tarazed"
+		fleet "Large Free Worlds" 300
+
+mission "Event: Galactic Condemnation Active"
+	invisible
+	landing
+	to offer
+		has "event galactic condemnation"
+		"days" > 15
+		not "event galactic condemnation active"
+	on offer
+		set "event galactic condemnation active"
+		event "Galactic Manhunt"
+		fail
+
+mission "Event: Hunter Becomes Hunted"
+	name "The Price of Infamy"
+	description "Your atrocities have made you the most wanted person in the galaxy. Survive."
+	job
+	to offer
+		has "event galactic condemnation"
+		"combat rating" > 200
+		random < 40
+	source
+		government "Pirate" "Independent"
+	on offer
+		dialog `A grizzled captain pulls you aside. "You've got guts showing your face anywhere," they say. "Every bounty hunter in the galaxy is looking for you. My advice? Run far and run fast. Or..." They shrug. "Or go down fighting. Your choice." Welcome to life as the galaxy's most wanted.`
+	on accept
+		fail
+
+
+
+# DIPLOMATIC CONSEQUENCES
+# Player actions affecting faction relations
+
+mission "Event: Diplomatic Incident"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 5
+		"reputation: Republic" < -30
+		"reputation: Syndicate" < -30
+		not "event diplomatic incident"
+		random < 20
+	on offer
+		set "event diplomatic incident"
+		log "Your actions have contributed to deteriorating relations between the Republic and Syndicate. Both sides blame 'rogue elements' for the tension."
+		conversation
+			`News broadcasts are reporting on increasing tension between the Republic and the Syndicate. "...analysts suggest that recent attacks by unknown parties have pushed relations to their lowest point in decades. Both governments are accusing the other of harboring the responsible parties..."`
+			`	You know exactly who those "unknown parties" are.`
+				decline
+
+mission "Event: Peace Mediator"
+	name "Unlikely Peacemaker"
+	description "Your protective actions have earned you respect from multiple factions. Someone thinks you could help ease tensions. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 4
+		"reputation: Republic" > 25
+		"reputation: Syndicate" > 25
+		"reputation: Free Worlds" > 25
+		not "event peace mediator"
+		random < 10
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Neutral"
+		distance 3 6
+	on complete
+		set "event peace mediator"
+		payment 100000
+		"reputation: Republic" += 10
+		"reputation: Syndicate" += 10
+		"reputation: Free Worlds" += 10
+		dialog `The diplomat looks at you with a mixture of surprise and respect. "You've managed something rare," they say. "You're trusted by all three major factions. That makes you valuable." They explain their proposal: you could serve as a neutral party, carrying messages and helping to ease tensions. "The galaxy could use more people like you. Will you help us prevent the next war?"`
+
+
+
+# NEWS REFLECTING GALACTIC EVENTS
+
+news "Pirate Activity Rising"
+	location
+		government "Republic" "Syndicate" "Free Worlds"
+	to show
+		has "event pirate surge"
+	name
+		word
+			"Nervous merchant"
+			"Worried trader"
+			"Concerned pilot"
+	message
+		word
+			"Pirate activity has been increasing lately. "
+			"I've heard of more attacks in the past month than the past year. "
+			"The pirates seem bolder than ever before. "
+		word
+			"They say there's some captain out there inspiring them. "
+			"Someone's giving the pirates ideas. "
+			"A notorious pirate has been making headlines. "
+		word
+			"I'm adding more weapons to my ship."
+			"Might have to hire an escort for my next run."
+			"Times are getting dangerous."
+
+news "Trade Flourishing"
+	location
+		government "Republic" "Syndicate" "Free Worlds"
+	to show
+		has "event trade prosperity"
+	name
+		word
+			"Happy merchant"
+			"Prosperous trader"
+			"Satisfied captain"
+	message
+		word
+			"Trade has been excellent lately! "
+			"Profits are up across the board! "
+			"The routes have never been safer! "
+		word
+			"Some captain has been making the difference. "
+			"Reliable traders are stabilizing the market. "
+			"Competition keeps everyone honest. "
+		word
+			"Good times for those of us in the shipping business!"
+			"It's a great time to be a merchant!"
+			"The economy is booming!"
+
+news "Crime Dropping"
+	location
+		government "Republic" "Syndicate" "Free Worlds"
+	to show
+		has "event crime reduction"
+	name
+		word
+			"Grateful citizen"
+			"Relieved traveler"
+			"Happy resident"
+	message
+		word
+			"Crime is down in most systems! "
+			"The bounty hunters have been doing great work! "
+			"Pirates are thinking twice before attacking. "
+		word
+			"Someone out there is making a real difference. "
+			"The hunters are earning their bounties. "
+			"Justice is finally being served. "
+		word
+			"I feel safer traveling than I have in years."
+			"Maybe there's hope for civilization after all."
+			"Thank goodness for the hunters!"
+
+news "Protector Movement"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	to show
+		has "event protector movement"
+	name
+		word
+			"Enthusiastic pilot"
+			"Young idealist"
+			"Shield volunteer"
+	message
+		word
+			"Have you heard of the Shields? "
+			"There's a movement of volunteer protectors! "
+			"Citizens are taking safety into their own hands! "
+		word
+			"They escort merchants for free! "
+			"They fight pirates wherever they find them! "
+			"They're inspired by some legendary captain! "
+		word
+			"I'm thinking of joining up!"
+			"It's amazing what ordinary people can do!"
+			"This is what the galaxy needs!"
+
+news "Tension Rising"
+	location
+		government "Republic" "Syndicate" "Free Worlds"
+	to show
+		has "event regional tension"
+	name
+		word
+			"Worried analyst"
+			"Concerned citizen"
+			"Anxious traveler"
+	message
+		word
+			"Tensions between the factions are rising. "
+			"Things are getting unstable out there. "
+			"The political situation is deteriorating. "
+		word
+			"Some say a single person is responsible. "
+			"Someone's been stirring up trouble deliberately. "
+			"There's a destabilizing force at work. "
+		word
+			"I hope things don't get worse."
+			"We might be heading toward conflict."
+			"These are dangerous times."

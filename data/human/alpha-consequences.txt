@@ -1,0 +1,424 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Alpha Consequence Missions
+# The Alphas are genetically engineered super-soldiers with green skin, superhuman
+# abilities, and no empathy or compassion. They were humanity's greatest threat.
+# Many survived the Alpha Wars and remain hidden, plotting their return.
+# Player actions can attract their attention - for better or worse.
+
+
+
+# ALPHA HUNTER RECOGNITION CHAIN
+# For players who actively oppose the Alphas
+
+mission "Alpha Hunter: Noticed"
+	invisible
+	landing
+	to offer
+		has "FW Alphas 1.1: done"
+		not "alpha hunter noticed"
+	on offer
+		set "alpha hunter noticed"
+		conversation
+			`As you land, a man in civilian clothes approaches. Something about his bearing suggests military training. "Captain <last>," he says quietly. "I'm with Navy Intelligence. We've noticed your actions against the Alphas on Poisonwood."`
+			choice
+				`	"I was just helping out."`
+				`	"What do you want?"`
+			`	"We want you to know that your efforts haven't gone unnoticed. The fight against the Alphas is ongoing - they're still out there, hiding, planning. We may call on you again." He hands you a small communication device. "Keep this. If we need someone with your... capabilities, we'll be in touch."`
+			`	He walks away before you can respond. You've been recruited, whether you wanted to be or not.`
+				decline
+
+mission "Alpha Hunter: Intelligence"
+	name "Alpha Threat Assessment"
+	description "Navy Intelligence has information about Alpha activity. Meet your contact on <destination>."
+	job
+	to offer
+		has "alpha hunter noticed"
+		"combat rating" > 100
+		random < 20
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	destination
+		government "Republic"
+		distance 3 6
+	on complete
+		set "alpha hunter intelligence"
+		payment 50000
+		dialog `Your Intelligence contact briefs you on current Alpha activity. "They're not organized like they used to be," she explains. "Small cells, hidden on anarchist worlds and in the spaces between civilizations. But they're adapting, recruiting, planning." She shows you data on suspected Alpha locations. "We can't move openly against them without proof. But independent operators like you... you can go places we can't." The implications are clear.`
+
+mission "Alpha Hunter: Cell Elimination"
+	name "Alpha Cell"
+	description "Intelligence has located an Alpha cell on <destination>. Eliminate them."
+	job
+	to offer
+		has "alpha hunter intelligence"
+		"combat rating" > 150
+		random < 25
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Pirate" "Independent"
+		distance 4 8
+	npc kill
+		government "Alpha"
+		personality heroic staying
+		system destination
+		fleet
+			names "civilian"
+			variant
+				"Berserker"
+			variant
+				"Quicksilver"
+				"Sparrow" 2
+	on complete
+		payment 150000
+		"reputation: Republic" += 10
+		"reputation: Alpha" -= 25
+		dialog `The Alpha cell is eliminated. Your contact sends a brief message: "Confirmed. Good work. They won't hurt anyone else." You feel satisfaction, but also unease. The Alphas you killed were dangerous, but they died without trial, without due process. Is this justice, or just a cleaner form of murder? The question lingers.`
+
+mission "Alpha Hunter: Elite Status"
+	name "Alpha Hunter Recognition"
+	description "Your actions against the Alphas have earned you recognition. Report to <destination>."
+	job
+	to offer
+		has "alpha hunter intelligence"
+		"reputation: Alpha" < -50
+		"combat rating" > 200
+		random < 15
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic"
+		distance 2 5
+	on complete
+		set "alpha hunter elite"
+		payment 200000
+		"reputation: Republic" += 25
+		dialog `Admiral Danforth himself greets you. "Captain <last>, your work against the Alphas has been exemplary," he says. "You've eliminated more Alpha cells than most Navy units. Unofficially, of course - we can never acknowledge operations like yours." He hands you a substantial payment. "The Republic owes you a debt. If you ever need our help, it will be there." You've become one of humanity's most effective weapons against its oldest enemy.`
+
+
+
+# ALPHA TARGET CHAIN
+# For players who become targets of Alpha attention
+
+mission "Alpha Target: Observed"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 5
+		"combat rating" > 150
+		not "alpha target observed"
+		random < 10
+	on offer
+		set "alpha target observed"
+		conversation
+			`As you walk through the spaceport, you notice someone watching you. When you look directly at them, they don't look away. Instead, they smile - a cold, predatory smile.`
+			`	Their skin has a faint greenish tint.`
+			choice
+				`	(Approach them.)`
+				`	(Ignore them and keep walking.)`
+					goto ignore
+				`	(Reach for your weapon.)`
+					goto weapon
+			`	The figure raises their hands in mock surrender. "Easy, Captain. I'm not here to fight. Just... observing." Their voice is unnaturally smooth. "You've been making quite a name for yourself. The kind of name that gets noticed by people like me."`
+			choice
+				`	"What do you want?"`
+					goto want
+				`	"Are you an Alpha?"`
+					goto alpha
+			label ignore
+			`	As you walk away, you hear them laugh. "Pretending you didn't see me won't help, Captain. We know who you are. We know what you've done. We'll be watching." The words follow you like a curse.`
+				decline
+			label weapon
+			`	"Weapons in a crowded spaceport? Messy." They don't seem concerned. "I'm just delivering a message: we know who you are. We know your capabilities. When the time comes, we may have a use for someone like you." They turn and walk away, disappearing into the crowd.`
+				decline
+			label want
+			`	"Nothing. Yet." Their eyes are cold, calculating. "But talent like yours shouldn't be wasted on petty governments. When you're ready for something bigger, we'll find you." They vanish into the crowd before you can respond.`
+				decline
+			label alpha
+			`	"Labels are so limiting," they say. "Let's just say I represent... evolved interests. And we're always looking for capable individuals." They press something into your hand - a small data chip. "In case you want to know more." They're gone before you can react.`
+				decline
+
+mission "Alpha Target: Recruitment Attempt"
+	name "An Offer"
+	description "Someone claiming to represent 'evolved interests' wants to meet you on <destination>."
+	job
+	to offer
+		has "alpha target observed"
+		"actionlog: pattern" >= 2
+		"actionlog: pattern" <= 5
+		random < 20
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate" "Independent"
+		distance 3 6
+	on offer
+		conversation
+			`You receive an encrypted message on a frequency you don't recognize. "Captain <last>. We've been watching your career with interest. You have skills we could use. Meet us on <destination> to discuss... opportunities."`
+			`	The message is unsigned, but you have a good idea who sent it.`
+			choice
+				`	(Accept the meeting.)`
+					accept
+				`	(Ignore the message.)`
+					decline
+				`	(Report this to the authorities.)`
+					goto report
+			label report
+			`	You forward the message to your Navy Intelligence contact. Within hours, they respond: "We'll have assets in the area. If this is who we think it is, don't provoke them - just gather information. But if you see an opportunity to eliminate a high-value target... take it."`
+				accept
+	on complete
+		conversation
+			`The meeting takes place in a private room at a rundown bar. Three individuals wait for you. Two are clearly guards - heavily muscled, with the telltale green tint to their skin. The third is different: older, more refined, but with the same unsettling coldness in their eyes.`
+			`	"Captain <last>," they say. "Thank you for coming. I am called Prometheus. I represent the next step in human evolution - what you call 'Alphas,' though we prefer 'Ascended.'"`
+			choice
+				`	"What do you want from me?"`
+				`	"I'm not interested in working with monsters."`
+					goto reject
+			`	"We want to offer you a choice. You've proven yourself capable of great violence. That's useful. But you've also shown independence - you don't blindly follow orders. That's rare." Prometheus leans forward. "The old humanity is dying. Governments squabble while the galaxy burns. We offer something better: a chance to be part of what comes next."`
+			choice
+				`	"What's the catch?"`
+					goto catch
+				`	"I'll never work with Alphas."`
+					goto reject
+			label catch
+			`	"No catch. Just understanding. Help us when we ask, and we'll help you. Betray us, and..." Prometheus smiles coldly. "Well. We have long memories and longer reaches."`
+			choice
+				`	"I'll think about it."`
+					goto maybe
+				`	"No deal."`
+					goto reject
+			label maybe
+			`	"That's all we ask." Prometheus stands. "We'll be in touch. In the meantime, consider what you really want from life. Power? Freedom? The governments can't give you that. We can." They leave, and you're left wondering what you've gotten yourself into.`
+			`	You receive 50,000 credits as a 'signing bonus.'`
+				accept
+			label reject
+			`	Prometheus's expression doesn't change. "A pity. You would have been useful." They stand. "This offer won't be repeated. And Captain? Now that you've seen our faces..." The guards move slightly, hands on weapons. "We'll be watching you very carefully. Enemies of our kind tend to have... accidents."`
+			`	They leave. You've made powerful enemies today.`
+				decline
+	on accept
+		payment 50000
+		set "alpha contact made"
+		"reputation: Alpha" += 25
+	on decline
+		set "alpha enemy made"
+		"reputation: Alpha" -= 25
+
+mission "Alpha Target: Betrayal Choice"
+	name "The Moment of Truth"
+	description "The Alphas are asking for your help with an operation. Meet them on <destination>."
+	job
+	to offer
+		has "alpha contact made"
+		random < 25
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate" "Independent"
+		distance 3 6
+	on offer
+		conversation
+			`Prometheus contacts you again. "It's time to prove your loyalty, Captain. We have a small operation planned - nothing major, just eliminating a troublesome Navy Intelligence agent who's been disrupting our networks. Meet us on <destination> to discuss details."`
+			choice
+				`	"I'll be there."`
+					accept
+				`	"I'm out. This was a mistake."`
+					goto out
+			label out
+			`	"I see." Prometheus's voice is cold. "That's unfortunate. We don't take betrayal lightly, Captain. Watch your back." The connection cuts. You've burned your bridge with the Alphas - and painted a target on yourself.`
+				decline
+	on decline
+		set "alpha betrayal"
+		"reputation: Alpha" -= 50
+	on complete
+		conversation
+			`The briefing is disturbing. The target is a woman - a Navy Intelligence analyst who's been mapping Alpha safe houses. Prometheus shows you her photo, her schedule, her vulnerabilities.`
+			`	"A simple job," Prometheus says. "Make it look like an accident. Pirates, perhaps. Or equipment failure. We don't care how, just that it's done."`
+			choice
+				`	"Consider it done."`
+					goto accept
+				`	"I can't kill someone in cold blood."`
+					goto refuse
+				`	(This is my chance to take them down.)`
+					goto attack
+			label accept
+			`	"Good. You'll be compensated generously." Prometheus transfers coordinates and details. "Don't disappoint us." You leave with blood money in your account and murder in your future. Is this really who you want to be?`
+			`	You receive 100,000 credits. Your soul feels considerably cheaper.`
+			payment 100000
+			set "alpha assassin"
+			"reputation: Alpha" += 20
+			"reputation: Republic" -= 50
+				accept
+			label refuse
+			`	Prometheus's eyes narrow. "Then you're of no use to us. And you know too much." The guards draw weapons. "This is disappointing, Captain. You had such potential." You barely escape with your life, but you escape. The Alphas will hunt you now.`
+			set "alpha enemy made"
+			"reputation: Alpha" -= 100
+				decline
+			label attack
+			`	You draw your weapon and fire. The guards are fast - inhumanly fast - but you're faster. Or maybe just luckier. In the chaos, Prometheus escapes, but you eliminate both guards. As alarms sound, you flee the station.`
+			`	A message arrives from Prometheus: "You've just signed your death warrant, Captain. Enjoy what little time you have left."`
+			set "alpha enemy made"
+			"reputation: Alpha" -= 100
+			"reputation: Republic" += 25
+				decline
+
+
+
+# ALPHA ENEMY CONSEQUENCES
+
+mission "Alpha Enemy: Assassination Attempt"
+	invisible
+	landing
+	to offer
+		has "alpha enemy made"
+		not "alpha assassination attempt"
+		random < 30
+	on offer
+		set "alpha assassination attempt"
+		conversation
+			`As you're walking to your ship, something whistles past your ear. A moment later, pain explodes in your shoulder - you've been shot.`
+			`	You dive for cover, scanning for the shooter. There - a figure on a nearby rooftop, green skin visible even at this distance. They're repositioning for another shot.`
+			choice
+				`	(Return fire.)`
+					goto fight
+				`	(Run for your ship.)`
+					goto flee
+			label fight
+			`	Your shot catches the assassin in the chest. They stumble, but don't fall - Alpha physiology is tough. You fire again, and this time they go down. Security forces arrive moments later, but the assassin has already disappeared. "Alpha," one guard mutters, examining the blood trail. "You're lucky to be alive, Captain."`
+				goto end
+			label flee
+			`	You sprint for your ship, bullets tracking your path. You make it aboard and lift off, medical systems already treating your wound. A message arrives: "You got lucky. Next time, you won't." The Alphas aren't going to stop.`
+			label end
+			`	You'll need to be more careful from now on. The Alphas don't forgive, and they don't forget.`
+				decline
+
+mission "Alpha Enemy: Bounty"
+	name "Hunted"
+	description "The Alphas have put a price on your head. Survive."
+	job
+	to offer
+		has "alpha enemy made"
+		"reputation: Alpha" < -75
+		random < 20
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	on offer
+		conversation
+			`A friend warns you: "Captain, I've seen your name on certain lists. The Alphas have put out an unofficial bounty - half a million credits to anyone who brings them your head. Literally." They look nervous just talking to you. "You might want to lay low for a while. Or get some serious backup."`
+			choice
+				`	"Thanks for the warning."`
+					accept
+				`	"Let them come."`
+					accept
+	on accept
+		dialog `You're now being hunted by the most dangerous predators in the galaxy. Every crowded spaceport could hide an assassin. Every job could be a trap. This is your life now - until either you or the Alphas are eliminated.`
+
+
+
+# ALPHA ALLIANCE CONSEQUENCES
+
+mission "Alpha Alliance: Inner Circle"
+	name "Ascendancy"
+	description "Prometheus invites you to meet the Alpha leadership. Travel to <destination>."
+	job
+	to offer
+		has "alpha assassin"
+		"reputation: Alpha" > 25
+		random < 15
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate" "Independent"
+		distance 5 10
+	on complete
+		set "alpha inner circle"
+		payment 250000
+		conversation
+			`You're brought to a hidden facility deep underground. The security is intense - you're scanned, searched, and escorted by multiple Alpha guards. Finally, you're brought before a council of six individuals, each with the distinctive green skin of the Ascended.`
+			`	"Captain <last>," the eldest says. "You've proven yourself useful. More than useful - you've shown that baseline humans can be valuable allies." They gesture for you to sit. "We've decided to offer you something we've never offered an unmodified human: a seat at our table."`
+			`	The offer is staggering. Wealth, power, protection - and all you have to do is continue serving their interests. As you accept, you wonder if you've made a deal with the devil. But the devil pays very well.`
+
+
+
+# NEWS ITEMS
+
+news "Alpha Sightings"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	name
+		word
+			"Nervous citizen"
+			"Worried traveler"
+			"Anxious pilot"
+	message
+		word
+			"I saw someone with green skin on <planet> last week. "
+			"There are rumors of Alpha activity in the outer systems. "
+			"A friend of mine swears they met an Alpha at a bar. "
+		word
+			"The authorities say the Alphas are under control, but... "
+			"I don't believe they're really gone. "
+			"They say some Alphas have lived for centuries. "
+		word
+			"I hope I never meet one."
+			"I keep my weapon ready, just in case."
+			"Remembrance Day feels more real after that."
+
+news "Alpha Hunter Reputation"
+	location
+		government "Republic" "Syndicate" "Free Worlds"
+	to show
+		has "alpha hunter intelligence"
+	name
+		word
+			"Navy officer"
+			"Intelligence analyst"
+			"Security consultant"
+	message
+		word
+			"There's a captain who's been hunting Alphas. "
+			"I heard about someone taking down Alpha cells. "
+			"The Navy has an unofficial asset against the Alphas. "
+		word
+			"They say they've eliminated more Alphas than anyone in decades. "
+			"Whoever they are, the Alphas are afraid of them. "
+			"I wish I could shake their hand. "
+		word
+			"We need more people like that."
+			"Maybe the Alphas will finally be finished."
+			"Hope they stay safe - the Alphas have long memories."
+
+news "Alpha Fear"
+	location
+		government "Pirate" "Independent"
+	to show
+		has "alpha enemy made"
+	name
+		word
+			"Nervous smuggler"
+			"Worried pirate"
+			"Anxious criminal"
+	message
+		word
+			"There's a captain with an Alpha bounty on their head. "
+			"Someone pissed off the Alphas something fierce. "
+			"I heard the Alphas are hunting a specific pilot. "
+		word
+			"Half a million credits, they say. "
+			"Anyone who crosses paths with that captain is in danger. "
+			"The Alphas don't forget, and they don't forgive. "
+		word
+			"I'm staying far away from that mess."
+			"Wouldn't want to be in their shoes."
+			"That captain is either brave or crazy."

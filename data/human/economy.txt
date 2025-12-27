@@ -1,0 +1,347 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Economy-Based Consequence Missions
+# These missions react to the player's economic activities and their effects
+# on markets, trade relationships, and financial standing. Reputation affects
+# access to markets, credit, and economic opportunities.
+
+
+
+# MERCHANT GUILD PROGRESSION
+
+mission "Economy: Merchant Guild Initiation"
+	name "Guild Membership"
+	description "Your trading activities have attracted the Merchant Guild's attention. Apply for membership on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 1
+		"reputation: Merchant" > 15
+		"credits" > 100000
+		not "merchant guild member"
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade" "rich"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade"
+		distance 2 5
+	on complete
+		set "merchant guild member"
+		payment 25000
+		"reputation: Merchant" += 10
+		dialog `The Merchant Guild representative reviews your trading history with approval. "Reliable deliveries, fair dealing, no cargo 'accidents,'" they note. "You meet our standards." They process your membership. "Welcome to the Guild. You'll have access to our information network, preferred rates at member ports, and protection from unfair practices." A signing bonus is transferred to your account.`
+
+mission "Economy: Merchant Guild Senior"
+	name "Senior Trader"
+	description "Your exemplary trading record has earned you senior status in the Merchant Guild. A promotion ceremony awaits on <destination>."
+	job
+	to offer
+		has "merchant guild member"
+		"actionlog: pattern" == 1
+		"reputation: Merchant" > 35
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade" "rich"
+		distance 2 5
+	on complete
+		set "merchant guild senior"
+		payment 75000
+		"reputation: Merchant" += 10
+		dialog `The Merchant Guild council formally promotes you to Senior Trader status. "You've proven yourself one of the most reliable captains in human space," the Guildmaster says. "Senior status grants you priority cargo assignments, access to exclusive markets, and a voice in Guild policy." Fellow merchants applaud as you receive your credentials.`
+
+mission "Economy: Merchant Prince"
+	name "Merchant Prince"
+	description "The Merchant Guild's highest honor awaits. You're being inducted into the Merchant Council on <destination>."
+	job
+	to offer
+		has "merchant guild senior"
+		"actionlog: pattern" == 1
+		"reputation: Merchant" > 60
+		"credits" > 1000000
+		random < 5
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade" "rich"
+		distance 2 5
+	on complete
+		set "merchant prince"
+		payment 250000
+		"reputation: Merchant" += 20
+		dialog `The induction ceremony is elaborate and prestigious. You're joining the elite of galactic commerce - the Merchant Princes who shape trade policy across human space. "Your wealth, your reputation, your influence - all are now assets of the Council," the Guildmaster explains. "In return, you have access to opportunities that only we can provide." The signing bonus is substantial.`
+
+
+
+# TRADE EMBARGO CONSEQUENCES
+
+mission "Economy: Republic Trade Restrictions"
+	name "Commercial Sanctions"
+	description "Your hostile reputation with the Republic has resulted in trade restrictions. A smuggler on <destination> offers alternatives."
+	job
+	to offer
+		"reputation: Republic" < -30
+		"credits" > 50000
+		random < 25
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Pirate" "Independent"
+		distance 2 5
+	on complete
+		set "republic trade embargo"
+		payment 20000
+		dialog `The smuggler reviews your situation. "Republic markets are closed to you," they confirm. "Your name is on their blacklist. Any legitimate port will refuse to trade with you." They offer an alternative. "But there are always back channels. It costs more, but I can get you access to goods you can't buy officially. Interested?"`
+
+mission "Economy: Syndicate Financial Freeze"
+	name "Asset Lockdown"
+	description "The Syndicate has frozen your financial assets. Find a way to recover them on <destination>."
+	job
+	to offer
+		"reputation: Syndicate" < -30
+		"credits" > 100000
+		random < 25
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Pirate" "Independent"
+		distance 2 5
+	on complete
+		set "syndicate financial freeze"
+		payment -50000
+		dialog `The underground banker shakes their head. "The Syndicate has locked down accounts connected to you across a dozen systems," they explain. "Corporate financial warfare. They can't seize everything, but they've made your money... inconvenient." They work some digital magic. "I've recovered what I can. But you've lost about 50,000 credits to their lawyers and accountants."`
+
+mission "Economy: Free Worlds Boycott"
+	name "Citizen Boycott"
+	description "Free Worlds citizens are boycotting your services. A PR specialist on <destination> offers to help."
+	job
+	to offer
+		"reputation: Free Worlds" < -30
+		random < 25
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		set "free worlds boycott"
+		payment -30000
+		dialog `The PR specialist reviews your reputation. "You've made enemies among Free Worlds citizens," they say. "They're actively warning others not to do business with you. It's grassroots, which means it's hard to counter." They propose a campaign. "For 30,000 credits, I can try to rehabilitate your image. No guarantees, but it's better than nothing."`
+
+
+
+# BLACK MARKET CONSEQUENCES
+
+mission "Economy: Black Market Access"
+	name "Underground Commerce"
+	description "Your criminal reputation has opened doors to the black market. A broker on <destination> offers access."
+	job
+	to offer
+		"actionlog: pattern" == 2
+		"reputation: Pirate" > 20
+		not "black market access"
+		random < 20
+	source
+		government "Pirate"
+	destination
+		government "Pirate"
+		distance 2 5
+	on complete
+		set "black market access"
+		payment 40000
+		"reputation: Pirate" += 5
+		dialog `The black market broker greets you warmly. "Word is you know how to liberate cargo from its previous owners," they say with a grin. "We appreciate that kind of initiative." They grant you access to the underground trade network. "Stolen goods, contraband, items that 'fell off' ships - we move it all. Welcome to the real economy."`
+
+mission "Economy: Fence Services"
+	name "Moving Hot Goods"
+	description "Your black market connections offer fence services for stolen cargo. Deliver goods to <destination>."
+	job
+	repeat
+	to offer
+		has "black market access"
+		"reputation: Pirate" > 25
+		random < 30
+	source
+		government "Pirate"
+	destination
+		government "Pirate"
+		distance 2 5
+	cargo "Stolen Goods" 20 5 .2
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 50000
+		dialog `The fence examines your cargo with a practiced eye. "Good quality merchandise," they judge. "Not too hot, not too cold. Easy to move." They transfer your payment. "Keep bringing goods like this, and we'll keep making money together. The black market rewards reliability just like the legitimate one."`
+
+
+
+# FINANCIAL CRISIS CONSEQUENCES
+
+mission "Economy: Debt Collection"
+	name "Creditors Calling"
+	description "Your negative credit score has attracted debt collectors. Negotiate on <destination>."
+	job
+	to offer
+		"credits" < 10000
+		"crew: trustworthiness" < 500
+		random < 30
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Syndicate" "Independent"
+		distance 2 5
+	on complete
+		payment -5000
+		dialog `The debt collector is not friendly. "You've been running up bills and not paying them," they state. "Interest is accumulating. This is your one warning." They take a 'processing fee' from your account. "Get your finances in order. Next time we meet, the conversation will be less pleasant."`
+
+mission "Economy: Credit Rehabilitation"
+	name "Financial Recovery"
+	description "A financial advisor is offering to help rebuild your credit rating. Meet them on <destination>."
+	job
+	to offer
+		"credits" > 100000
+		"crew: trustworthiness" < 600
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Syndicate"
+		distance 2 5
+	on complete
+		payment -25000
+		dialog `The financial advisor reviews your accounts. "Your credit rating is damaged, but not beyond repair," they assess. "For 25,000 credits, I can consolidate your debts, renegotiate terms, and establish a rehabilitation plan." You agree. "Within a few months, your financial reputation should recover. But you need to stay current on your obligations."`
+
+
+
+# MARKET INFLUENCE
+
+mission "Economy: Market Manipulation Warning"
+	name "Trading Investigation"
+	description "The Commerce Authority suspects you of market manipulation. Report to <destination> for investigation."
+	job
+	to offer
+		"actionlog: pattern" == 1
+		"reputation: Merchant" > 30
+		"credits" > 500000
+		random < 10
+	source
+		government "Republic" "Syndicate"
+	destination
+		government "Republic" "Syndicate"
+		distance 2 5
+	on complete
+		payment -50000
+		dialog `The Commerce Authority investigator reviews your trading records intensively. "Your trading patterns have significantly affected commodity prices in several markets," they note. "While not technically illegal, your activities have drawn... attention." They impose a 'market stabilization fee.' "Consider this a warning. Trade fairly, or we'll be watching more closely."`
+
+mission "Economy: Price War"
+	name "Competitive Pressure"
+	description "Rival traders are undercutting your rates. Fight back or find new markets. Strategize on <destination>."
+	job
+	to offer
+		has "merchant guild member"
+		"reputation: Merchant" > 25
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade"
+		distance 2 5
+	on complete
+		payment 30000
+		dialog `Your Merchant Guild contact briefs you on the competition. "A consortium of smaller traders is targeting your routes," they explain. "They're offering lower rates, trying to push you out." They offer strategy advice. "You can fight back with volume, find new routes they can't access, or diversify into services they don't offer." A Guild support payment helps offset your losses.`
+
+
+
+# ECONOMIC REPUTATION EFFECTS
+
+mission "Economy: Investment Opportunity"
+	name "Venture Capital"
+	description "Your trading success has attracted investors. Meet them on <destination> to discuss opportunities."
+	job
+	to offer
+		"actionlog: pattern" == 1
+		"reputation: Merchant" > 40
+		"credits" > 300000
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Syndicate"
+		attributes "rich"
+		distance 2 5
+	on complete
+		payment 100000
+		dialog `The investment group is impressed by your track record. "Consistent profits, diverse routes, strong reputation," they summarize. "We'd like to invest in your operations." They offer a substantial capital injection. "Expand your fleet, open new routes, hire more crew. We'll take a small percentage of profits, but the growth potential is significant."`
+
+mission "Economy: Insurance Premium"
+	name "Risk Assessment"
+	description "Your dangerous activities have affected your insurance rates. Negotiate on <destination>."
+	job
+	to offer
+		"actionlog: pattern" >= 2
+		"actionlog: pattern" <= 5
+		"combat rating" > 50
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Syndicate"
+		distance 2 5
+	on complete
+		payment -40000
+		dialog `The insurance adjuster reviews your file with concern. "Combat engagements, hostile faction activity, criminal associations..." they list. "Your risk profile has increased significantly." They recalculate your premiums. "I'm afraid your rates are going up. Substantially. A 40,000 credit adjustment is required to maintain coverage."`
+
+
+
+# CREW ECONOMIC CONSEQUENCES
+
+mission "Economy: Crew Compensation"
+	name "Labor Dispute"
+	description "Your crew is demanding better pay. Negotiate on <destination> before they strike."
+	job
+	to offer
+		"crew: trustworthiness" < 500
+		"credits" > 50000
+		random < 25
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 4
+	on complete
+		payment -30000
+		dialog `Your crew's representatives present their demands. "Wages haven't kept pace with the risks we're taking," the spokescrewman says. "Either we get a raise, or we walk." After tense negotiations, you agree to a 30,000 credit bonus pool. "This buys you goodwill for now," they say. "But don't let it slide again."`
+
+mission "Economy: Crew Loyalty Bonus"
+	name "Appreciation Day"
+	description "Your well-treated crew has attracted attention. A management consultant on <destination> wants to study your approach."
+	job
+	to offer
+		"crew: trustworthiness" > 800
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Syndicate"
+		distance 2 5
+	on complete
+		payment 50000
+		dialog `The management consultant is impressed. "Your crew loyalty metrics are exceptional," they observe. "Low turnover, high morale, strong operational security. Other captains could learn from your approach." They commission a case study. "We'd like to document your management techniques. The fee for participating is substantial - your methods are valuable intellectual property."`

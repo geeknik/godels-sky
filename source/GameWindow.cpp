@@ -146,7 +146,7 @@ bool GameWindow::Init(bool headless)
 		flags |= SDL_WINDOW_MAXIMIZED;
 
 	// The main window spawns visibly at this point.
-	mainWindow = SDL_CreateWindow("Endless Sky", SDL_WINDOWPOS_UNDEFINED,
+	mainWindow = SDL_CreateWindow("Gödel's Sky", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, headless ? 0 : flags);
 
 	if(!mainWindow)
@@ -461,7 +461,7 @@ void GameWindow::ExitWithError(const string &message, bool doPopUp)
 		SDL_MessageBoxData box;
 		box.flags = SDL_MESSAGEBOX_ERROR;
 		box.window = nullptr;
-		box.title = "Endless Sky: Error";
+		box.title = "Gödel's Sky: Error";
 		box.message = message.c_str();
 		box.colorScheme = nullptr;
 

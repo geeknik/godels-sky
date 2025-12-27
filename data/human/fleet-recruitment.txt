@@ -1,0 +1,500 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Fleet Recruitment Missions
+# These missions represent NPCs who want to join the player's fleet based on
+# the player's reputation, behavior patterns, and accomplishments. Your
+# actions attract like-minded individuals who want to serve under a captain
+# whose values align with their own.
+
+# =============================================================================
+# TRADER PATTERN RECRUITMENT (Pattern 1)
+# =============================================================================
+
+mission "Recruit: Aspiring Merchant"
+	name "Crew Applicant"
+	description "A young merchant captain wants to learn from your successful trading operation. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 1
+		"reputation: Merchant" > 20
+		"flagship crew" > 5
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		"flagship crew" += 3
+		payment 10000
+		dialog `The young merchant is eager and earnest. "I've been watching your operation," they say. "Clean routes, fair prices, reliable schedules. That's the kind of trading I want to learn." They've brought their own small savings as a buy-in. "I know I'm just starting, but I work hard. Take me on, and I'll earn my place." Their enthusiasm is infectious.`
+
+mission "Recruit: Trade Family"
+	name "Family Operation Request"
+	description "A merchant family with generations of experience wants to join your fleet. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 1
+		"reputation: Merchant" > 40
+		"cargo space" > 200
+		random < 12
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "trade"
+		distance 2 6
+	on complete
+		"flagship crew" += 8
+		payment 50000
+		dialog `The Hernandez family has traded for four generations. "Our ship was destroyed in a pirate attack," the patriarch explains. "Insurance covered the loss, but not the income. We heard about your operation - clean, profitable, well-protected." They offer their expertise as crew. "We know every trade route, every commodity cycle, every port official. Let us work for you until we can rebuild." Their experience is invaluable.`
+
+mission "Recruit: Retired Trader"
+	name "One More Run"
+	description "A legendary retired trader wants to come out of retirement for your operation. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 1
+		"reputation: Merchant" > 60
+		has "trade magnate"
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Neutral"
+		distance 2 5
+	on complete
+		"flagship crew" += 5
+		payment 75000
+		"reputation: Merchant" += 5
+		dialog `Marcus Chen is a legend in trading circles. "Fifty years in the business," he says. "Made my fortune, retired young, got bored." He examines your operation with an expert eye. "You've built something impressive. Reminds me of my early days." He offers his services. "I don't need the money. I need the work. Let me join your crew, teach your people what I know. One more run. For old times' sake."`
+
+
+# =============================================================================
+# PIRATE PATTERN RECRUITMENT (Pattern 2)
+# =============================================================================
+
+mission "Recruit: Desperate Criminal"
+	name "No Other Options"
+	description "Someone on the run wants to join your operation. They're waiting on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 2
+		"reputation: Pirate" > 15
+		random < 20
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Independent" "Pirate"
+		distance 2 5
+	on complete
+		"flagship crew" += 4
+		dialog `The applicant looks desperate. "I'm wanted in three systems," they admit. "Small-time stuff, but enough to get me locked up forever." They've heard about your operation. "You take what you need. You don't apologize for it. I can work with that." They have useful skills - navigation, weapons maintenance. "I'm not asking for charity. I'll pull my weight. Just give me a place where the law can't reach me."`
+
+mission "Recruit: Pirate Crew"
+	name "Professional Raiders"
+	description "An experienced pirate crew wants to serve under your flag. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 2
+		"reputation: Pirate" > 30
+		"combat rating" > 50
+		random < 15
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Pirate"
+		distance 2 5
+	on complete
+		"flagship crew" += 10
+		dialog `The pirate crew is professional and well-equipped. "We've been watching your raids," the captain says. "Clean hits, good target selection, no unnecessary casualties. That's not common in our business." They're looking for stable leadership. "Working alone, we're small-time. Under someone with your reputation, we could do better." They offer their ship as escort, their crew as support. "What do you say, boss?"`
+
+mission "Recruit: Fallen Captain"
+	name "Second Chance"
+	description "A disgraced former Navy captain wants to join your fleet. They're waiting on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 2
+		"reputation: Pirate" > 45
+		"combat rating" > 100
+		random < 10
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Independent"
+		distance 2 5
+	on complete
+		"flagship crew" += 6
+		payment 25000
+		dialog `Commander Sarah Vance was court-martialed three years ago. "They said I was too aggressive," she says bitterly. "Took too many risks. Killed too many enemy combatants." She looks at you with respect. "You take what you want. You don't play by their rules. That's what I should have done." She offers her military expertise. "I know Navy tactics, patrol patterns, weak points. Let me work for someone who appreciates results."`
+
+
+# =============================================================================
+# BOUNTY HUNTER PATTERN RECRUITMENT (Pattern 3)
+# =============================================================================
+
+mission "Recruit: Young Hunter"
+	name "Hunter Apprentice"
+	description "An aspiring bounty hunter wants to learn from your expertise. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 3
+		"reputation: Bounty" > 20
+		random < 18
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military" "station"
+		distance 2 5
+	on complete
+		"flagship crew" += 3
+		payment 15000
+		dialog `The young hunter is eager but inexperienced. "I've taken down small targets," they say. "Petty criminals, minor bounties. Nothing like what you do." They want to learn from a professional. "Your capture rate is legendary. Your methods are clean and effective. Teach me." They bring their own weapons and equipment. "I don't expect to be coddled. I'll start at the bottom and work my way up."`
+
+mission "Recruit: Hunter Team"
+	name "Professional Partnership"
+	description "An experienced bounty hunting team wants to work under your coordination. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 3
+		"reputation: Bounty" > 40
+		"combat rating" > 75
+		random < 12
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "station"
+		distance 2 5
+	on complete
+		"flagship crew" += 8
+		payment 40000
+		"reputation: Bounty" += 3
+		dialog `The Blackwell team has worked together for years. "Good hunters, all of us," the leader says. "But we've hit our ceiling. The big bounties require resources we don't have." They've researched your operation thoroughly. "Your fleet, your reputation, your network - that's what we need." They offer a partnership. "We handle the ground work, you handle the coordination. Split the profits. Everyone gets rich."`
+
+mission "Recruit: Retired Marshal"
+	name "Badge on the Table"
+	description "A retired federal marshal wants to join your bounty hunting operation. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 3
+		"reputation: Bounty" > 60
+		random < 8
+	source
+		government "Republic"
+	destination
+		government "Republic"
+		distance 2 5
+	on complete
+		"flagship crew" += 4
+		payment 50000
+		"reputation: Republic" += 5
+		dialog `Marshal Elena Rodriguez served for thirty years. "I put away more criminals than I can count," she says. "But the system is broken. Half of them are out in five years, back to the same crimes." She's chosen a different path. "Private bounty hunting gets results. And from what I hear, you get better results than most." She offers her expertise. "I know how criminals think. I know where they hide. Let me use that knowledge somewhere it matters."`
+
+
+# =============================================================================
+# PROTECTOR PATTERN RECRUITMENT (Pattern 4)
+# =============================================================================
+
+mission "Recruit: Saved Civilian"
+	name "Returning the Favor"
+	description "Someone you saved now wants to serve on your crew. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 4
+		"encounter: count disposition grateful" >= 2
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		"flagship crew" += 2
+		dialog `They remember exactly when you saved them. "I was on that freighter," they say. "When the pirates attacked, you appeared out of nowhere. Drove them off. Saved everyone." They've been searching for you ever since. "I can't just go back to my normal life after that. I want to do what you do. Protect people." They're not experienced, but they're dedicated. "Teach me. I'll work harder than anyone."`
+
+mission "Recruit: Grateful Family"
+	name "Debt of Honor"
+	description "A family you protected wants to repay you with service. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 4
+		"encounter: count disposition grateful" >= 4
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 6
+	on complete
+		"flagship crew" += 6
+		payment 30000
+		dialog `The Okonkwo family owes you their lives. "Our colony ship was stranded," the father explains. "Engines dead, life support failing. You found us. Towed us to safety. Refused payment." They've brought their entire family - pilots, engineers, medics. "We can't repay what you did. But we can serve. Our skills are yours, for as long as you'll have us." Their gratitude is profound and sincere.`
+
+mission "Recruit: Idealist Volunteer"
+	name "The Cause"
+	description "A young idealist wants to join your protection mission. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 4
+		"reputation: Republic" > 30
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Neutral"
+		distance 2 5
+	on complete
+		"flagship crew" += 4
+		dialog `The volunteer is young but passionate. "The Navy is too slow," they say. "Too political. Too many rules." They've heard about your work protecting civilians. "You actually make a difference. You save people." They've trained independently - weapons, first aid, ship operations. "I don't want to wait for bureaucratic approval while people die. I want to help. Now. With you."`
+
+mission "Recruit: Retired Hero"
+	name "One More Tour"
+	description "A retired military hero wants to serve under your command. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 4
+		"encounter: count disposition grateful" >= 6
+		"reputation: Republic" > 50
+		random < 8
+	source
+		government "Republic" "Free Worlds"
+	destination
+		government "Republic" "Free Worlds"
+		distance 2 5
+	on complete
+		"flagship crew" += 5
+		payment 50000
+		"reputation: Republic" += 5
+		dialog `Admiral James Morrison (ret.) is a legend. "I spent forty years in the Navy," he says. "Won every medal they had to give." But retirement doesn't suit him. "I keep hearing about your work. Protecting civilians, fighting pirates, making a real difference." He offers his expertise. "The Navy trained me to protect people. Let me keep doing that. Under your command."`
+
+
+# =============================================================================
+# WARMONGER PATTERN RECRUITMENT (Pattern 5)
+# =============================================================================
+
+mission "Recruit: Battle Hungry"
+	name "Looking for Action"
+	description "A combat veteran looking for non-stop action wants to join your crew. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 5
+		"combat rating" > 75
+		random < 18
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Independent"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		"flagship crew" += 4
+		dialog `The veteran has scars from a dozen battles. "Peacetime is killing me," they say. "I'm wired for combat. Anything else feels like dying slowly." They've heard about your endless conflicts. "You fight everyone. Governments, pirates, aliens - you don't stop." They grin. "That's what I need. Take me on, and I'll be your best fighter. Guaranteed."`
+
+mission "Recruit: Mercenary Band"
+	name "Professional Killers"
+	description "A mercenary company wants to serve under your banner. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 5
+		"combat rating" > 150
+		"actionlog: escalation"
+		random < 12
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent"
+		distance 2 5
+	on complete
+		"flagship crew" += 12
+		payment 75000
+		dialog `The Crimson Company is infamous. "Fifty kills guaranteed," their commander says. "Individually. As a unit, we've taken down fleets." They want to join your war. "You're building something. A force that can challenge governments." They're not cheap, but they're effective. "We follow whoever wins. And you keep winning. Let us help you win bigger."`
+
+mission "Recruit: Dishonored General"
+	name "Path of War"
+	description "A dishonored military general wants to serve your campaign. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 5
+		"combat rating" > 200
+		random < 8
+	source
+		government "Independent"
+	destination
+		government "Independent"
+		distance 2 5
+	on complete
+		"flagship crew" += 8
+		payment 100000
+		dialog `General Victor Kane was stripped of rank for "excessive force." "They said I was too aggressive," he says. "Too willing to accept casualties. Too eager to engage." He studies your combat record with approval. "You understand. War isn't something you apologize for. It's something you win." He offers his strategic expertise. "Together, we could challenge empires."`
+
+
+# =============================================================================
+# HIGH REPUTATION CROSS-FACTION RECRUITMENT
+# =============================================================================
+
+mission "Recruit: Faction Defector"
+	name "Changing Sides"
+	description "Someone from an enemy faction wants to defect to your side. Meet them secretly on <destination>."
+	job
+	to offer
+		"reputation: Republic" > 40
+		"reputation: Free Worlds" > 40
+		random < 10
+	source
+		government "Republic" "Free Worlds"
+	destination
+		government "Neutral"
+		distance 2 6
+	on complete
+		"flagship crew" += 6
+		payment 40000
+		dialog `The defector is nervous but determined. "I've been watching the war from the inside," they say. "Both sides make mistakes. Both sides have good people." They've chosen you. "You work with everyone. You don't play political games. You just help people." They bring valuable intelligence. "I know things about my former faction. Use that knowledge to end the fighting faster."`
+
+mission "Recruit: Multi-Species Crew"
+	name "United Fleet"
+	description "Representatives from multiple species want to join your multi-cultural operation. Meet them on <destination>."
+	job
+	to offer
+		"reputation: Hai" > 30
+		"reputation: Republic" > 30
+		random < 8
+	source
+		government "Hai" "Republic"
+	destination
+		government "Neutral"
+		distance 2 6
+	on complete
+		"flagship crew" += 10
+		payment 60000
+		dialog `The group includes humans, and several Hai. "Your fleet operates across species boundaries," the spokesman explains. "That's rare and valuable." They want to be part of it. "We believe cooperation is the future. Different species working together, learning from each other." They bring diverse skills and perspectives. "Let us prove what unity can accomplish."`
+
+
+# =============================================================================
+# SPECIAL RECRUITMENT BASED ON ACCOMPLISHMENTS
+# =============================================================================
+
+mission "Recruit: Legendary Followers"
+	name "The Legend Grows"
+	description "Your legendary status has attracted exceptional individuals. Meet them on <destination>."
+	job
+	to offer
+		has "legendary combat rating"
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Neutral"
+		distance 2 5
+	on complete
+		"flagship crew" += 15
+		payment 100000
+		dialog `They've come from across human space. Pilots, soldiers, engineers, scientists - all drawn by your legend. "We've heard the stories," one says. "We've verified as many as we could." They're believers. "You're building something unprecedented. A fleet that answers to no government, follows no flag except your own." They want to be part of history. "Let us serve. Let us be remembered alongside you."`
+
+mission "Recruit: Atrocity Followers"
+	name "Dark Following"
+	description "Your infamous deeds have attracted a particular kind of follower. Meet them on <destination>."
+	job
+	to offer
+		"reputation: atrocity"
+		random < 20
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Pirate"
+		distance 2 5
+	on complete
+		"flagship crew" += 8
+		dialog `They're the worst kind of people. Killers, sadists, the criminally insane. "We heard what you did," one says with admiration. "The massacres. The atrocities. The complete disregard for life." They worship your cruelty. "We want to serve someone who understands. Someone who doesn't pretend to have limits." They're dangerous even to you - but also useful. "Let us help you build something terrible."`
+
+mission "Recruit: Redemption Seekers"
+	name "Second Chances"
+	description "People seeking redemption want to serve under your reformed operation. Meet them on <destination>."
+	job
+	to offer
+		"days" > 100
+		"reputation: Republic" > 30
+		"actionlog: pattern" == 4
+		not "reputation: atrocity"
+		random < 12
+	source
+		government "Republic" "Free Worlds" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Neutral"
+		distance 2 5
+	on complete
+		"flagship crew" += 8
+		payment 35000
+		dialog `They're all recovering from something. Former criminals, discharged soldiers, people who made terrible choices. "We heard about your work," one says. "Protecting people. Making amends." They see you as a path to redemption. "We can't undo what we did. But we can spend the rest of our lives trying to balance the scales." They're motivated by guilt and hope. "Give us a chance to be better."`
+
+
+# =============================================================================
+# ALIEN FACTION RECRUITMENT
+# =============================================================================
+
+mission "Recruit: Hai Volunteers"
+	name "Hai Friends"
+	description "A group of Hai who admire your actions want to join your crew. Meet them on <destination>."
+	job
+	to offer
+		"reputation: Hai" > 50
+		"actionlog: pattern" == 4
+		random < 10
+	source
+		government "Hai"
+	destination
+		government "Hai"
+		distance 2 5
+	on complete
+		"flagship crew" += 6
+		payment 40000
+		"reputation: Hai" += 5
+		dialog `The Hai volunteers are unusual - their species rarely serves on human ships. "You have proven yourself friend to all species," their spokesman says in careful English. "You protect the weak, respect the peaceful, value cooperation." They want to learn from you. "Perhaps by serving together, our peoples grow closer." They bring unique Hai perspectives and skills. "We are honored to join your crew."`
+
+mission "Recruit: Wanderer Observer"
+	name "Wanderer Partnership"
+	description "A Wanderer wishes to join your crew to observe and assist. Meet them on <destination>."
+	job
+	to offer
+		has "wanderer life speaker"
+		"reputation: Wanderer" > 60
+		random < 8
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		distance 2 5
+	on complete
+		"flagship crew" += 3
+		payment 50000
+		"reputation: Wanderer" += 5
+		dialog `The Wanderer's presence is calming. "You have been named Life-Speaker," they say through translation. "This is rare honor for outsider. We wish to understand you better." They offer their services. "I will observe, assist, learn. In return, I teach what Wanderers know." Their ecological expertise and unique perspective make them valuable crew members. "Together, we bring growth where there was none."`
+
+mission "Recruit: Remnant Operative"
+	name "Remnant Alliance"
+	description "A Remnant operative wants to embed with your crew for mutual benefit. Meet them on <destination>."
+	job
+	to offer
+		has "remnant inner circle"
+		"reputation: Remnant" > 60
+		random < 8
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 5
+	on complete
+		"flagship crew" += 4
+		payment 60000
+		dialog `The Remnant operative speaks in careful, measured tones. "The Council has authorized a deeper partnership," they explain. "Embedding an operative with your crew serves both our interests." They bring Remnant technology expertise and intelligence resources. "You have proven trustworthy. Now we prove our trust in return." The partnership opens doors to Remnant resources you never had access to before.`

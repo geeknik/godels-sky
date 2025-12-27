@@ -1,0 +1,371 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Sheragi Consequence Missions
+# The Sheragi are an extinct dragon-like species who destroyed themselves in civil war.
+# Their ruins are being excavated, and their legacy serves as a warning.
+# These consequences deal with archaeology, memory, and the lessons of extinction.
+# The Archons guard their memory as an example to other species.
+
+
+
+# ARCHAEOLOGICAL INTEREST CHAIN
+
+mission "Sheragi: Amateur Interest"
+	name "Dragon Ruins Tourist"
+	description "Your interest in ancient history has been noted. An archaeological tour on <destination> could teach you about the extinct Sheragi."
+	job
+	to offer
+		has "Sheragi Archaeology: The Box 1: done"
+		random < 20
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	destination
+		planet "Zug"
+	on complete
+		set "sheragi amateur interest"
+		payment 5000
+		dialog `The archaeological tour is fascinating. Foster's assistants guide you through the Sheragi ruins, explaining how these dragon-like beings built cities, developed technology, and ultimately destroyed themselves. "They were powerful," your guide says. "Maybe too powerful for their own good." You leave with a new appreciation for the fragility of civilizations.`
+
+mission "Sheragi: Historical Researcher"
+	name "Sheragi Research Grant"
+	description "Your understanding of Sheragi history has impressed academics. Apply for a research grant on <destination>."
+	job
+	to offer
+		has "sheragi amateur interest"
+		has "Sheragi Archaeology: The Box 2: done"
+		random < 25
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		attributes research
+		distance 3 6
+	on complete
+		set "sheragi researcher status"
+		payment 50000
+		dialog `The academic board reviews your application with interest. "Your involvement in the Sheragi archaeological projects has been... noted," the chair says. "We're pleased to offer you a modest research stipend. Continue your work, Captain. The Sheragi have much to teach us - if we're wise enough to learn."`
+
+mission "Sheragi: Expert Status"
+	name "Sheragi Expert Consultation"
+	description "Your expertise on Sheragi history is now recognized academically. Consult with researchers on <destination>."
+	job
+	to offer
+		has "sheragi researcher status"
+		has "Sheragi Archaeology: The Emerald Sword 3: done"
+		random < 15
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		distance 3 6
+	on complete
+		set "sheragi expert status"
+		payment 75000
+		dialog `The researchers treat you with genuine respect. "You've been inside the Emerald Sword," one says with awe. "You've seen what they built, and why they fell." They ask detailed questions about Sheragi technology and culture. By the end, they've added your name to their publications as a consultant. You're now officially an expert on an extinct species.`
+
+
+
+# MEMORIAL CONSEQUENCES
+
+mission "Sheragi: Memorial Visit"
+	name "Remembering the Dragons"
+	description "Visit the Sheragi memorial on <destination> and pay respects to an extinct species."
+	job
+	to offer
+		has "Sheragi Archaeology: Epilogue: done"
+		not "sheragi memorial visited"
+		random < 30
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	destination
+		planet "Zug"
+	on complete
+		set "sheragi memorial visited"
+		dialog `Foster has built a small memorial near the excavation site. A carved stone bears the image of a Sheragi in flight. "They were magnificent," Foster says quietly. "Eight meters tall. They built ships bigger than anything we have. And they're gone." He pauses. "Sometimes I wonder if future archaeologists will dig up our ruins and say the same thing about us." You stand in silence for a while, contemplating the weight of extinction.`
+
+mission "Sheragi: Archon Memorial"
+	invisible
+	landing
+	to offer
+		has "sheragi memorial visited"
+		has "archon curiosity dialogue"
+		random < 15
+	on offer
+		conversation
+			`As you reflect on the Sheragi, a familiar presence touches your mind. The Archon. "You visited their memorial."`
+			choice
+				`	"I wanted to pay my respects."`
+				`	"I wanted to understand what happened to them."`
+					goto understand
+			`	"Respect for the dead is... admirable. Few species take time to honor those who came before." The presence seems almost warm. "We remember them all, but it is good that others remember too."`
+				goto wisdom
+			label understand
+			`	"Understanding is the first step to wisdom." The Archon's presence expands slightly. "The Sheragi did not understand until it was too late. They built weapons of terrible power. They used them. They are gone."`
+			label wisdom
+			`	"Do you know what caused their extinction?" you ask.`
+			`	"Themselves." The word carries profound sadness. "They were strong, proud, brilliant. But they could not see that their strength was also their weakness. They built weapons that could crack worlds, and when civil war came, they used them." A pause. "We tried to warn them. They did not listen."`
+			choice
+				`	"Could you have stopped them?"`
+					goto stop
+				`	"Do you think humanity is in danger of the same fate?"`
+					goto humanity
+			label stop
+			`	"We could have. We chose not to." The Archon's tone is heavy. "To prevent their war would have required us to become tyrants. We enforce peace between species, not within them. That is... a rule we made long ago. Perhaps it is wrong. But it is our rule."`
+				goto end
+			label humanity
+			`	"Every species is in danger of extinction. Most by their own hands." The presence considers. "Humanity has advantages the Sheragi lacked. You are slower to anger. You have more empathy. But you also have... tendencies. We watch. We hope."`
+			label end
+			`	"Learn from the Sheragi," the Archon says as the presence begins to fade. "They could not change their nature. Perhaps you can change yours." The voice recedes, leaving you alone with the weight of cosmic history.`
+				decline
+
+
+
+# WARMONGER WARNING CHAIN
+
+mission "Sheragi: Warmonger Parallel"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 5
+		has "sheragi memorial visited"
+		not "sheragi warmonger warning"
+		random < 20
+	on offer
+		set "sheragi warmonger warning"
+		conversation
+			`As you land, you notice a Quarg watching you from across the spaceport. When you make eye contact, they approach.`
+			`	"You visited the Sheragi memorial," they say. "Yet you continue on a path of violence." Their tone is not accusatory - merely observational.`
+			choice
+				`	"What's your point?"`
+				`	"The Sheragi were warlike. I'm just one person."`
+					goto scale
+			`	"The Sheragi were also 'just individuals' once. Until they built fleets. Until they built weapons that could shatter worlds." The Quarg studies you. "History does not remember the first Sheragi who chose violence. It only remembers the result."`
+				goto warning
+			label scale
+			`	"One person can start a war. One person can build a weapon. One person can inspire others." The Quarg's expression is unreadable. "The Sheragi civil war began with a single assassination. Within a generation, their species was extinct."`
+			label warning
+			`	"We do not interfere in the development of species," the Quarg says. "But we remember. The Sheragi thought they were powerful enough to survive anything. They were wrong." They turn to leave. "Consider whether you want your legacy to be a warning or an inspiration."`
+				decline
+
+mission "Sheragi: Violence Escalation"
+	invisible
+	landing
+	to offer
+		has "sheragi warmonger warning"
+		"actionlog: escalation"
+		"combat rating" > 200
+		not "sheragi escalation warning"
+		random < 25
+	on offer
+		set "sheragi escalation warning"
+		conversation
+			`A message arrives on your ship's system. It's from Foster, the archaeologist. "Captain <last>, I've been following reports of your... activities. I thought you should know something we found in the Sheragi records."`
+			`	The message continues: "We deciphered a journal from a Sheragi military commander. He started as a defender of his people. Over time, he became a conqueror. He wrote about how each victory made the next war seem more necessary. He called it 'the escalation trap.' By the end, he was commanding weapons that could sterilize entire planets."`
+			`	"He died believing he was saving his people. In reality, he helped destroy them. I'm not saying you're like him, Captain. I'm just saying... be careful. The path from protector to destroyer is shorter than you'd think."`
+				decline
+
+
+
+# PROTECTOR PARALLEL CHAIN
+
+mission "Sheragi: Protector Parallel"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 4
+		has "sheragi memorial visited"
+		not "sheragi protector parallel"
+		random < 20
+	on offer
+		set "sheragi protector parallel"
+		conversation
+			`You receive a message from one of Foster's Hai archaeological assistants. "Captain <last>, I've been studying your reputation. You protect others. This is good."`
+			`	The message continues: "I wanted to share something we found in the Sheragi records. Not all of them were warmongers. Some tried to protect the innocent, even during their civil war. They formed a group called the 'Shield of Rekla' - named after their legendary unifier."`
+			`	"They failed, of course. The war consumed them too. But their writings survive. They spoke of the burden of protection - how difficult it is to defend without becoming a destroyer yourself. They warned about the 'guardian's trap': the temptation to prevent harm by causing greater harm."`
+			`	"You protect people, Captain. That's rare and valuable. Just remember: the Sheragi protectors lost their way when they started deciding who deserved protection and who didn't. As long as you protect everyone, you're still a guardian. The moment you start choosing... you become something else."`
+				decline
+
+mission "Sheragi: Guardian's Wisdom"
+	name "Shield of Rekla"
+	description "The Hai archaeologists have found Sheragi writings about protection and guardianship. Collect them from <destination>."
+	job
+	to offer
+		has "sheragi protector parallel"
+		"actionlog: pattern" == 4
+		has "sheragi researcher status"
+		random < 15
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral" "Hai"
+	destination
+		government "Hai"
+		distance 3 6
+	on complete
+		set "sheragi guardian wisdom"
+		payment 40000
+		dialog `The Hai archivist presents you with translated writings from the Shield of Rekla. The texts speak of duty, sacrifice, and the burden of protection. One passage stands out: "A true guardian does not choose who to protect. They protect all, or they protect none. The moment we judge who is worthy of our shield, we become judges instead of guardians - and judges eventually become executioners." You feel the weight of ancient wisdom settling on your shoulders.`
+
+
+
+# TRADER PARALLEL CHAIN
+
+mission "Sheragi: Trader Parallel"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 1
+		has "Sheragi Archaeology: The Box 2: done"
+		not "sheragi trader parallel"
+		random < 20
+	on offer
+		set "sheragi trader parallel"
+		conversation
+			`Foster catches you in the spaceport. "Captain! I heard about your trading reputation. Interesting fact: the Sheragi had traders too."`
+			`	He pulls out a data pad with translated texts. "Their merchants were actually some of the last to fall. While the warriors were destroying each other, the traders kept supply lines open, kept people fed. They were seen as neutral parties."`
+			`	"Of course, eventually even they got pulled into the conflict. Both sides accused them of supporting the other. But for a while, they were the only thing keeping Sheragi society from completely collapsing." He pauses. "Sometimes I think merchants are underappreciated. You might not fight wars, but you prevent famines. That's worth something."`
+				decline
+
+
+
+# ARCHAEOLOGICAL PROTECTION CONSEQUENCES
+
+mission "Sheragi: Artifact Protection"
+	name "Defend the Dig"
+	description "Pirates are threatening the Sheragi archaeological site on <destination>. Help defend it."
+	job
+	to offer
+		has "sheragi researcher status"
+		"combat rating" > 50
+		random < 20
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	destination
+		planet "Zug"
+	npc kill
+		government "Pirate"
+		personality nemesis plunders
+		system destination
+		fleet
+			names "pirate"
+			variant
+				"Berserker"
+				"Fury" 2
+	on complete
+		payment 60000
+		"reputation: Republic" += 5
+		dialog `The pirates retreat after you destroy their ships. Foster thanks you profusely. "Those artifacts are irreplaceable," he says. "The Sheragi are gone - their relics are all we have left to understand them. You've done more than protect property. You've protected history itself."`
+
+mission "Sheragi: Artifact Trafficking"
+	name "The Relic Trade"
+	description "Someone is trafficking stolen Sheragi artifacts. Track them down and recover the relics."
+	job
+	to offer
+		has "sheragi expert status"
+		"combat rating" > 100
+		random < 15
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Pirate" "Independent"
+		distance 4 8
+	cargo "Sheragi Artifacts" 5 2 .1
+	on offer
+		conversation
+			`Foster contacts you urgently. "Captain, several important Sheragi artifacts have been stolen from the dig site. I've traced them to black market dealers on <destination>. Can you recover them? Legally or... otherwise?"`
+			choice
+				`	"I'll get them back."`
+					accept
+				`	"This isn't my kind of job."`
+					decline
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 100000
+		"reputation: Republic" += 10
+		dialog `You return the artifacts to Foster, who examines them with relief. "These are from the Emerald Sword era," he says. "They're priceless for understanding Sheragi culture in their final years." He pays you generously. "You've done good work, Captain. The Sheragi may be extinct, but their legacy is safer thanks to you."`
+
+
+
+# NEWS ITEMS
+
+news "Sheragi Interest"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	to show
+		has "Sheragi Archaeology: The Box 2: done"
+	name
+		word
+			"History enthusiast"
+			"Amateur archaeologist"
+			"Curious student"
+	message
+		word
+			"Have you heard about the Sheragi ruins on Zug? "
+			"I've been reading about the extinct Sheragi. "
+			"The dragon people fascinate me. "
+		word
+			"They were eight meters tall! "
+			"They built ships bigger than Navy Carriers! "
+			"They had weapons that could crack planets! "
+		word
+			"And they destroyed themselves. Makes you think."
+			"Such a waste of potential."
+			"I wonder what we could learn from their technology."
+
+news "Sheragi Warning"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	to show
+		has "Sheragi Archaeology: Epilogue: done"
+	name
+		word
+			"Philosopher"
+			"Ethicist"
+			"Worried citizen"
+	message
+		word
+			"The Sheragi story is a warning. "
+			"I visited the Sheragi memorial recently. "
+			"Everyone should learn about the Sheragi. "
+		word
+			"They had everything - technology, power, intelligence. "
+			"They were more advanced than us in many ways. "
+			"They could have ruled the galaxy. "
+		word
+			"Instead, they're extinct. We should learn from that."
+			"Will humanity make the same mistakes?"
+			"Sometimes I worry we're heading down the same path."
+
+news "Sheragi Archaeology"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	to show
+		has "sheragi researcher status"
+	name
+		word
+			"Graduate student"
+			"Research assistant"
+			"Young archaeologist"
+	message
+		word
+			"The Sheragi dig on Zug is producing incredible finds! "
+			"Foster's team keeps uncovering new artifacts! "
+			"I applied for the Sheragi research program! "
+		word
+			"They found intact technology from before the civil war. "
+			"The writings we're translating are heartbreaking. "
+			"Their art shows they weren't just warriors. "
+		word
+			"Every discovery teaches us something new."
+			"I hope we can piece together what really happened to them."
+			"It's humbling to study a dead civilization."

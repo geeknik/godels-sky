@@ -1,0 +1,502 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Escalation Chain Missions
+# These missions track and respond to escalating conflict levels.
+# The player's repeated hostile actions against a government lead to
+# increasingly severe responses and consequences.
+# Uses "actionlog: escalation" to detect escalating violence patterns.
+
+
+
+# STAGE 1: INITIAL TENSIONS
+# The government notices increased hostile activity and responds with warnings
+
+mission "Escalation: Republic Warning"
+	name "Official Warning"
+	description "The Republic has noticed your hostile activities. A government official wants to deliver a formal warning on <destination>."
+	job
+	to offer
+		"actionlog: escalation"
+		"reputation: Republic" < -10
+		"reputation: Republic" > -50
+		not "republic escalation stage 1"
+		random < 30
+	source
+		government "Republic" "Independent" "Neutral"
+	destination
+		government "Republic"
+		attributes "military"
+		distance 2 5
+	on complete
+		set "republic escalation stage 1"
+		payment 5000
+		"reputation: Republic" += 5
+		dialog `The Republic official is stern but not hostile. "Your recent activities have been noted," they say. "Consider this a formal warning. The Republic protects its citizens. Continue your current course, and you will face consequences." They hand you a small credit chip. "This is not a bribe. It's an opportunity to change your path. We hope you take it."`
+
+mission "Escalation: Syndicate Notice"
+	name "Corporate Notice"
+	description "The Syndicate has flagged your activities in their system. Report to <destination> to discuss the situation."
+	job
+	to offer
+		"actionlog: escalation"
+		"reputation: Syndicate" < -10
+		"reputation: Syndicate" > -50
+		not "syndicate escalation stage 1"
+		random < 30
+	source
+		government "Syndicate" "Independent" "Neutral"
+	destination
+		government "Syndicate"
+		attributes "core"
+		distance 2 5
+	on complete
+		set "syndicate escalation stage 1"
+		payment 10000
+		"reputation: Syndicate" += 5
+		dialog `The Syndicate executive reviews your file on a holographic display. "Your activities are creating... inefficiencies," they say. "The Syndicate values order and profit. Your disruptions threaten both." They slide a credit chip across the desk. "Consider this an investment in your future behavior. The Syndicate rewards those who align with our interests."`
+
+mission "Escalation: Free Worlds Concern"
+	name "Council Concern"
+	description "The Free Worlds Council has expressed concern about your actions. They're requesting a meeting on <destination>."
+	job
+	to offer
+		"actionlog: escalation"
+		"reputation: Free Worlds" < -10
+		"reputation: Free Worlds" > -50
+		not "free worlds escalation stage 1"
+		random < 30
+	source
+		government "Free Worlds" "Independent" "Neutral"
+	destination
+		government "Free Worlds"
+		attributes "core"
+		distance 2 5
+	on complete
+		set "free worlds escalation stage 1"
+		payment 5000
+		"reputation: Free Worlds" += 5
+		dialog `The Free Worlds representative speaks frankly. "We believe in second chances," they say. "But your recent actions concern us. The Free Worlds stands for liberty - not lawlessness." They offer a handshake and a modest payment. "Show us you can be part of our community. Or we'll have to reconsider your welcome."`
+
+
+
+# STAGE 2: INCREASED SURVEILLANCE
+# The government begins actively monitoring the player
+
+mission "Escalation: Republic Surveillance"
+	name "Under Observation"
+	description "Republic Intelligence has placed you under surveillance. Evade their observers and reach safe harbor on <destination>."
+	job
+	repeat
+	to offer
+		has "republic escalation stage 1"
+		"actionlog: escalation"
+		"reputation: Republic" < -30
+		not "republic escalation stage 2"
+		random < 25
+	source
+		government "Independent" "Neutral" "Pirate"
+	destination
+		government "Independent" "Pirate"
+		distance 3 6
+	npc
+		government "Republic"
+		personality surveillance waiting
+		system destination
+		fleet
+			names "republic"
+			variant
+				"Patrol Boat"
+				"Flivver" 2
+	on complete
+		set "republic escalation stage 2"
+		payment 15000
+		dialog `You manage to lose your Republic shadows and reach <planet>. A contact there fills you in: "You've been flagged in their system. Every port you visit, they know about it. Every cargo you carry, they're tracking." This is getting serious.`
+
+mission "Escalation: Syndicate Tracking"
+	name "Corporate Surveillance"
+	description "Syndicate security has tagged your ship with tracking devices. Get them removed at a trusted facility on <destination>."
+	job
+	to offer
+		has "syndicate escalation stage 1"
+		"actionlog: escalation"
+		"reputation: Syndicate" < -30
+		not "syndicate escalation stage 2"
+		random < 25
+	source
+		government "Independent" "Neutral" "Pirate"
+	destination
+		government "Independent" "Pirate"
+		attributes "station"
+		distance 2 5
+	on complete
+		set "syndicate escalation stage 2"
+		payment -20000
+		dialog `The mechanic scans your ship and whistles. "They've tagged you good," they say. "Military-grade trackers in your hull, your engine nacelles, even your cargo bay. Someone really wants to know where you are." Removing them is expensive, but cheaper than the alternative.`
+
+mission "Escalation: Free Worlds Watchers"
+	name "Citizen Observers"
+	description "Free Worlds citizens are reporting your movements. Lay low on <destination> while things cool down."
+	job
+	to offer
+		has "free worlds escalation stage 1"
+		"actionlog: escalation"
+		"reputation: Free Worlds" < -30
+		not "free worlds escalation stage 2"
+		random < 25
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent" "Pirate"
+		attributes "rim" "frontier"
+		distance 3 6
+	on complete
+		set "free worlds escalation stage 2"
+		payment 10000
+		dialog `You spend a week on <planet>, staying out of sight. Reports trickle in of Free Worlds citizens asking about your ship at various ports. "It's not just the government," a contact explains. "Regular people are watching for you. Your reputation precedes you now."`
+
+
+
+# STAGE 3: ACTIVE INTERDICTION
+# The government begins actively trying to stop the player
+
+mission "Escalation: Republic Blockade"
+	name "Blockade Runner"
+	description "The Republic has established checkpoints on major routes. Navigate through or around the blockade to reach <destination>."
+	job
+	repeat
+	to offer
+		has "republic escalation stage 2"
+		"actionlog: escalation"
+		"reputation: Republic" < -50
+		not "republic escalation stage 3"
+		random < 30
+	source
+		government "Independent" "Pirate"
+	waypoint
+		distance 2 4
+	destination
+		government "Independent" "Pirate"
+	npc evade
+		government "Republic"
+		personality staying nemesis
+		system waypoint
+		fleet
+			names "republic"
+			variant
+				"Frigate"
+				"Corvette" 2
+			variant
+				"Cruiser"
+				"Patrol Boat" 2
+	on complete
+		set "republic escalation stage 3"
+		payment 30000
+		dialog `You slip through the Republic blockade and reach safety. But it was close - closer than you'd like. "They're not playing around anymore," a contact warns. "Full military interdiction. This is wartime-level response." Whatever you did, the Republic considers you a serious threat now.`
+
+mission "Escalation: Syndicate Asset Seizure"
+	name "Asset Protection"
+	description "The Syndicate is attempting to seize your assets. Move quickly to secure your funds on <destination>."
+	job
+	to offer
+		has "syndicate escalation stage 2"
+		"actionlog: escalation"
+		"reputation: Syndicate" < -50
+		"credits" > 100000
+		not "syndicate escalation stage 3"
+		random < 30
+	source
+		government "Independent" "Pirate" "Neutral"
+	destination
+		government "Pirate"
+		distance 2 5
+	on complete
+		set "syndicate escalation stage 3"
+		payment -50000
+		dialog `You barely manage to move your funds before the Syndicate freezes your accounts. But not all of them - 50,000 credits vanish into their corporate maw. "Corporate legal authority," the underground banker explains. "They can seize assets in any system they have financial agreements with. Which is most of them." Operating in Syndicate space just got a lot harder.`
+
+mission "Escalation: Free Worlds Militia"
+	name "Militia Response"
+	description "Free Worlds militia have been mobilized against you. Evade their patrol in <system> and escape to <destination>."
+	job
+	repeat
+	to offer
+		has "free worlds escalation stage 2"
+		"actionlog: escalation"
+		"reputation: Free Worlds" < -50
+		not "free worlds escalation stage 3"
+		random < 30
+	source
+		government "Independent" "Pirate"
+	waypoint
+		distance 2 4
+	destination
+		government "Independent" "Pirate"
+	npc evade
+		government "Free Worlds"
+		personality staying nemesis
+		system waypoint
+		fleet
+			names "free worlds"
+			variant
+				"Falcon"
+				"Fury" 2
+			variant
+				"Osprey"
+				"Fury" 3
+	on complete
+		set "free worlds escalation stage 3"
+		payment 25000
+		dialog `You escape the militia patrol by the skin of your teeth. These aren't professionals - they're citizen volunteers. But there are a lot of them, and they're motivated. "The Council put out a call," a contact explains. "Volunteers from a dozen systems. They really don't like you."`
+
+
+
+# STAGE 4: DEDICATED TASK FORCE
+# The government assigns permanent resources to dealing with the player
+
+mission "Escalation: Republic Task Force"
+	name "Hunter-Killer Group"
+	description "The Republic has assigned a dedicated task force to eliminate you. Survive their attack in <system> and escape to <destination>."
+	job
+	repeat
+	to offer
+		has "republic escalation stage 3"
+		"actionlog: escalation"
+		"reputation: Republic" < -75
+		"combat rating" > 100
+		random < 40
+	source
+		government "Independent" "Pirate"
+	waypoint
+		distance 2 4
+	destination
+		government "Pirate"
+	npc evade
+		government "Republic"
+		personality nemesis waiting
+		system waypoint
+		fleet
+			names "republic"
+			variant
+				"Cruiser"
+				"Frigate" 2
+				"Corvette" 2
+			variant
+				"Carrier"
+				"Lance" 4
+	on complete
+		payment 50000
+		dialog `You barely escape the Republic task force. These aren't random patrols - this is a dedicated hunter-killer group with your name on their mission brief. "You've made the priority list," a contact confirms. "There's a captain out there whose only job is finding and destroying you." This is personal now.`
+
+mission "Escalation: Syndicate Contractors"
+	name "Corporate Solutions"
+	description "The Syndicate has hired private military contractors to deal with you. Survive their ambush in <system>."
+	job
+	repeat
+	to offer
+		has "syndicate escalation stage 3"
+		"actionlog: escalation"
+		"reputation: Syndicate" < -75
+		"combat rating" > 100
+		random < 40
+	source
+		government "Independent" "Pirate"
+	waypoint
+		distance 2 4
+	destination
+		government "Pirate"
+	npc evade
+		government "Bounty Hunter"
+		personality nemesis waiting
+		system waypoint
+		fleet
+			names "bounty hunter"
+			variant
+				"Corvette" 2
+				"Fury" 4
+			variant
+				"Quicksilver" 3
+				"Berserker" 2
+	on complete
+		payment 60000
+		dialog `The contractors are professional, well-equipped, and relentless. You barely escape with your ship intact. "Syndicate money," a contact explains. "They've put out an open contract. Anyone who brings you in - or takes you out - gets paid. A lot." The Syndicate doesn't forgive. And they never forget.`
+
+mission "Escalation: Free Worlds Coalition"
+	name "United Response"
+	description "Multiple Free Worlds systems have coordinated a response against you. Escape the coalition forces in <system>."
+	job
+	repeat
+	to offer
+		has "free worlds escalation stage 3"
+		"actionlog: escalation"
+		"reputation: Free Worlds" < -75
+		"combat rating" > 100
+		random < 40
+	source
+		government "Independent" "Pirate"
+	waypoint
+		distance 2 4
+	destination
+		government "Pirate"
+	npc evade
+		government "Free Worlds"
+		personality nemesis waiting
+		system waypoint
+		fleet
+			names "free worlds"
+			variant
+				"Osprey" 2
+				"Falcon"
+				"Fury" 3
+			variant
+				"Falcon" 2
+				"Fury" 4
+	on complete
+		payment 40000
+		dialog `The coalition fleet is impressive - ships from half a dozen different Free Worlds systems, all working together. You escape, but just barely. "You've united them," a contact observes dryly. "The Free Worlds doesn't have a central military. But you've given them a common enemy to rally against. Congratulations."`
+
+
+
+# ESCALATION RESOLUTION: DE-ESCALATION OPTIONS
+# Ways to potentially reduce escalation levels
+
+mission "De-escalation: Republic Service"
+	name "Proving Loyalty"
+	description "A Republic admiral is offering you a chance to prove you've changed. Complete a dangerous mission to <destination> and earn some goodwill."
+	job
+	to offer
+		has "republic escalation stage 2"
+		not "reputation: atrocity"
+		random < 15
+	source
+		government "Republic"
+		attributes "military"
+	destination
+		government "Republic"
+		distance 3 6
+	npc accompany save
+		government "Republic"
+		personality escort
+		fleet
+			names "republic"
+			variant
+				"Shuttle"
+	npc
+		government "Pirate"
+		personality nemesis
+		system destination
+		fleet
+			names "pirate"
+			variant
+				"Fury" 3
+			variant
+				"Corvette"
+				"Fury"
+	on complete
+		payment 75000
+		"reputation: Republic" += 20
+		clear "republic escalation stage 2"
+		dialog `The admiral reviews your mission performance. "Perhaps I was wrong about you," they admit. "This was dangerous work, and you came through." They transfer a significant payment and update your file. "You're still being watched. But the active pursuit orders have been rescinded. Don't make me regret this."`
+	on visit
+		dialog phrase "generic arrived-without-npc dialog"
+
+mission "De-escalation: Syndicate Deal"
+	name "Corporate Arrangement"
+	description "A Syndicate executive is willing to make a deal. Complete a task for them on <destination> and your file will be... adjusted."
+	job
+	to offer
+		has "syndicate escalation stage 2"
+		not "reputation: atrocity"
+		"credits" > 100000
+		random < 15
+	source
+		government "Syndicate"
+	destination
+		government "Syndicate"
+		distance 2 5
+	cargo "Sealed Container" 10 3 .05
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment -75000
+		"reputation: Syndicate" += 15
+		clear "syndicate escalation stage 2"
+		dialog `The executive receives the cargo with a thin smile. "The Syndicate appreciates... flexibility," they say. "Your file has been updated. The surveillance orders are cancelled." They take 75,000 credits from your account without asking. "Consider that a processing fee. Welcome back to civilized commerce."`
+
+mission "De-escalation: Free Worlds Redemption"
+	name "Community Service"
+	description "The Free Worlds Council offers a path to redemption. Perform humanitarian work to prove your commitment to their values."
+	job
+	to offer
+		has "free worlds escalation stage 2"
+		not "reputation: atrocity"
+		random < 15
+	source
+		government "Free Worlds"
+	destination
+		government "Free Worlds"
+		attributes "rim" "frontier"
+		distance 3 6
+	cargo "Medical" 20 3 .1
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 30000
+		"reputation: Free Worlds" += 20
+		clear "free worlds escalation stage 2"
+		dialog `You spend weeks delivering medical supplies to frontier colonies, asking nothing in return. Word gets back to the Council. "Actions speak louder than words," a representative tells you. "The militia has been stood down. You're not our enemy anymore." They hand you a modest payment. "This isn't charity. It's what you earned."`
+
+
+
+# ESCALATION CONSEQUENCES: PERMANENT EFFECTS
+# Very high escalation leads to lasting consequences
+
+mission "Escalation: Permanent Hostility"
+	name "Point of No Return"
+	description "Your actions have made you a permanent enemy of the Republic. A final message awaits on <destination>."
+	job
+	to offer
+		"actionlog: escalation"
+		"reputation: Republic" < -100
+		"reputation: atrocity"
+		random < 20
+	source
+		government "Pirate"
+	destination
+		government "Pirate"
+		distance 2 5
+	on complete
+		set "republic permanent enemy"
+		dialog `The message is from a Republic intelligence officer. "This is the last communication you'll receive from us," they say. "You are now classified as a permanent hostile. There will be no negotiations, no deals, no redemption. Every Republic ship that sees you will try to kill you. Every Republic port is closed to you forever." They pause. "You made this choice. Live with it."`
+
+mission "Escalation: Warmonger Recognition"
+	name "The Chaos Agent"
+	description "Your pattern of escalating violence across multiple governments has earned you a reputation. Factions are organizing against you."
+	job
+	to offer
+		"actionlog: pattern" == 5
+		"actionlog: escalation"
+		or
+			has "republic escalation stage 3"
+			has "syndicate escalation stage 3"
+			has "free worlds escalation stage 3"
+		random < 20
+	source
+		government "Pirate"
+	destination
+		government "Pirate"
+		distance 2 5
+	on complete
+		set "recognized warmonger"
+		payment 100000
+		dialog `An underground broker approaches you with a mix of fear and respect. "You've made quite a name for yourself," they say. "Governments that normally hate each other are sharing intelligence about you. You've become a unifying threat." They slide you a credit chip. "The chaos merchants love what you're doing. Here's a bonus. Keep it up - or don't. Either way, you've changed things."`

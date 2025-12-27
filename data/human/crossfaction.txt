@@ -1,0 +1,372 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Cross-Faction Consequence Missions
+# These missions react to the player's relationships across multiple factions.
+# Actions for one faction can have ripple effects on relationships with others.
+# Balancing competing interests becomes a strategic challenge.
+
+
+
+# DIPLOMATIC BALANCE: REPUBLIC VS SYNDICATE
+
+mission "Crossfaction: Republic Syndicate Tension"
+	name "Corporate vs Government"
+	description "Your favor with the Republic has not gone unnoticed by the Syndicate. A corporate representative wants to discuss your loyalties on <destination>."
+	job
+	to offer
+		"reputation: Republic" > 40
+		"reputation: Syndicate" > 10
+		"reputation: Syndicate" < 30
+		random < 15
+	source
+		government "Syndicate"
+	destination
+		government "Syndicate"
+		distance 2 5
+	on complete
+		payment 50000
+		"reputation: Syndicate" += 5
+		dialog `The Syndicate executive is direct. "You've been doing a lot of work for the Republic," they observe. "Good work. But the Syndicate offers... better compensation for exclusive services." They slide a credit chip across the desk. "Consider this a gesture of our interest. The Republic pays in patriotism. We pay in credits."`
+
+mission "Crossfaction: Republic Suspicion"
+	name "Loyalty Questions"
+	description "The Republic is concerned about your Syndicate connections. Report to <destination> for a security interview."
+	job
+	to offer
+		"reputation: Syndicate" > 40
+		"reputation: Republic" > 10
+		"reputation: Republic" < 30
+		random < 15
+	source
+		government "Republic"
+	destination
+		government "Republic"
+		attributes "military"
+		distance 2 5
+	on complete
+		payment 30000
+		"reputation: Republic" += 5
+		dialog `The Republic intelligence officer reviews your file. "You've been spending a lot of time in Syndicate space," they note. "Completing a lot of Syndicate contracts." They lean forward. "The Republic values loyalty. Corporate interests and national interests don't always align. Choose your friends carefully." They add a bonus to your account. "Consider this a reminder of where true stability lies."`
+
+mission "Crossfaction: Dual Agent"
+	name "Playing Both Sides"
+	description "Both Republic and Syndicate value your services. A broker on <destination> sees opportunity in this."
+	job
+	to offer
+		"reputation: Republic" > 35
+		"reputation: Syndicate" > 35
+		random < 10
+	source
+		government "Independent"
+	destination
+		government "Independent"
+		distance 2 5
+	on complete
+		payment 75000
+		dialog `The broker grins. "You've got friends in both the Republic and the Syndicate," they say. "That's rare. Usually you have to pick a side." They offer you a unique opportunity. "I specialize in... facilitating communication between parties who officially don't talk to each other. Your position could be very valuable. Interested in becoming a back-channel?"`
+
+
+
+# DIPLOMATIC BALANCE: REPUBLIC VS FREE WORLDS
+
+mission "Crossfaction: Civil War Echoes"
+	name "Old Wounds"
+	description "Your Republic connections concern some in the Free Worlds. A council member wants to discuss your loyalties on <destination>."
+	job
+	to offer
+		"reputation: Republic" > 40
+		"reputation: Free Worlds" > 10
+		"reputation: Free Worlds" < 25
+		random < 15
+	source
+		government "Free Worlds"
+	destination
+		government "Free Worlds"
+		distance 2 5
+	on complete
+		payment 35000
+		"reputation: Free Worlds" += 5
+		dialog `The Free Worlds council member speaks carefully. "The war is over," they say. "But memories are long. You work with the Republic. Some of our citizens fought and died against that government." They pause. "We don't demand you choose sides. But understand that your Republic connections make some people... nervous." They offer a token payment. "Prove you're a friend to freedom."`
+
+mission "Crossfaction: Republic Reconciler"
+	name "Bridge Builder"
+	description "Your good relations with both Republic and Free Worlds make you valuable. A diplomat on <destination> needs your help."
+	job
+	to offer
+		"reputation: Republic" > 40
+		"reputation: Free Worlds" > 40
+		random < 10
+	source
+		government "Republic" "Free Worlds"
+	destination
+		government "Republic" "Free Worlds"
+		distance 2 5
+	on complete
+		payment 60000
+		"reputation: Republic" += 5
+		"reputation: Free Worlds" += 5
+		dialog `The diplomat is cautiously optimistic. "Relations between the Republic and Free Worlds are... delicate," they explain. "But you're trusted by both sides. That makes you valuable." They ask you to carry a series of messages and observe reactions. "This is unofficial. Deniable. But potentially important. The war is over - help us build the peace."`
+
+
+
+# HUMAN VS ALIEN RELATIONS
+
+mission "Crossfaction: Human Representative"
+	name "Ambassador Without Portfolio"
+	description "Your positive relations with alien species have made you a de facto human representative. A council on <destination> wants to formalize this."
+	job
+	to offer
+		"reputation: Hai" > 30
+		or
+			"reputation: Coalition" > 30
+			"reputation: Wanderer" > 30
+		"reputation: Republic" > 20
+		random < 10
+	source
+		government "Republic"
+	destination
+		government "Republic"
+		attributes "core"
+		distance 2 5
+	on complete
+		set "unofficial ambassador"
+		payment 75000
+		"reputation: Republic" += 10
+		dialog `The Republic Foreign Affairs office is impressed by your relationships with alien species. "You've built trust where others failed," they observe. "The Hai, the Coalition, the Wanderers - they all speak well of you." They offer you an unofficial role. "You're not a formal ambassador. But you could be a bridge between humanity and the galaxy. Interested?"`
+
+mission "Crossfaction: Alien Trade Network"
+	name "Galactic Commerce"
+	description "Your connections across multiple alien species could create new trade opportunities. Meet investors on <destination>."
+	job
+	to offer
+		has "unofficial ambassador"
+		"reputation: Hai Merchant" > 25
+		"reputation: Coalition" > 25
+		random < 15
+	source
+		government "Syndicate"
+	destination
+		government "Syndicate"
+		distance 2 5
+	on complete
+		payment 100000
+		dialog `The Syndicate investment group is excited. "You have access to markets that are closed to most humans," they explain. "Hai goods, Coalition technology, Wanderer resources - there's enormous profit potential." They offer you a stake in a new multi-species trading consortium. "Your contacts are the key. Help us open these markets, and everyone profits."`
+
+
+
+# PIRATE REPUTATION CONSEQUENCES
+
+mission "Crossfaction: Pirate Connections"
+	name "Criminal Associations"
+	description "Your reputation among pirates is affecting your relations with legitimate governments. A contact on <destination> warns you."
+	job
+	to offer
+		"reputation: Pirate" > 30
+		or
+			"reputation: Republic" > 20
+			"reputation: Syndicate" > 20
+		random < 20
+	source
+		government "Independent"
+	destination
+		government "Independent"
+		distance 2 5
+	on complete
+		dialog `Your contact looks worried. "Word is getting around," they say. "You've got friends among the pirates. Good friends, from what I hear." They lean closer. "The governments are starting to notice. Right now they still deal with you, but that could change. You might have to choose: the underground, or legitimate society."`
+
+mission "Crossfaction: Pirate Pariah"
+	name "Shunned by Both"
+	description "Your high reputation with pirates has made you persona non grata with legitimate governments. A fixer on <destination> offers help."
+	job
+	to offer
+		"reputation: Pirate" > 50
+		"reputation: Republic" < -20
+		"reputation: Syndicate" < -20
+		random < 20
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate"
+		distance 2 5
+	on complete
+		payment 40000
+		dialog `The fixer shrugs. "You've picked your side," they say. "The legitimate governments want nothing to do with you. But that's not necessarily bad." They gesture around at the pirate station. "There's a whole economy out here. Goods, services, information - all flowing outside official channels. You're part of that now. Embrace it."`
+
+mission "Crossfaction: Reformed Pirate"
+	name "Second Chance"
+	description "Despite your pirate history, a government official is willing to give you a chance to go legitimate. Meet them on <destination>."
+	job
+	to offer
+		"reputation: Pirate" > 30
+		"reputation: Pirate" < 50
+		or
+			"reputation: Republic" > 0
+			"reputation: Free Worlds" > 0
+		not "reputation: atrocity"
+		random < 10
+	source
+		government "Republic" "Free Worlds"
+	destination
+		government "Republic" "Free Worlds"
+		distance 2 5
+	on complete
+		payment 50000
+		"reputation: Pirate" -= 15
+		"reputation: Republic" += 10
+		"reputation: Free Worlds" += 10
+		dialog `The official reviews your file. "You've been running with pirates," they state. "But you've also helped legitimate citizens. Done some good." They make you an offer. "We're willing to overlook your past associations if you commit to legitimate work going forward. Your pirate friends won't like it. But you'll have a future."`
+
+
+
+# WARMONGER CROSS-FACTION CONSEQUENCES
+
+mission "Crossfaction: Universal Pariah"
+	name "Enemy of All"
+	description "Your attacks on multiple governments have made you an enemy to everyone. A bounty coordination effort is underway."
+	job
+	to offer
+		"actionlog: pattern" == 5
+		"reputation: Republic" < -30
+		"reputation: Syndicate" < -30
+		"reputation: Free Worlds" < -30
+		random < 25
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate"
+		distance 3 6
+	on complete
+		set "universal bounty"
+		payment 20000
+		dialog `A contact delivers grim news. "You've managed to piss off everyone," they say. "Republic, Syndicate, Free Worlds - they're sharing intelligence about you. Coordinating bounty efforts." They shake their head. "That's almost impressive. Governments that can't agree on anything else have found common ground: they all want you dead."`
+
+mission "Crossfaction: Bounty Coordination"
+	name "Joint Hunting Party"
+	description "Multiple governments have pooled resources to hunt you. Survive their combined assault in <system>."
+	job
+	repeat
+	to offer
+		has "universal bounty"
+		"combat rating" > 100
+		random < 40
+	source
+		government "Pirate"
+	waypoint
+		distance 2 4
+	destination
+		government "Pirate"
+	npc evade
+		government "Bounty Hunter"
+		personality nemesis waiting
+		system waypoint
+		fleet
+			names "bounty hunter"
+			variant
+				"Corvette" 2
+				"Fury" 3
+			variant
+				"Quicksilver" 2
+				"Berserker" 3
+	on complete
+		payment 60000
+		dialog `You escape the coordinated hunting party, but barely. These aren't random bounty hunters - they're well-equipped, well-informed, and working together. "Multi-government funding," a contact confirms. "They're pooling resources to take you down. You've become expensive to hunt, but they're committed."`
+
+
+
+# PROTECTOR CROSS-FACTION RECOGNITION
+
+mission "Crossfaction: Galactic Protector"
+	name "Defender of All"
+	description "Your pattern of protecting others has earned recognition across faction lines. A multi-faction ceremony awaits on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 4
+		"reputation: Republic" > 30
+		"reputation: Free Worlds" > 30
+		or
+			"reputation: Merchant" > 30
+			"reputation: Syndicate" > 30
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Neutral"
+		distance 2 5
+	on complete
+		set "galactic protector"
+		payment 100000
+		"reputation: Republic" += 5
+		"reputation: Free Worlds" += 5
+		"reputation: Syndicate" += 5
+		"reputation: Merchant" += 5
+		dialog `Representatives from multiple governments and factions gather to honor you. "You don't serve any one flag," the speaker says. "You serve everyone who needs protection. That's rare." They present you with tokens from each faction. "When the innocent are threatened, you answer. The galaxy is safer because of captains like you."`
+
+
+
+# DISPOSITION-BASED CROSS-FACTION
+
+mission "Crossfaction: Reputation Precedes"
+	name "Known Everywhere"
+	description "Your NPC relationships have spread your reputation across faction lines. A journalist on <destination> wants your story."
+	job
+	to offer
+		"encounter: count disposition friendly" >= 10
+		"encounter: count disposition grateful" >= 3
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment 35000
+		dialog `The journalist is eager. "I've been tracking you," they explain. "Talking to people you've met, helped, saved. Your reputation travels faster than your ship." They record your stories. "The galaxy is full of anonymous captains. But you? People remember you. That's worth documenting."`
+
+mission "Crossfaction: Nemesis Network"
+	name "Enemies Everywhere"
+	description "Your personal enemies have formed a network to track you. A contact on <destination> has intelligence."
+	job
+	to offer
+		"encounter: count disposition hostile" >= 3
+		"encounter: has disposition nemesis"
+		random < 20
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Independent" "Pirate"
+		distance 2 5
+	on complete
+		payment 25000
+		dialog `Your contact looks worried. "Bad news," they say. "Your enemies are talking to each other. Sharing information. Coordinating." They hand you a data chip. "This is what they know about your movements, your ship, your habits. They're organized now. Watch your back."`
+
+
+
+# ECONOMIC CROSS-FACTION
+
+mission "Crossfaction: Trade War"
+	name "Commercial Conflict"
+	description "Your trade activities have made you a pawn in inter-faction economic competition. Navigate carefully on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 1
+		"reputation: Merchant" > 30
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		distance 2 5
+	on complete
+		payment 45000
+		dialog `The economic advisor briefs you carefully. "Trade routes are political," they explain. "When you carry cargo for one faction, other factions notice. Your success as a trader makes you valuable - and a target." They offer advice. "Balance your routes. Don't become too dependent on any one faction. Economic independence is true freedom."`

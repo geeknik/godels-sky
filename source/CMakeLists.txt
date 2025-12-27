@@ -18,6 +18,8 @@ target_sources(EndlessSkyLib PRIVATE
 	AI.h
 	Account.cpp
 	Account.h
+	ActionLog.cpp
+	ActionLog.h
 	AlertLabel.cpp
 	AlertLabel.h
 	AmmoDisplay.cpp
@@ -103,6 +105,8 @@ target_sources(EndlessSkyLib PRIVATE
 	EsUuid.h
 	EscortDisplay.cpp
 	EscortDisplay.h
+	EncounterRecord.cpp
+	EncounterRecord.h
 	ExclusiveItem.h
 	FighterHitHelper.h
 	Files.cpp
@@ -265,6 +269,8 @@ target_sources(EndlessSkyLib PRIVATE
 	Rectangle.h
 	RenderBuffer.cpp
 	RenderBuffer.h
+	ReputationManager.cpp
+	ReputationManager.h
 	RouteEdge.cpp
 	RouteEdge.h
 	RoutePlan.cpp
@@ -339,6 +345,8 @@ target_sources(EndlessSkyLib PRIVATE
 	WeightedList.h
 	Wormhole.cpp
 	Wormhole.h
+	WitnessSystem.cpp
+	WitnessSystem.h
 	WormholeStrategy.h
 	ZipFile.cpp
 	ZipFile.h

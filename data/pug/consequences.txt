@@ -1,0 +1,364 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Pug Consequence Missions
+# The Pug are enigmatic beings devoted to peace, healing, and justice.
+# They speak of being "part of a larger whole" and work to end conflict
+# throughout the galaxy. Their reactions are mysterious and often cryptic,
+# reflecting their ancient wisdom and their mission of galactic harmony.
+
+
+
+# POSITIVE CONSEQUENCES: PEACEMAKER RECOGNITION
+
+mission "Pug Observation: Peaceful Path"
+	name "The Pug Watch"
+	description "The Pug have taken notice of your peaceful activities. A cryptic message awaits on <destination>."
+	job
+	to offer
+		"reputation: Pug" > 10
+		"actionlog: pattern" <= 1
+		random < 10
+	source
+		government "Pug"
+	destination
+		government "Pug"
+		distance 2 5
+	on complete
+		set "pug observed"
+		payment 40000
+		dialog `A Pug approaches you with an expression that might be serenity. "We have observed your path," they say. "You walk the way of commerce, not conflict. This brings balance." They pause, considering. "The galaxy has much violence. Those who choose otherwise are... noted. We remember those who choose peace."`
+
+mission "Pug Recognition: Protector Spirit"
+	name "Guardian of Life"
+	description "The Pug have recognized your pattern of protecting others. They wish to speak with you on <destination>."
+	job
+	to offer
+		has "pug observed"
+		"actionlog: pattern" == 4
+		"reputation: Pug" > 25
+		random < 10
+	source
+		government "Pug"
+	destination
+		government "Pug"
+		distance 2 5
+	on complete
+		set "pug protector"
+		payment 75000
+		"reputation: Pug" += 15
+		dialog `The Pug council regards you with what might be approval. "You protect the vulnerable," they say. "You stand between the weak and those who would harm them. This is... the way." Their words carry weight beyond their simplicity. "We are part of a larger whole. You also serve something larger than yourself. This connects us." They offer you a gift - credits and something less tangible: a sense of purpose validated.`
+
+mission "Pug Blessing: Peacekeeper"
+	name "The Pug Blessing"
+	description "The Pug are offering you their blessing. A ceremony awaits on <destination>."
+	job
+	to offer
+		has "pug protector"
+		"reputation: Pug" > 50
+		"encounter: count disposition grateful" >= 5
+		random < 5
+	source
+		government "Pug"
+	destination
+		government "Pug"
+		distance 2 5
+	on complete
+		set "pug blessed"
+		payment 150000
+		"reputation: Pug" += 25
+		dialog `The Pug blessing ceremony is unlike anything in human culture. Multiple Pug gather around you, their voices harmonizing in ways that seem to resonate with something deep in your being. "You are recognized," they intone. "Your service to peace, to protection, to the greater harmony - all is known. All is valued." When it ends, you feel... different. Lighter, perhaps. Or more connected. "Go with our blessing. Carry peace where you travel. The larger whole includes you now."`
+
+
+
+# NEGATIVE CONSEQUENCES: VIOLENCE CONCERNS
+
+mission "Pug Concern: Violence Observed"
+	name "A Gentle Warning"
+	description "The Pug have expressed concern about your violent activities. A messenger awaits on <destination>."
+	job
+	to offer
+		"reputation: Pug" < -5
+		"reputation: Pug" > -20
+		"actionlog: pattern" >= 2
+		random < 20
+	source
+		government "Pug"
+	destination
+		government "Pug"
+		distance 2 4
+	on complete
+		set "pug warning"
+		dialog `The Pug messenger speaks with gentle sadness. "We have observed your path," they say. "It trends toward conflict. Violence begets violence. This is an ancient truth." They do not threaten. "We do not seek to punish. We seek to heal. Consider: is there not another way? The galaxy has enough destroyers."`
+
+mission "Pug Sorrow: Escalating Violence"
+	name "The Pug Mourn"
+	description "Your escalating violence has deeply troubled the Pug. A council member wishes to speak on <destination>."
+	job
+	to offer
+		has "pug warning"
+		"actionlog: escalation"
+		"reputation: Pug" < -15
+		random < 20
+	source
+		government "Pug"
+	destination
+		government "Pug"
+		distance 2 5
+	on complete
+		set "pug mourning"
+		"reputation: Pug" -= 10
+		dialog `The Pug council member's sorrow is palpable. "We have watched your journey," they say. "Each act of violence leads to more violence. Each death creates ripples of pain." They show you something - images of consequences you may not have considered. "We do not judge. We observe. We hope. But hope grows difficult when the pattern is so clear. Can you not see what you are becoming?"`
+
+mission "Pug Intervention: Final Appeal"
+	name "The Last Hope"
+	description "The Pug are making a final appeal for you to change your path. Hear them on <destination>."
+	job
+	to offer
+		has "pug mourning"
+		"reputation: Pug" < -30
+		not "reputation: atrocity"
+		random < 15
+	source
+		government "Pug"
+	destination
+		government "Pug"
+		distance 2 5
+	on complete
+		set "pug final appeal"
+		dialog `The Pug gathering is solemn. "This is our final appeal," the speaker says. "We have watched. We have hoped. We have mourned." They present you with a vision - possible futures, branching paths. "You still have choice. Every being, every moment, has choice. The path of destruction need not be your destiny." They wait. "We cannot force change. We can only offer the possibility of it. The choice is yours."`
+
+
+
+# PROTECTOR PATTERN: PUG ALLIANCE
+
+mission "Pug Alliance: Shared Purpose"
+	name "Aligned Purposes"
+	description "The Pug recognize a kindred spirit in you. They offer partnership on <destination>."
+	job
+	to offer
+		has "pug protector"
+		"actionlog: pattern" == 4
+		"reputation: Pug" > 40
+		random < 10
+	source
+		government "Pug"
+	destination
+		government "Pug"
+		distance 2 5
+	on complete
+		set "pug ally"
+		payment 100000
+		"reputation: Pug" += 10
+		dialog `The Pug proposition is straightforward. "We work to end conflict," they say. "You work to protect the innocent. These goals align." They offer partnership. "When we identify threats to peace, we may call upon you. When you need assistance in your protective work, we may answer. This is not obligation. This is... shared purpose." The alliance is formed not with contracts, but with mutual understanding.`
+
+mission "Pug Alliance: Joint Protection"
+	name "Pug Request"
+	description "The Pug need assistance protecting civilians in <system>. Aid them and return to <destination>."
+	job
+	repeat
+	to offer
+		has "pug ally"
+		"combat rating" > 75
+		random < 25
+	source
+		government "Pug"
+	waypoint
+		distance 2 4
+	destination
+		government "Pug"
+	npc accompany save
+		government "Merchant"
+		personality escort timid
+		fleet
+			names "civilian"
+			variant
+				"Freighter"
+				"Shuttle" 2
+	npc
+		government "Pirate"
+		personality nemesis plunders
+		system waypoint
+		fleet
+			names "pirate"
+			variant
+				"Fury" 2
+				"Berserker"
+	on complete
+		payment 60000
+		"reputation: Pug" += 5
+		dialog `The Pug observer records the successful protection mission. "Lives saved. Conflict avoided. The pattern is good." They seem pleased in their enigmatic way. "Partnership serves the greater peace. Continue your work. We watch. We appreciate."`
+	on visit
+		dialog phrase "generic arrived-without-npc dialog"
+
+
+
+# WARMONGER CONSEQUENCES: PUG OPPOSITION
+
+mission "Pug Opposition: Active Threat"
+	name "Pug Judgment"
+	description "The Pug have classified you as a threat to galactic peace. A declaration awaits on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 5
+		"reputation: Pug" < -40
+		random < 25
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		set "pug opposed"
+		dialog `The Pug message is delivered through intermediaries. "You have been classified as an active threat to galactic peace," it reads. "Your pattern of violence destabilizes regions, creates suffering, perpetuates cycles of conflict. We cannot ignore this." The tone shifts. "We do not seek vengeance. We seek to protect. From you." It's not a threat. It's a statement of fact. The Pug will now actively work against you.`
+
+mission "Pug Opposition: Intervention"
+	name "Pug Intervention Force"
+	description "Pug forces are attempting to stop your activities. Evade them in <system> and escape."
+	job
+	repeat
+	to offer
+		has "pug opposed"
+		"reputation: Pug" < -60
+		"combat rating" > 100
+		random < 35
+	source
+		government "Independent" "Pirate"
+	waypoint
+		distance 2 4
+	destination
+		government "Independent" "Pirate"
+	npc evade
+		government "Pug"
+		personality nemesis waiting
+		system waypoint
+		fleet
+			names "pug"
+			variant
+				"Pug Zibruka" 2
+			variant
+				"Pug Maboro"
+				"Pug Zibruka"
+	on complete
+		payment 50000
+		dialog `You escape the Pug intervention force. Their ships are powerful, but they seemed more interested in containing you than destroying you. "They're trying to limit your impact," a contact observes. "Wherever you go, they're working to counter your influence. It's not personal hatred - it's systematic opposition to everything you represent."`
+
+
+
+# WITNESS-AWARE: PUG OMNISCIENCE
+
+mission "Pug: Nothing Hidden"
+	name "The Pug See All"
+	description "The Pug know things about your activities that should be impossible. Understand how on <destination>."
+	job
+	to offer
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 500
+		random < 15
+	source
+		government "Pug"
+	destination
+		government "Pug"
+		distance 2 5
+	on complete
+		dialog `The Pug speaks with unsettling certainty. "We know what you have done," they say. "Not because others told us. We... perceive. The larger whole sees all." They gesture vaguely. "Every action creates ripples. Witnesses or no witnesses, the universe knows. We are connected to that knowing." It's unclear if this is mystical or technological, but the implications are clear: there are no secrets from the Pug.`
+
+mission "Pug: Hidden Actions"
+	name "Unseen Paths"
+	description "Your ability to act without being observed intrigues the Pug. Discuss this on <destination>."
+	job
+	to offer
+		"witness: unwitnessed"
+		"reputation: Pug" > 0
+		random < 10
+	source
+		government "Pug"
+	destination
+		government "Pug"
+		distance 2 5
+	on complete
+		payment 50000
+		dialog `The Pug seems curious - an unusual display. "You move without leaving traces," they observe. "This is... interesting. The ripples you create are subtle." They consider. "This could serve peace, or destroy it. A hidden protector, or a hidden predator. We cannot yet discern which you will become. We will watch with... particular attention."`
+
+
+
+# ATROCITY CONSEQUENCES: PUG GRIEF
+
+mission "Pug: Atrocity Grief"
+	name "The Pug Weep"
+	description "Your atrocities have caused the Pug profound grief. A message awaits on <destination>."
+	job
+	to offer
+		"reputation: atrocity"
+		"reputation: Pug" < -50
+		random < 30
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		set "pug grief"
+		dialog `The Pug message is delivered with obvious sorrow. "We have witnessed your atrocities," it begins. "Not observed - witnessed. We felt each death. Each moment of terror. Each extinguished life." The message continues. "We do not understand how any being can choose such a path. We grieve for your victims. We grieve for you - for what you have become. There is no redemption we can offer. Only... mourning." The Pug have given up hope for you. That might be the worst condemnation possible.`
+
+mission "Pug: Active Containment"
+	name "Pug Containment"
+	description "The Pug have initiated active containment protocols against you. Escape their forces in <system>."
+	job
+	repeat
+	to offer
+		has "pug grief"
+		"combat rating" > 125
+		random < 40
+	source
+		government "Independent" "Pirate"
+	waypoint
+		distance 2 4
+	destination
+		government "Pirate"
+	npc evade
+		government "Pug"
+		personality nemesis waiting
+		system waypoint
+		fleet
+			names "pug"
+			variant
+				"Pug Maboro" 2
+				"Pug Zibruka" 3
+	on complete
+		payment 75000
+		dialog `You escape the Pug containment fleet, but the encounter was intense. Unlike their usual measured responses, these Pug fought with what almost seemed like anger. "Containment protocols," a contact explains. "They've decided you're too dangerous to ignore. Wherever you go, they'll try to limit the damage you can do." The galaxy's peacekeepers have declared you their enemy.`
+
+
+
+# REDEMPTION PATH
+
+mission "Pug: Redemption Possibility"
+	name "A Chance for Change"
+	description "Against all odds, the Pug are offering you a chance at redemption. Hear their proposal on <destination>."
+	job
+	to offer
+		"reputation: Pug" < -20
+		"reputation: Pug" > -50
+		not "reputation: atrocity"
+		"actionlog: pattern" == 4
+		random < 5
+	source
+		government "Pug"
+	destination
+		government "Pug"
+		distance 2 5
+	on complete
+		payment 50000
+		"reputation: Pug" += 20
+		dialog `The Pug proposition is unexpected. "We have observed a change," they say. "Where once you destroyed, now you protect. This is... hopeful." They offer a path forward. "The past cannot be erased. But the future remains unwritten. Continue your protective work. Let each life you save balance against lives you have taken." They pause. "Redemption is not forgiveness. It is transformation. Are you truly transforming?" It's both a question and a challenge.`

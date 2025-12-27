@@ -1,0 +1,392 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Consequence Missions
+# These missions react to reputation thresholds and atrocity status.
+# They provide both opportunities (for high reputation) and problems (for low reputation).
+
+
+
+mission "Republic Recognition: Friendly"
+	name "Official Recognition"
+	description "Your positive reputation with the Republic has been noticed. A government official on <destination> wants to formally acknowledge your contributions."
+	job
+	to offer
+		"reputation: threshold friendly"
+		"reputation: Republic" > 25
+		random < 15
+	source
+		government "Republic"
+		attributes "core" "military"
+	destination
+		government "Republic"
+		attributes "core"
+		distance 2 5
+	on complete
+		payment 50000
+		"reputation: Republic" += 5
+		dialog `The Republic official presents you with a commendation. "On behalf of the Republic, I thank you for your service to our citizens. Your actions have made our space safer." A substantial credit transfer accompanies the ceremony. "Consider this a token of our appreciation."`
+
+mission "Republic Honor Guard"
+	name "Diplomatic Escort"
+	description "The Republic needs a trusted captain to escort a diplomatic mission to <destination>. Your reputation makes you the ideal candidate."
+	job
+	repeat
+	to offer
+		"reputation: threshold allied"
+		"reputation: Republic" > 50
+		"combat rating" > 50
+		random < 20
+	source
+		government "Republic"
+		attributes "military"
+	destination
+		government "Republic" "Free Worlds"
+		attributes "core"
+		distance 3 6
+	npc accompany save
+		government "Republic"
+		personality escort
+		fleet
+			names "republic"
+			variant
+				"Frigate"
+	npc
+		government "Pirate"
+		personality nemesis
+		system destination
+		fleet
+			names "pirate"
+			variant
+				"Fury" 2
+				"Berserker"
+			variant
+				"Corvette"
+				"Fury"
+	on complete
+		payment 75000
+		"reputation: Republic" += 3
+		dialog `The diplomatic mission arrives safely. The ambassador shakes your hand. "The Republic is fortunate to have captains like you. Your escort ensured our safety through hostile space."`
+	on visit
+		dialog phrase "generic arrived-without-npc dialog"
+
+
+mission "Hostile Territory: Republic Bounty"
+	name "Wanted by the Republic"
+	description "Your hostile actions against the Republic have put a price on your head. Bounty hunters are actively searching for you."
+	job
+	to offer
+		"reputation: threshold hostile"
+		"reputation: Republic" < -50
+		random < 30
+	source
+		government "Independent" "Pirate" "Neutral"
+	destination
+		government "Pirate" "Independent"
+		distance 3 6
+	npc
+		government "Bounty Hunter"
+		personality nemesis waiting
+		fleet
+			names "bounty hunter"
+			variant
+				"Fury" 2
+				"Berserker"
+			variant
+				"Corvette"
+				"Fury"
+	on complete
+		payment 10000
+		dialog `You manage to evade the bounty hunters and reach relative safety. The local bartender slides you a drink. "Word on the street is there's a price on your head. The Republic doesn't forget."`
+
+mission "Hostile Territory: Safe Passage"
+	name "Underground Railroad"
+	description "A smuggler offers to guide you through Republic space to <destination> via safe routes. The service isn't cheap."
+	job
+	repeat
+	to offer
+		"reputation: threshold hostile"
+		"reputation: Republic" < -50
+		"credits" > 50000
+		random < 25
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate" "Independent"
+		distance 4 8
+	on complete
+		payment -40000
+		dialog `The smuggler leads you through a maze of backwater systems and hidden jump points. "These routes aren't on any official chart," they explain. "That's why they're safe. For you, anyway." You pay the steep fee, grateful to avoid Republic patrols.`
+
+
+mission "Atrocity Consequences: Pursued"
+	name "The Price of War Crimes"
+	description "Your atrocities have not been forgotten. A special task force has been assembled to bring you to justice."
+	job
+	to offer
+		"reputation: atrocity"
+		random < 40
+	source
+		government "Independent" "Pirate" "Neutral"
+	destination
+		government "Pirate"
+		distance 4 8
+	npc
+		government "Republic"
+		personality nemesis waiting
+		fleet
+			names "republic"
+			variant
+				"Frigate"
+				"Corvette" 2
+			variant
+				"Cruiser"
+				"Frigate"
+	on complete
+		payment 5000
+		dialog `You escape the task force, but just barely. The message is clear: the governments of human space will never forget what you've done. There's no redemption for atrocities.`
+
+mission "Atrocity Consequences: Exile"
+	name "Permanent Exile"
+	description "An agent on <destination> offers to help you establish a new identity - for a price. It won't erase your crimes, but it might buy you time."
+	job
+	to offer
+		"reputation: atrocity"
+		"credits" > 500000
+		random < 15
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate"
+		distance 3 6
+	on complete
+		payment -400000
+		dialog `The agent takes your money and hands you forged documents. "This new identity won't hold up to close scrutiny," they warn, "but it'll help you avoid the automated recognition systems. Just don't expect to ever be welcome in civilized space again."`
+
+
+mission "Syndicate Friendly: Business Opportunity"
+	name "Corporate Partnership"
+	description "The Syndicate appreciates efficiency. Your reputation has caught the attention of their acquisitions department. Meet them on <destination>."
+	job
+	to offer
+		"reputation: threshold friendly"
+		"reputation: Syndicate" > 25
+		random < 15
+	source
+		government "Syndicate"
+		attributes "core"
+	destination
+		government "Syndicate"
+		distance 2 5
+	on complete
+		payment 60000
+		"reputation: Syndicate" += 5
+		dialog `The Syndicate executive is all business. "We've reviewed your performance metrics. Impressive efficiency ratings. We'd like to offer you preferential access to our logistics network." A substantial payment is transferred. "Consider this a partnership bonus."`
+
+mission "Syndicate Allied: Priority Contracts"
+	name "Priority Cargo"
+	description "As a trusted Syndicate partner, you have access to priority contracts. Deliver <cargo> to <destination> for premium rates."
+	job
+	repeat
+	deadline 5
+	to offer
+		"reputation: threshold allied"
+		"reputation: Syndicate" > 50
+		random < 30
+	source
+		government "Syndicate"
+		attributes "core"
+	destination
+		government "Syndicate"
+		distance 2 5
+	cargo "Industrial" 25 3 .15
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 15000 350
+		dialog `The Syndicate logistics coordinator verifies the delivery. "On time, as expected. Your reliability rating has been updated accordingly."`
+
+
+mission "Free Worlds Friendly: Volunteer Recognition"
+	name "Volunteer Appreciation"
+	description "The Free Worlds Council wants to thank you for your support. A ceremony is being held on <destination>."
+	job
+	to offer
+		"reputation: threshold friendly"
+		"reputation: Free Worlds" > 25
+		random < 15
+	source
+		government "Free Worlds"
+		attributes "core"
+	destination
+		government "Free Worlds"
+		attributes "core"
+		distance 2 5
+	on complete
+		payment 40000
+		"reputation: Free Worlds" += 5
+		dialog `The Free Worlds Council presents you with a medal. "You've stood with us when it mattered. The people of the Free Worlds won't forget." The audience applauds as you receive a commemorative payment.`
+
+mission "Free Worlds Allied: Emergency Response"
+	name "Disaster Relief"
+	description "A Free Worlds colony needs emergency supplies. As a trusted ally, you've been called to help. Deliver relief supplies to <destination>."
+	job
+	repeat
+	deadline 4
+	to offer
+		"reputation: threshold allied"
+		"reputation: Free Worlds" > 50
+		random < 25
+	source
+		government "Free Worlds"
+	destination
+		government "Free Worlds"
+		attributes "rim" "frontier"
+		distance 3 6
+	cargo "Medical" 15 2 .1
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 30000
+		"reputation: Free Worlds" += 3
+		dialog `The colonists greet you with relief and gratitude. "You came when we needed you most," the colony administrator says. "The Free Worlds looks after its own."`
+
+
+mission "Merchant Recognition: Reliable Trader"
+	name "Trader's Commendation"
+	description "Your reliability has impressed the Merchant Guild. They're hosting an event in your honor on <destination>."
+	job
+	to offer
+		"reputation: threshold friendly"
+		"reputation: Merchant" > 25
+		"actionlog: pattern" == 1
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade" "rich"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade" "rich"
+		distance 2 5
+	on complete
+		payment 45000
+		"reputation: Merchant" += 5
+		dialog `The Merchant Guild throws a lavish reception in your honor. "In a galaxy full of pirates and profiteers, honest traders are rare," the Guild master says. "You're one of the good ones." You receive a generous gift from the Guild treasury.`
+
+
+mission "Reputation Recovery: Community Service"
+	name "Path to Redemption"
+	description "Your reputation is in tatters, but not beyond repair. A rehabilitation program on <destination> offers a chance to rebuild trust through community service."
+	job
+	repeat
+	to offer
+		"reputation: threshold unfriendly"
+		not "reputation: atrocity"
+		"reputation: Republic" > -50
+		random < 20
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Neutral"
+		distance 2 5
+	on complete
+		payment -10000
+		"reputation: Republic" += 5
+		"reputation: Free Worlds" += 3
+		dialog `You spend several days helping with local reconstruction efforts. It's hard work, and you have to pay for your own expenses, but the locals seem to appreciate it. "Everyone deserves a second chance," one of the coordinators says. "Keep this up, and people will forget your past."`
+
+mission "Reputation Recovery: Humanitarian Aid"
+	name "Aid Worker"
+	description "Humanitarian organizations need volunteers for aid delivery. Your damaged reputation might improve if you help those in need."
+	job
+	repeat
+	to offer
+		"reputation: threshold hostile"
+		not "reputation: atrocity"
+		random < 15
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent" "Neutral"
+		attributes "rim" "frontier"
+		distance 3 7
+	cargo "Food" 20 2 .1
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		"reputation: Republic" += 3
+		"reputation: Free Worlds" += 3
+		"reputation: Merchant" += 2
+		dialog `You deliver aid to a struggling colony. The grateful colonists don't care about your past - they're just happy for the help. News of your good deed spreads, slightly improving your reputation.`
+
+
+mission "Pirate Friendly: Inner Circle"
+	name "Pirate Council Invitation"
+	description "Your reputation among pirates has reached legendary status. The Pirate Council wants to meet you on <destination>."
+	job
+	to offer
+		"reputation: threshold friendly"
+		"reputation: Pirate" > 25
+		"pirate jobs" > 20
+		random < 10
+	source
+		government "Pirate"
+	destination
+		government "Pirate"
+		distance 3 6
+	on complete
+		payment 100000
+		"reputation: Pirate" += 10
+		set "pirate council member"
+		dialog `The Pirate Council meets in a heavily fortified station. The captain who greets you is legendary. "We've heard of your exploits. You've earned a seat at this table." A massive payment is transferred to your account. "Welcome to the inner circle. We protect our own."`
+
+mission "Pirate Council: Fleet Operation"
+	name "Council Operation"
+	description "The Pirate Council is coordinating a major fleet operation in <system>. As a council member, you're expected to participate."
+	job
+	repeat
+	to offer
+		has "pirate council member"
+		"combat rating" > 100
+		random < 25
+	source
+		government "Pirate"
+	waypoint
+		distance 2 5
+	destination
+		government "Pirate"
+	npc kill
+		government "Merchant"
+		personality staying harvests plunders
+		fleet
+			names "civilian"
+			variant
+				"Freighter" 2
+				"Hauler II"
+			variant
+				"Hauler III"
+				"Heavy Shuttle" 2
+	npc
+		government "Republic"
+		personality staying
+		system waypoint
+		fleet
+			names "republic"
+			variant
+				"Corvette"
+				"Patrol Boat"
+	on complete
+		payment 120000
+		"reputation: Republic" -= 15
+		"reputation: Pirate" += 5
+		dialog `The council operation is a success. The take is divided among participants, with council members receiving the largest shares. "This is why we work together," the coordinator says. "Alone, we're outlaws. Together, we're a force to be reckoned with."`

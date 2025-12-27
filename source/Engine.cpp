@@ -497,6 +497,24 @@ void Engine::Step(bool isActive)
 	events.swap(eventQueue);
 	eventQueue.clear();
 
+	// Gödel's Sky: Step pending witness reports and handle any that are ready.
+	// When reports complete (witnesses transmitted their report), apply reputation effects.
+	vector<WitnessReport> completedReports = witnessSystem.StepReports();
+	for(const WitnessReport &report : completedReports)
+	{
+		// The crime was reported by witnesses. Apply reputation penalty.
+		if(report.victimGov)
+		{
+			// Use the standard offense mechanism, which propagates to allied governments.
+			report.victimGov->Offend(report.eventType, 1);
+
+			// Notify the player that their crime was reported.
+			string message = "Witnesses have reported your crime against the " +
+				report.victimGov->TrueName() + " to the authorities.";
+			Messages::Add({message, GameData::MessageCategories().Get("high")});
+		}
+	}
+
 	// Process any outstanding sprites that need to be uploaded to the GPU.
 	queue.ProcessSyncTasks();
 
@@ -1922,6 +1940,9 @@ void Engine::MoveShip(const shared_ptr<Ship> &ship)
 			// If this is a player ship, make sure it's no longer selected.
 			if(ship->IsYours())
 				player.DeselectEscort(ship.get());
+			// Gödel's Sky: Notify witness system that this ship was destroyed.
+			// This may eliminate a witness from pending crime reports.
+			witnessSystem.NotifyShipDestroyed(ship.get());
 		}
 		return;
 	}
@@ -2514,7 +2535,34 @@ void Engine::DoCollisions(Projectile &projectile)
 			{
 				int eventType = shipHit->TakeDamage(visuals, damage.CalculateDamage(*shipHit), gov);
 				if(eventType)
+				{
 					eventQueue.emplace_back(gov, shipHit, eventType);
+
+					// Gödel's Sky: Check for witnesses when the player commits hostile acts.
+					const Ship *flagship = player.Flagship();
+					if(flagship && gov == flagship->GetGovernment() &&
+						(eventType & (ShipEvent::PROVOKE | ShipEvent::DISABLE | ShipEvent::DESTROY)))
+					{
+						WitnessResult witnesses = WitnessSystem::CheckWitnesses(
+							shipHit->Position(), flagship, shipHit.get(), ships);
+
+						// If there are witnesses, queue a report. The report will be
+						// processed after a delay, giving the player time to eliminate witnesses.
+						if(witnesses.HasWitnesses())
+						{
+							WitnessReport report(
+								nullptr,  // Reporting government (determined by witnesses)
+								shipHit->GetGovernment(),
+								eventType,
+								WitnessConstants::REPORT_TRANSMISSION_TIME,
+								player.GetSystem(),
+								0.0);  // Reputation impact calculated later
+							report.activeWitnesses = witnesses.GetSuppressibleWitnesses();
+							report.canBeSuppressed = witnesses.CanSuppressReport();
+							witnessSystem.QueueReport(report);
+						}
+					}
+				}
 			}
 			else if(collisionType == CollisionType::MINABLE)
 			{

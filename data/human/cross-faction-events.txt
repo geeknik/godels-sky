@@ -1,0 +1,385 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Cross-Faction Event Chains
+# These missions create complex multi-faction events based on player actions.
+# Player behavior ripples outward to affect relationships between governments.
+# Actions in one faction's territory can have consequences in another's.
+
+
+
+# DIPLOMATIC BRIDGE CHAIN
+# For players who maintain good relations with multiple factions
+
+mission "Cross-Faction: Trusted Mediator"
+	name "Diplomatic Courier"
+	description "Your positive reputation with multiple factions makes you valuable. Carry a diplomatic message from <origin> to <destination>."
+	job
+	to offer
+		"reputation: Republic" > 25
+		"reputation: Syndicate" > 25
+		random < 15
+	source
+		government "Republic"
+	destination
+		government "Syndicate"
+		distance 3 6
+	cargo "Diplomatic Materials" 2 2 .05
+	on offer
+		conversation
+			`A Republic diplomat approaches you. "Captain <last>, your reputation precedes you. You're one of the few captains trusted by both the Republic and the Syndicate." They lower their voice. "We need someone to carry sensitive materials between our governments. Officially, relations are... strained. Unofficially, we're trying to prevent things from getting worse."`
+			choice
+				`	"I'll do it."`
+					accept
+				`	"I don't want to get involved in politics."`
+					decline
+	on complete
+		payment 75000
+		"reputation: Republic" += 10
+		"reputation: Syndicate" += 10
+		dialog `The Syndicate diplomat receives the materials with evident relief. "Thank you, Captain. You've done both our governments a service." They seem to struggle with something, then add: "There are those in both the Republic and the Syndicate who would prefer war. People like you, who can work with both sides... you're more valuable than you know."`
+
+mission "Cross-Faction: Peace Conference"
+	name "Conference Security"
+	description "A secret peace conference between Republic and Syndicate officials needs security. Escort the diplomats to <destination>."
+	job
+	to offer
+		"reputation: Republic" > 40
+		"reputation: Syndicate" > 40
+		random < 10
+	source
+		government "Republic" "Syndicate"
+	destination
+		government "Neutral"
+		distance 4 8
+	passengers 4
+	on offer
+		conversation
+			`A high-ranking official pulls you aside. "Captain, your work as a diplomatic courier has been noticed. We're planning something unprecedented: a secret meeting between Republic and Syndicate leaders to discuss... de-escalation." They look around nervously. "We need someone trusted by both sides to provide security. The consequences if this meeting is discovered by the wrong people would be severe."`
+			choice
+				`	"I'll protect them with my life."`
+					accept
+				`	"This is above my pay grade."`
+					decline
+	on complete
+		set "cross faction peacemaker"
+		payment 150000
+		"reputation: Republic" += 20
+		"reputation: Syndicate" += 20
+		dialog `The conference concludes successfully. You never learn what was discussed, but the diplomats from both sides seem... hopeful. "You've done something important today, Captain," one tells you. "Maybe we can avoid another civil war after all." Whether that's true remains to be seen, but you've played a part in the attempt.`
+
+
+
+# FACTION ANTAGONIST CHAIN
+# For players who damage relations between factions
+
+mission "Cross-Faction: War Profiteer"
+	name "Arms Dealing"
+	description "A weapons dealer needs help moving cargo that could inflame tensions. Deliver it to <destination>."
+	job
+	to offer
+		"actionlog: pattern" >= 2
+		"actionlog: pattern" <= 5
+		"credits" > 500000
+		random < 20
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate" "Independent"
+		distance 4 8
+	cargo "Weapons" 25 2 .1
+	on offer
+		conversation
+			`A shady dealer approaches you. "Captain, I've got a business proposition. These weapons" - they gesture to crates - "are heading to certain parties who plan to use them to... encourage conflict between the Republic and Syndicate." They smile coldly. "War is good for business. My business, and potentially yours."`
+			choice
+				`	"I'm not interested in starting wars."`
+					decline
+				`	"How much?"`
+			`	"More than you'd make in a month of honest trading. All you have to do is not ask questions." They lean in. "The galaxy is going to burn eventually. Might as well profit from it."`
+			choice
+				`	"Fine. Let's do it."`
+					accept
+				`	"I have some standards."`
+					decline
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		set "war profiteer"
+		payment 200000
+		"reputation: Republic" -= 10
+		"reputation: Syndicate" -= 10
+		dialog `The weapons are delivered to a warehouse where you prefer not to look too closely at the buyers. Your payment arrives in untraceable credits. Somewhere, these weapons will be used to kill people - maybe Republic soldiers, maybe Syndicate citizens. You've just helped make the galaxy a little more dangerous. But the money is real, and that's what matters. Right?`
+
+mission "Cross-Faction: False Flag"
+	name "Deniable Operation"
+	description "Someone wants to make it look like the Syndicate attacked a Republic convoy. Participate and receive payment."
+	job
+	to offer
+		has "war profiteer"
+		"combat rating" > 100
+		random < 15
+	source
+		government "Pirate" "Independent"
+	destination
+		government "Pirate" "Independent"
+	waypoint
+		distance 3 5
+	npc kill
+		government "Merchant"
+		personality staying
+		system waypoint
+		fleet
+			names "civilian"
+			variant
+				"Freighter"
+				"Shuttle"
+	on offer
+		conversation
+			`Your contact from the arms deal reaches out again. "Captain, we have an... advanced opportunity. There's a Republic merchant convoy passing through <system>. We want you to destroy it - while flying under Syndicate colors." They hand you transponder codes. "The Republic will blame the Syndicate. The Syndicate will deny it. Tensions escalate. Everyone profits."`
+			choice
+				`	"I'll do it."`
+					accept
+				`	"This is going too far."`
+					goto refuse
+			label refuse
+			`	"Going soft on me, Captain?" They shrug. "Fine. But don't think you can walk away from this business cleanly. You're already in deep."`
+				decline
+	on complete
+		set "false flag operator"
+		payment 150000
+		"reputation: Republic" -= 25
+		"reputation: Syndicate" -= 15
+		dialog `The convoy is destroyed. You watch the escape pods tumble into space - there won't be rescue ships for hours. Your transponder spoofed Syndicate codes the whole time. Tomorrow, the news will report a "Syndicate attack on Republic shipping." You've just helped push two governments closer to war. The credits feel heavier in your account than they should.`
+
+
+
+# ALIEN DIPLOMACY CHAIN
+# Player actions affecting human-alien relations
+
+mission "Cross-Faction: Human-Hai Bridge"
+	name "Cultural Ambassador"
+	description "Your positive reputation with both humans and Hai makes you ideal for a sensitive mission. Travel to <destination>."
+	job
+	to offer
+		"reputation: Hai" > 30
+		"reputation: Republic" > 30
+		random < 15
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Hai"
+		distance 5 10
+	passengers 2
+	on offer
+		conversation
+			`A Republic official and a Hai diplomat approach you together - an unusual sight. "Captain <last>," the human says, "you're one of the rare individuals trusted by both our peoples. We're working on a cultural exchange program, and we need someone to escort our first human participants to Hai space."`
+			`	The Hai adds, "Trust between our species is fragile. We need someone who understands both cultures to help smooth any misunderstandings."`
+			choice
+				`	"I'd be honored."`
+					accept
+				`	"I'm not a diplomat."`
+					decline
+	on complete
+		set "human hai bridge"
+		payment 100000
+		"reputation: Hai" += 15
+		"reputation: Republic" += 10
+		dialog `The exchange participants are nervous but excited as they disembark on the Hai world. You introduce them to local contacts, translate cultural nuances, and generally keep things from going sideways. By the end, humans and Hai are sharing meals and stories like old friends. "You've done something important here, Captain," the Republic official tells you. "Small steps, but this is how peace is built."`
+
+mission "Cross-Faction: Alien Incident"
+	name "Incident Report"
+	description "A conflict between human and Hai traders has occurred. Investigate and mediate on <destination>."
+	job
+	to offer
+		has "human hai bridge"
+		"reputation: Hai" > 40
+		random < 20
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Hai"
+	destination
+		government "Hai"
+		distance 3 6
+	on offer
+		conversation
+			`You receive an urgent message from your Hai contacts. "Captain <last>, there has been an... incident. A human trader attacked a Hai merchant, claiming self-defense. The Hai say the human fired first. Relations are strained. Your mediation is requested."`
+			choice
+				`	"I'll look into it."`
+					accept
+				`	"This isn't my problem."`
+					decline
+	on complete
+		payment 75000
+		"reputation: Hai" += 10
+		"reputation: Republic" += 10
+		dialog `After investigating both sides, you determine that the incident was a tragic misunderstanding - the Hai merchant made a gesture that humans interpret as threatening, and the human trader panicked. You explain the cultural context to both parties, and eventually they shake hands (a gesture you have to explain to the Hai). "Without you, this could have escalated," the Hai elder says. "Perhaps more humans should learn our ways."`
+
+
+
+# PIRATE-GOVERNMENT RELATIONS
+# Player actions affecting legitimacy and criminality
+
+mission "Cross-Faction: Pirate Rehabilitation"
+	name "Reformed Pirate"
+	description "A pirate captain wants to go legitimate. Help them make contact with Republic authorities on <destination>."
+	job
+	to offer
+		"reputation: Pirate" > 10
+		"reputation: Republic" > 20
+		random < 15
+	source
+		government "Pirate"
+	destination
+		government "Republic"
+		distance 4 8
+	passengers 1
+	on offer
+		conversation
+			`A tired-looking pirate captain approaches you. "Captain <last>, I've heard you work both sides of the line. I want out. I'm tired of running, tired of fighting, tired of... this life." They look desperate. "I have information the Republic would want - safe houses, supply routes, contact networks. In exchange, I want amnesty. Can you help me make contact?"`
+			choice
+				`	"I'll see what I can do."`
+					accept
+				`	"You've made your bed."`
+					decline
+	on complete
+		payment 50000
+		"reputation: Republic" += 15
+		"reputation: Pirate" -= 10
+		dialog `The Republic intelligence officer listens to the pirate's offer, then nods. "This information is valuable. We can offer reduced sentences - not full amnesty, but a chance at a real life." The former pirate weeps with relief. "Thank you, Captain. You've given me a future." You've just helped someone escape the cycle of crime. Not everyone will appreciate that.`
+
+mission "Cross-Faction: Government Defector"
+	name "Defector's Flight"
+	description "A Republic official wants to defect to the Free Worlds. Help them escape to <destination>."
+	job
+	to offer
+		"reputation: Republic" > 20
+		"reputation: Free Worlds" > 20
+		random < 10
+	source
+		government "Republic"
+	destination
+		government "Free Worlds"
+		distance 5 10
+	passengers 1
+	on offer
+		conversation
+			`A nervous official pulls you aside. "Captain, I need help. I have evidence of... let's say, inappropriate activities by certain Republic senators. I've been threatened. The only safe place for me now is the Free Worlds, but I can't travel openly." They look around fearfully. "Can you get me out?"`
+			choice
+				`	"I'll help you escape."`
+					accept
+				`	"I don't want to get involved in Republic politics."`
+					decline
+	on complete
+		payment 100000
+		"reputation: Free Worlds" += 20
+		"reputation: Republic" -= 15
+		dialog `The defector breathes a sigh of relief as you land on Free Worlds soil. "I'm safe. Thank you, Captain." They promise that the evidence they carry will be used responsibly. Whether that's true, or whether you've just helped a criminal escape justice, you may never know. Politics is never simple.`
+
+
+
+# QUARG OBSERVER CHAIN
+# Player actions noticed by the ancient Quarg
+
+mission "Cross-Faction: Quarg Interest"
+	invisible
+	landing
+	to offer
+		"reputation: Republic" > 50
+		"reputation: Syndicate" > 50
+		"reputation: Free Worlds" > 50
+		not "quarg interest noticed"
+		random < 10
+	on offer
+		set "quarg interest noticed"
+		conversation
+			`A Quarg approaches you in the spaceport. Their species rarely initiates contact with humans. "You are Captain <last>," they say. It's not a question. "We have observed your interactions with the human factions."`
+			choice
+				`	"Why are you watching me?"`
+				`	"Is there a problem?"`
+					goto problem
+			`	"We watch many things. You are... unusual. Humans typically favor their own faction. You move between them." The Quarg studies you. "This is rare. It suggests... perspective."`
+				goto end
+			label problem
+			`	"No problem. An observation." The Quarg tilts their head. "You bridge divisions that others cannot. This is valuable. We have seen species destroy themselves over smaller divisions than those between your factions."`
+			label end
+			`	"Continue as you have," the Quarg says. "Unity is strength. Division is extinction." They walk away, leaving you to ponder the attention of an ancient species.`
+				decline
+
+mission "Cross-Faction: Quarg Mediation Request"
+	name "Ancient Arbitration"
+	description "The Quarg have requested your assistance in a delicate matter. Meet them on <destination>."
+	job
+	to offer
+		has "quarg interest noticed"
+		has "cross faction peacemaker"
+		random < 15
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	destination
+		government "Quarg"
+		distance 5 15
+	on complete
+		set "quarg mediator"
+		payment 200000
+		dialog `The Quarg council receives you with unexpected formality. "We have a dispute," they explain, "between two human factions claiming rights to a system near our space. Neither trusts the other to arbitrate fairly. But both, we are told, trust you." You spend days reviewing evidence, interviewing representatives, and crafting a compromise. The final agreement isn't perfect, but both sides accept it. "You have demonstrated wisdom," the Quarg elder says. "We will remember this."`
+
+
+
+# NEWS ITEMS
+
+news "Faction Relations"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	to show
+		has "cross faction peacemaker"
+	name
+		word
+			"Political analyst"
+			"News commentator"
+			"Diplomatic observer"
+	message
+		word
+			"Relations between the major factions seem to be improving lately. "
+			"There are rumors of secret peace talks between governments. "
+			"Trade between faction borders is up this quarter. "
+		word
+			"Some say a particular captain has been facilitating communication. "
+			"Apparently there's someone trusted by all sides acting as a go-between. "
+			"Private diplomacy may be more effective than official channels. "
+		word
+			"Maybe we can avoid another war after all."
+			"It's refreshing to see cooperation instead of conflict."
+			"I hope this trend continues."
+
+news "Faction Tensions"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	to show
+		has "false flag operator"
+	name
+		word
+			"Worried citizen"
+			"Nervous merchant"
+			"Anxious traveler"
+	message
+		word
+			"Tensions between factions are worse than ever. "
+			"There's been a string of 'incidents' lately. "
+			"Someone seems to be deliberately stirring up conflict. "
+		word
+			"The Republic blames the Syndicate. The Syndicate blames pirates. "
+			"No one knows who's really responsible. "
+			"I've heard rumors of false flag operations. "
+		word
+			"I'm worried about where this is heading."
+			"War feels closer every day."
+			"I'm stocking up on supplies, just in case."

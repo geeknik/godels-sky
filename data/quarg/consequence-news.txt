@@ -1,0 +1,448 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Consequence-Reactive News - Quarg Space
+# The Quarg are an ancient species who observe younger civilizations with
+# detached interest. They speak formally and view individual actions in
+# the context of entire civilizations and deep time.
+
+# =============================================================================
+# QUARG TRADER PATTERN REACTIONS
+# =============================================================================
+
+news "quarg trader observation"
+	to show
+		"actionlog: pattern" == 1
+		"reputation: Quarg" > 10
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg observer"
+			"Quarg"
+	message
+		word
+			`"`
+		word
+			"You are what is called a 'merchant.' Your species develops through trade. This is known to us."
+			"We have observed your trading patterns. They are consistent with peaceful development. This is acceptable."
+			"Trade is how young species learn cooperation. You practice this well. It is a favorable sign for your kind."
+			"Your cargo manifests show fair exchange. This is the foundation of civilization. You build well."
+			"Many of your species resort to violence for resources. You choose trade. This is the wiser path."
+		word
+			`"`
+
+
+news "quarg trader ancient perspective"
+	to show
+		"actionlog: pattern" == 1
+		"reputation: Quarg" > 25
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg elder"
+			"Ancient Quarg"
+	message
+		word
+			`"`
+		word
+			"We have watched civilizations rise and fall for eons. Those who trade prosper. Those who only take, perish. You seem to understand this."
+			"In the long view, merchants are the true builders of empires. Warriors only destroy what others create. Your choice is noted."
+			"Your trading routes mirror patterns we have seen in a thousand successful species. You are on the correct path."
+			"Resources flow where they are needed through trade. This is the natural order. You align with it well."
+		word
+			`"`
+
+
+# =============================================================================
+# QUARG PROTECTOR PATTERN REACTIONS
+# =============================================================================
+
+news "quarg protector interest"
+	to show
+		"actionlog: pattern" == 4
+		"reputation: Quarg" > 20
+	location
+		government "Quarg"
+	name
+		word
+			"Curious Quarg"
+			"Quarg observer"
+	message
+		word
+			`"`
+		word
+			"You use strength to defend, not to dominate. This is unusual among your kind. We find this... interesting."
+			"Protection of the weak is a sign of advanced morality. Your species shows potential. You embody this potential."
+			"We have seen many who claim to protect but secretly exploit. Your actions suggest genuine intent. This is rare."
+			"The strong protecting the weak creates stable societies. You understand this instinctively. Evolution has served you well."
+		word
+			`"`
+
+
+news "quarg protector philosophical"
+	to show
+		"actionlog: pattern" == 4
+		"encounter: count disposition grateful" >= 3
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg philosopher"
+			"Contemplative Quarg"
+	message
+		word
+			`"`
+		word
+			"Why do you protect others at risk to yourself? This is the question that defines sentient species. Your answer pleases us."
+			"In our long observation, protectors are the rarest pattern. Predators and parasites are common. You are uncommon."
+			"The universe tends toward entropy and destruction. Those who actively preserve life work against this tide. We respect this."
+			"You have saved lives at cost to yourself. This transcends mere survival instinct. This is what we call 'civilization.'"
+		word
+			`"`
+
+
+# =============================================================================
+# QUARG PIRATE PATTERN REACTIONS
+# =============================================================================
+
+news "quarg pirate disappointment"
+	to show
+		"actionlog: pattern" == 2
+		"reputation: Quarg" < 0
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg"
+			"Quarg observer"
+	message
+		word
+			`"`
+		word
+			"You take from others by force. This is the path of species that do not survive long. We have seen this pattern end badly."
+			"Piracy is resource acquisition without contribution. It is parasitic. Parasites weaken their hosts and eventually die with them."
+			"We had hoped your species would evolve past predatory behavior. You demonstrate that hope was premature."
+			"Your actions slow the development of your civilization. Every resource stolen is cooperation prevented."
+		word
+			`"`
+
+
+news "quarg pirate analysis"
+	to show
+		"actionlog: pattern" == 2
+		"reputation: Quarg" < -20
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg analyst"
+			"Quarg recorder"
+	message
+		word
+			`"`
+		word
+			"We document all patterns of behavior. Yours is catalogued under 'developmental regression.' It is not a favorable category."
+			"Your piracy indicates your species has not yet solved the problem of resource distribution. Disappointing, given your technological level."
+			"In our records, species with high piracy rates have lower survival probabilities. You contribute to this statistic."
+			"We do not judge by your species' standards. By ours, you are very young and making very old mistakes."
+		word
+			`"`
+
+
+# =============================================================================
+# QUARG WARMONGER PATTERN REACTIONS
+# =============================================================================
+
+news "quarg warmonger concern"
+	to show
+		"actionlog: pattern" == 5
+		"reputation: Quarg" < -30
+	location
+		government "Quarg"
+	name
+		word
+			"Troubled Quarg"
+			"Quarg sentinel"
+	message
+		word
+			`"`
+		word
+			"You seek conflict constantly. This pattern, taken to its extreme, leads to extinction. We have witnessed this many times."
+			"War is sometimes necessary. Constant war is pathology. Your pattern suggests the latter. This concerns us."
+			"We have seen warmonger species consume themselves and their neighbors. You walk this path. Turn back if you can."
+			"Violence as first resort indicates failure of higher cognitive function. You are capable of more. Why do you not show it?"
+		word
+			`"`
+
+
+news "quarg warmonger historical"
+	to show
+		"actionlog: pattern" == 5
+		"actionlog: escalation"
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg historian"
+			"Keeper of records"
+	message
+		word
+			`"`
+		word
+			"In our archives, we have records of 847 species that followed your pattern. None exist today. Consider this carefully."
+			"The universe is vast and old. It has seen countless warmongers rise and fall. You are not unique. You are a pattern repeating."
+			"We do not intervene in the self-destruction of young species. It is not our role. But we would prefer you prove our predictions wrong."
+			"Your destructive potential grows daily. So does your likelihood of triggering responses you cannot survive. This is mathematics, not judgment."
+		word
+			`"`
+
+
+# =============================================================================
+# QUARG ATROCITY REACTIONS
+# =============================================================================
+
+news "quarg atrocity response"
+	to show
+		"reputation: atrocity"
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg council representative"
+			"Quarg elder"
+	message
+		word
+			`"`
+		word
+			"You have committed acts that transcend normal conflict. This is noted in permanent records. It will be remembered long after you are gone."
+			"We do not experience emotion as you do. But if we did, what you have done would invoke our deepest disapproval."
+			"Atrocity against sentients is the ultimate failure of a being. You have failed in the most fundamental way possible."
+			"We have seen monsters before. Some wore scales, some had fur, some looked like you. The form is irrelevant. The actions define."
+		word
+			`"`
+
+
+news "quarg atrocity philosophical"
+	to show
+		"reputation: atrocity"
+		"reputation: Quarg" < -50
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg sage"
+			"Ancient observer"
+	message
+		word
+			`"`
+		word
+			"The capacity for atrocity exists in all sentient species. Most suppress it. You have embraced it. This is a choice. A tragic choice."
+			"In the long history of the galaxy, beings like you appear regularly. They burn brightly with destruction, then fade to nothing. You will too."
+			"We wonder if you understand what you have become. Probably not. Self-awareness of one's own monstrosity is rare."
+			"Your species will remember you for generations. The memory will be a wound that never fully heals. This is your legacy."
+		word
+			`"`
+
+
+# =============================================================================
+# QUARG WITNESS REACTIONS
+# =============================================================================
+
+news "quarg witness observation"
+	to show
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 400
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg recorder"
+			"Quarg observer"
+	message
+		word
+			`"`
+		word
+			"We see more than you realize. All your actions are observed and recorded. Nothing is hidden from those who watch."
+			"Your activities have been documented by multiple observers. The pattern is clear. The record is complete."
+			"We have watched your species since before you had writing. One individual's actions are always noted. Yours especially."
+			"The universe remembers everything. We are part of that memory. Your deeds, good and ill, are preserved."
+		word
+			`"`
+
+
+news "quarg unwitnessed curiosity"
+	to show
+		"witness: unwitnessed"
+		"actionlog: pattern" >= 2
+	location
+		government "Quarg"
+	name
+		word
+			"Intrigued Quarg"
+			"Quarg analyst"
+	message
+		word
+			`"`
+		word
+			"You operate in ways that avoid observation. This is interesting. Few young species have this capability. Or this need."
+			"Our sensors are extensive. Yet gaps exist in your record. Either you are very skilled or very fortunate. Or both."
+			"The absence of witnesses does not mean the absence of observers. We see patterns you cannot imagine. Consider this."
+			"You move through space like a shadow. This could serve good purposes or ill. We watch to learn which."
+		word
+			`"`
+
+
+# =============================================================================
+# QUARG LONG-TERM REACTIONS
+# =============================================================================
+
+news "quarg long-term positive"
+	to show
+		"days" > 300
+		"reputation: Quarg" > 50
+		"actionlog: pattern" <= 4
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg elder"
+			"Ancient Quarg"
+	message
+		word
+			`"`
+		word
+			"We have observed you for a significant portion of your lifespan. Your consistency is remarkable. This is the sign of true character."
+			"In the long view, you represent the best of your species. If all humans were like you, your civilization would flourish."
+			"Time reveals truth. You have had many opportunities to betray your principles. You have not. This is noted."
+			"We have seen enough. You are what you appear to be: a being of genuine worth. This is our conclusion."
+		word
+			`"`
+
+
+news "quarg long-term negative"
+	to show
+		"days" > 300
+		"reputation: Quarg" < -40
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg archivist"
+			"Keeper of records"
+	message
+		word
+			`"`
+		word
+			"Extended observation confirms initial assessment. You are a destructive force. Time has not changed this."
+			"We hoped you might evolve. You have not. Your pattern remains consistent with the most harmful outcomes."
+			"In our archives, you will be recorded as an example of failed potential. Your species is capable of better. You are not."
+			"The long view sometimes offers hope of redemption. In your case, it has offered only confirmation of our concerns."
+		word
+			`"`
+
+
+# =============================================================================
+# QUARG CROSS-SPECIES REACTIONS
+# =============================================================================
+
+news "quarg multi-faction praise"
+	to show
+		"reputation: Quarg" > 30
+		"reputation: Hai" > 30
+		"reputation: Coalition" > 20
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg diplomat"
+			"Inter-species liaison"
+	message
+		word
+			`"`
+		word
+			"You are trusted by multiple species. This is rare and valuable. Bridge-builders advance galactic civilization."
+			"We observe that the Hai speak well of you. The Coalition acknowledges your worth. This pattern is significant."
+			"Species that can cooperate with many others are catalysts for progress. You demonstrate this potential."
+			"The greatest individuals in galactic history were those who connected civilizations. You walk their path."
+		word
+			`"`
+
+
+news "quarg drak reference"
+	to show
+		"reputation: Quarg" > 50
+		"actionlog: pattern" == 4
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg elder"
+	message
+		word
+			`"`
+		word
+			"There are those who watch the watchers. Even we answer to higher powers. Your actions have not gone unnoticed at those levels."
+			"We serve a purpose larger than ourselves. You, in your small way, serve a similar purpose. Protection of the greater good."
+			"The universe has a structure you cannot perceive. Your actions align with forces you do not know exist. This is... encouraging."
+		word
+			`"`
+
+
+# =============================================================================
+# QUARG HUMAN CIVILIZATION REACTIONS
+# =============================================================================
+
+news "quarg humanity assessment positive"
+	to show
+		"actionlog: pattern" <= 4
+		"reputation: Quarg" > 40
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg sociologist"
+			"Civilization analyst"
+	message
+		word
+			`"`
+		word
+			"Your species is young but shows promise. Individuals like you suggest the potential for long-term survival."
+			"We have studied many young species. Yours is volatile but adaptive. You represent the better tendencies of your kind."
+			"Humanity could go either way. Toward destruction or toward greatness. You push toward greatness. This matters."
+			"The actions of individuals shape civilizations. Your actions shape humanity toward a future we would welcome."
+		word
+			`"`
+
+
+news "quarg humanity assessment negative"
+	to show
+		"actionlog: pattern" >= 2
+		"reputation: Quarg" < -30
+	location
+		government "Quarg"
+	name
+		word
+			"Quarg analyst"
+			"Civilization observer"
+	message
+		word
+			`"`
+		word
+			"Your species contains great potential and great danger. You embody the danger. This is unfortunate."
+			"We hoped humanity would mature quickly. Individuals like you suggest that hope may be misplaced."
+			"Every species has those who drag it backward. You are such an individual. Your species suffers for your existence."
+			"In the balance of human development, you weigh on the side of failure. We have noted this. It matters."
+		word
+			`"`

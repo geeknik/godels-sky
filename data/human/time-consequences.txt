@@ -1,0 +1,546 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Time-Based Consequence Missions
+# These missions represent delayed reactions to player actions. Consequences
+# don't always happen immediately - word spreads, investigations conclude,
+# memories fade or solidify over time. These create a sense that the
+# universe has memory and that actions have long-term effects.
+
+
+
+# DELAYED POSITIVE CONSEQUENCES
+
+mission "Delayed: Old Friend Remembers"
+	name "Blast from the Past"
+	description "Someone you helped long ago has tracked you down. They want to thank you properly on <destination>."
+	job
+	to offer
+		"encounter: count disposition grateful" >= 2
+		"days" > 30
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment 75000
+		dialog `You barely recognize them at first - it's been so long. But they remember everything. "You saved my ship," they say. "Maybe my life. I never forgot. It took me years, but I finally made it. Made something of myself. And I always said I'd find you and pay you back." The payment is substantial - the savings of years, offered freely. "This doesn't even cover what you did. But it's everything I have."`
+
+mission "Delayed: Career Milestone"
+	name "Years of Service"
+	description "The Merchant Guild is recognizing your years of reliable service. Attend the ceremony on <destination>."
+	job
+	to offer
+		has "merchant guild member"
+		"days" > 100
+		"actionlog: pattern" == 1
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		attributes "trade" "rich"
+		distance 2 5
+	on complete
+		payment 100000
+		"reputation: Merchant" += 10
+		dialog `The Merchant Guild recognizes your years of consistent service. "In an industry full of fly-by-night operators, you've proven yourself reliable over the long term," the Guildmaster says. "That kind of consistency is rare and valuable." A substantial bonus accompanies your service medal. "Here's to many more years of profitable commerce."`
+
+mission "Delayed: Investment Returns"
+	name "Dividends"
+	description "Investments you made long ago have matured. Collect your returns on <destination>."
+	job
+	to offer
+		"credits" > 500000
+		"days" > 75
+		random < 10
+	source
+		government "Syndicate"
+	destination
+		government "Syndicate"
+		distance 2 5
+	on complete
+		payment 150000
+		dialog `The investment manager is pleased to see you. "Your portfolio has performed exceptionally well," they report. "Long-term investments in stable markets, just as we recommended." They transfer a substantial dividend payment. "Patience is rewarded, as always. Would you like to reinvest, or enjoy the fruits of your wisdom?"`
+
+
+
+# DELAYED NEGATIVE CONSEQUENCES
+
+mission "Delayed: Old Enemy Surfaces"
+	name "The Past Returns"
+	description "Someone you wronged long ago has finally found you. A threatening message awaits on <destination>."
+	job
+	to offer
+		"encounter: has disposition hostile"
+		"days" > 50
+		random < 15
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		payment -10000
+		dialog `The message is brief and cold. "I finally found you. It took years, but I never stopped looking. What you did to me - to my family - I haven't forgotten. I won't be the one coming for you. That's not my way. But I've told people. A lot of people. Your past is catching up with you." You notice your accounts have been accessed. Money is missing. The harassment has begun.`
+
+mission "Delayed: Investigation Concludes"
+	name "Case Closed"
+	description "An investigation into your past activities has concluded. Learn the results on <destination>."
+	job
+	to offer
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 700
+		"days" > 60
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military"
+		distance 2 5
+	on complete
+		payment -50000
+		"reputation: Republic" -= 10
+		"reputation: Free Worlds" -= 10
+		"reputation: Syndicate" -= 10
+		dialog `The investigator presents their findings. "We've been compiling evidence for months," they say. "Witness statements, surveillance data, transaction records. It took time, but we've built a comprehensive picture of your activities." They issue fines and penalties. "Consider this a warning. We're watching you now. And we have very long memories."`
+
+mission "Delayed: Reputation Catches Up"
+	name "Word Spreads"
+	description "Your reputation has spread to new regions. A contact on <destination> has news about how you're perceived."
+	job
+	to offer
+		"encounter: count disposition hostile" >= 3
+		"days" > 40
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 3 6
+	on complete
+		"reputation: Merchant" -= 5
+		dialog `Your contact looks uncomfortable. "Word about you has been spreading," they say. "Stories from people you've wronged, warnings passed between captains. You're getting a reputation in systems you've never even visited." They show you transcripts of chatter mentioning your name - none of it flattering. "Reputation travels faster than ships. And it lasts longer than you'd think."`
+
+
+
+# DELAYED WITNESS CONSEQUENCES
+
+mission "Delayed: Witness Report"
+	name "The Report Filed"
+	description "A witness to your past activities has finally filed a report. The authorities want to question you on <destination>."
+	job
+	to offer
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 600
+		"days" > 45
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes "military"
+		distance 2 5
+	on complete
+		payment -25000
+		dialog `The authorities explain that a witness has come forward about activities from weeks ago. "They were afraid to report at the time," the officer says. "But eventually, conscience prevailed." The questioning is thorough, and the fine is substantial. "We take delayed reporting seriously. Fear shouldn't prevent justice."`
+
+mission "Delayed: Evidence Surfaces"
+	name "Found Footage"
+	description "Evidence of your past activities has been discovered. A fixer on <destination> offers to help."
+	job
+	to offer
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 500
+		"days" > 30
+		"credits" > 100000
+		random < 15
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Independent" "Pirate"
+		distance 2 5
+	on complete
+		payment -75000
+		dialog `The fixer shows you the evidence - recordings, sensor logs, witness statements compiled over weeks. "Someone's been building a case against you," they explain. "This stuff was about to hit the authorities. For 75,000 credits, I've made it... disappear." They take your money. "The past doesn't always stay buried. But I'm good at digging."`
+
+
+
+# DELAYED FACTION CONSEQUENCES
+
+mission "Delayed: Republic Recognition"
+	name "Citizenship Consideration"
+	description "After years of service, the Republic is considering you for special recognition. Attend the review on <destination>."
+	job
+	to offer
+		"reputation: Republic" > 50
+		"days" > 90
+		random < 10
+	source
+		government "Republic"
+	destination
+		government "Republic"
+		attributes "core"
+		distance 2 5
+	on complete
+		set "republic special recognition"
+		payment 100000
+		"reputation: Republic" += 15
+		dialog `The Republic review board examines your service record spanning years. "Consistent loyalty. Reliable service. No scandals, no betrayals." They stamp your file with a special designation. "You've proven yourself a true friend of the Republic over the long term. This isn't given lightly - it's earned over years." Special privileges and a substantial reward follow.`
+
+mission "Delayed: Syndicate Blacklist"
+	name "Corporate Memory"
+	description "The Syndicate has completed a long-term analysis of your activities. The results aren't good."
+	job
+	to offer
+		"reputation: Syndicate" < -30
+		"days" > 60
+		random < 20
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent"
+		distance 2 5
+	on complete
+		set "syndicate blacklisted"
+		payment -50000
+		dialog `A Syndicate representative delivers the news. "Our algorithms have analyzed your activity patterns over an extended period," they say. "The conclusion is clear: you are a net negative for corporate interests." They freeze what accounts they can reach. "You are now on the permanent exclusion list. This is not a negotiable status. Corporate memory is very, very long."`
+
+
+
+# LONG-TERM PATTERN CONSEQUENCES
+
+mission "Delayed: Pattern Confirmed"
+	name "You Are What You Do"
+	description "Your long-term behavior pattern has been officially recognized. Learn what this means on <destination>."
+	job
+	to offer
+		"actionlog: pattern" >= 1
+		"days" > 120
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment 50000
+		dialog `A behavioral analyst presents their findings. "We've tracked your activities over an extended period," they explain. "Patterns emerge over time that aren't visible in short-term analysis. You've been remarkably consistent." They show you charts and graphs. "You are what you repeatedly do. Your long-term pattern has been logged. Governments and organizations will react to the pattern, not just individual actions."`
+
+mission "Delayed: Generational Impact"
+	name "Legacy in the Making"
+	description "Your long-term activities are shaping how you'll be remembered. Reflect on this on <destination>."
+	job
+	to offer
+		"days" > 180
+		or
+			"encounter: count disposition grateful" >= 10
+			"encounter: count disposition hostile" >= 5
+		random < 5
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment 75000
+		dialog `An elderly historian approaches you. "I study notable captains," they explain. "Their long-term impact on trade, on politics, on the lives they touch." They've been tracking your career. "You're building a legacy. Whether you intend to or not. The people you've helped - or harmed - their stories are becoming part of yours. History will remember the pattern of your choices."`
+
+
+
+# DELAYED CREW CONSEQUENCES
+
+mission "Delayed: Crew Reunion"
+	name "Former Crew"
+	description "A former crew member wants to reconnect. Meet them on <destination>."
+	job
+	to offer
+		"crew: trustworthiness" > 700
+		"days" > 60
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment 25000
+		dialog `The former crew member greets you warmly. "Best captain I ever served under," they say. "I've been telling everyone about you. How you treated the crew fairly, paid on time, kept us safe." They press a gift into your hands. "Some of us pooled our savings. We wanted you to know that good captains are remembered. And appreciated."`
+
+mission "Delayed: Crew Grudge"
+	name "Disgruntled Former Employee"
+	description "A former crew member with a grudge has been spreading stories. Deal with this on <destination>."
+	job
+	to offer
+		"crew: trustworthiness" < 400
+		"days" > 45
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment -20000
+		"reputation: Merchant" -= 5
+		dialog `The problem is worse than you thought. A former crew member - one you didn't treat well - has been systematically badmouthing you to every hiring hall and merchant guild in the sector. "You underpaid us, worked us too hard, didn't care about our safety," the complaints read. Fixing the damage to your reputation costs time and money. Some grudges last.`
+
+
+
+# =============================================================================
+# VERY LONG-TERM CONSEQUENCES (months of gameplay)
+# =============================================================================
+
+mission "Long-Term: Old Debt Due"
+	name "The Loan Comes Due"
+	description "A significant loan from years ago is being called in. The creditors have been patient, but their patience has limits. Negotiate on <destination>."
+	job
+	to offer
+		"credits" > 2000000
+		"days" > 365  # At least a year
+		random < 8
+	source
+		government "Syndicate" "Independent"
+	destination
+		government "Syndicate"
+		attributes "bank"
+		distance 3 6
+	on complete
+		payment -300000
+		dialog `The loan officer presents documents you'd almost forgotten. "This loan was issued three years ago," they say. "We extended patience during your early career. But now your financial status has improved substantially. The principal plus accrued interest totals 300,000 credits. Payment is due immediately." You could pay, or negotiate, or... find other solutions. Old obligations catch up.`
+
+mission "Long-Term: Multi-Generation Gratitude"
+	name "Second Generation Thanks"
+	description "The child of someone you saved years ago has reached out. They want to express gratitude on <destination>."
+	job
+	to offer
+		"encounter: count disposition grateful" >= 5
+		"days" > 200
+		"actionlog: pattern" == 4  # PROTECTOR
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Neutral"
+		distance 2 5
+	on complete
+		payment 120000
+		"reputation: threshold friendly" += 15
+		dialog `A young adult approaches you nervously. "You probably don't remember me," they say. "I was a child when you saved our ship from pirates. My parents told me the story every year growing up. 'If not for that captain, we wouldn't be here.' I wanted to find you and thank you personally." They press a substantial payment into your hands. "My parents saved for this. They wanted to make sure you were taken care of." Your actions echo across generations.`
+
+mission "Long-Term: Multi-Generation Vengeance"
+	name "The Child's Revenge"
+	description "The orphan of someone you killed years ago has finally tracked you down. They want justice on <destination>."
+	job
+	to offer
+		"encounter: count disposition hostile" >= 8
+		"days" > 250
+		"reputation: atrocity"  # Has committed atrocities
+		random < 10
+	source
+		government "Independent" "Pirate" "Neutral"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		payment -40000
+		"encounter: count disposition hostile" += 1
+		dialog `The message is delivered through multiple channels to ensure it reaches you. "I know who you are," it reads. "You killed my parents ten years ago. Boarded their ship, killed everyone for cargo. I was a child, hidden in the life support maintenance shaft. I heard everything. I survived only because you didn't bother to check thoroughly. I've spent my entire life preparing for this moment." Your accounts have been hacked. Your contacts are being warned away from you. The orphan's vengeance has begun.`
+
+mission "Long-Term: Investigation Concludes"
+	name "The Final Report"
+	description "A years-long investigation into your activities has concluded. The authorities want to present findings on <destination>."
+	job
+	to offer
+		"days" > 400
+		"actionlog: witnessed" > 1500
+		"encounter: count disposition hostile" >= 10
+		random < 12
+	source
+		government "Republic"
+	destination
+		government "Republic"
+		attributes "military" "court"
+		distance 3 6
+	on complete
+		payment -100000
+		"reputation: Republic" -= 20
+		set "under federal investigation"
+		dialog `The federal prosecutor presents a thick dossier. "This investigation has spanned three years," they explain. "We compiled witness statements, sensor data, financial records. We built a case showing a pattern of criminal activity that's undeniable." The evidence is comprehensive and devastating. Large fines, potential criminal charges, permanent marks on your record. "We don't forget. We don't stop. Justice may be delayed, but it arrives."`
+
+mission "Long-Term: Network Reputation"
+	name "Your Name Is Known"
+	description "Your reputation has spread through interconnected networks across the galaxy. A broker on <destination> has analyzed your reach."
+	job
+	to offer
+		"days" > 300
+		or
+			"encounter: count disposition grateful" >= 20
+			"encounter: count disposition hostile" >= 15
+		random < 15
+	source
+		government "Independent" "Syndicate"
+	destination
+		government "Independent" "Syndicate"
+		attributes "trade"
+		distance 3 6
+	on complete
+		payment 0
+		set "network reputation established"
+		dialog `The reputation broker shows you a network map. "Your name appears in conversations across the galaxy," they explain. "Connected through trade routes, through pirate networks, through military intelligence. Someone you helped told their brother, who told their business partner, who mentioned it to a Hai merchant. The network has spread your reputation in every direction." They highlight regions where you're respected and regions where you're feared. "This is the power of networks. Everything is connected. Your actions ripple outward, touching people and places you've never seen."`
+
+mission "Long-Term: Alliance Solidified"
+	name "Years of Loyalty"
+	description "Your long-term support of the Coalition has been recognized. They're offering formal alliance status on <destination>."
+	job
+	to offer
+		"reputation: Coalition" > 60
+		"days" > 365
+		"encounter: count disposition grateful" >= 15  # Have helped many
+		random < 8
+	source
+		government "Coalition"
+	destination
+		government "Coalition"
+		attributes "core"
+		distance 3 6
+	on complete
+		set "coalition formal ally"
+		payment 200000
+		"reputation: Coalition" += 25
+		dialog `The Coalition High Council unanimously votes to grant you formal ally status. "Over years, you have consistently supported Coalition interests," the High Commander says. "Defended our ships, shared intelligence, fought our enemies when others wouldn't. This recognition is not given lightly - it's earned through proven loyalty." The alliance brings access to Coalition military hardware, priority access to Coalition ports, and the respect of being considered an equal. "We are bound now. Your enemies are our enemies. Your causes are our causes."`
+
+mission "Long-Term: Blood Feud Declared"
+	name "The Family Vow"
+	description "A powerful family has declared a blood feud against you for actions years ago. Learn the terms on <destination>."
+	job
+	to offer
+		"encounter: count disposition nemesis" >= 3
+		"days" > 300
+		"reputation: atrocity"
+		random < 8
+	source
+		government "Syndicate" "Independent"
+	destination
+		government "Independent"
+		distance 2 5
+	on complete
+		payment -80000
+		set "blood feud declared"
+		dialog `The message is formal, ancient in its ritual seriousness. "The family of [victim's name] declares blood feud against you, for the murder of [victim's name] committed [X] years ago. This feud will not end until debt is paid in blood. Family resources, business connections, hired mercenaries - all are now dedicated to your destruction." They provide specific details about their capabilities and how they plan to hunt you. Blood feuds are not casual threats. They are commitments spanning generations.`
+
+mission "Long-Term: The Legend Grows"
+	name "Stories of Your Deeds"
+	description "Your long-term actions have become the stuff of legend. A storyteller on <destination> is collecting tales."
+	job
+	to offer
+		"days" > 500
+		or
+			"encounter: count disposition grateful" >= 25
+			"encounter: count disposition hostile" >= 20
+		random < 10
+	source
+		government "Neutral" "Independent"
+	destination
+		government "Neutral" "Independent"
+		distance 2 5
+	on complete
+		payment 50000
+		dialog `An old storyteller in a corner booth waves you over. "I collect stories of notable captains," they say. "And yours is particularly interesting. The people you've helped across decades - they remember. They tell their children, who tell theirs. The pattern of your choices has become a legend growing in the telling." They recite stories that surprise even you - moments you'd forgotten, people you hadn't realized were affected. "Your actions ripple outward through time. Every person you touch becomes part of your story, spreading to people you'll never meet. That is legacy."`
+
+
+
+# =============================================================================
+# NETWORK EFFECT CONSEQUENCES
+# Reputation spreading through connected relationships
+# =============================================================================
+
+mission "Network: Gratitude Cascade"
+	name "The Gratitude Network"
+	description "Someone you helped has been telling everyone, and those people are telling everyone they know. A cascade of gratitude awaits on <destination>."
+	job
+	to offer
+		"encounter: count disposition grateful" >= 10
+		"days" > 100
+		"actionlog: pattern" == 4 or "actionlog: pattern" == 1
+		random < 12
+	source
+		government "Republic" "Free Worlds" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Neutral"
+		distance 2 5
+	on complete
+		payment 90000
+		"encounter: count disposition grateful" += 5
+		dialog `You're greeted by a small crowd of strangers, all expressing gratitude for actions you don't remember. "You helped my brother five years ago," says one. "My cousin told me about how you saved their convoy," says another. A merchant captain approaches. "I heard about your reputation through a Hai merchant who heard about you from a Wanderer trader. The network of people you've helped keeps growing." They collectively pool resources to reward you. "Goodwill spreads faster than light when it travels through human connections."`
+
+mission "Network: Hostility Cascade"
+	name "The Warning Network"
+	description "Someone you wronged has been spreading warnings through their network. Captains are being warned about you on <destination>."
+	job
+	to offer
+		"encounter: count disposition hostile" >= 12
+		"days" > 80
+		not "witness: unwitnessed"
+		random < 15
+	source
+		government "Independent" "Neutral" "Syndicate"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		payment -30000
+		"reputation: Merchant" -= 10
+		dialog `The spaceport is abnormally quiet when you arrive. People watch you with suspicion. A spacer approaches cautiously. "We received a warning about you," they say. "Someone you wronged told their contacts, who told theirs, who posted warnings in hiring halls and trade forums. The network of warnings has been spreading for months." You're offered worse prices, fewer opportunities, and wary glances. Hostility spreads through connections just as gratitude does.`
+
+mission "Network: Alliance Recommendation"
+	name "Endorsement Chain"
+	description "Your allies have been recommending you to their allies, creating a chain of endorsements. A major government wants to formalize this on <destination>."
+	job
+	to offer
+		"reputation: threshold allied"
+		"encounter: count disposition grateful" >= 15
+		"days" > 150
+		random < 10
+	source
+		government "Republic" "Coalition" "Free Worlds"
+	destination
+		government "Republic" "Coalition" "Free Worlds"
+		attributes "core"
+		distance 3 6
+	on complete
+		payment 150000
+		"reputation: threshold allied" += 15
+		dialog `The official presents a letter of endorsement signed by multiple governments and organizations. "Your reputation has been independently verified by multiple parties we trust," they explain. "The Hai speak highly of your peaceful trade practices. The Wanderers praise your environmental stewardship. The Republic values your consistent support. When allies agree, we take notice." They offer preferential treatment and access normally reserved for trusted partners. "Network endorsements are more valuable than individual praise. When multiple connected sources vouch for you, that carries weight."`
+
+mission "Network: Enemy Coalition"
+	name "United Against You"
+	description "Your enemies have formed a coalition against you. Governments and factions that normally compete are coordinating against you. Meet their representative on <destination>."
+	job
+	to offer
+		"encounter: count disposition nemesis" >= 5
+		"reputation: atrocity"
+		"days" > 200
+		random < 8
+	source
+		government "Independent"
+	destination
+		government "Independent"
+		distance 2 5
+	on complete
+		payment -60000
+		set "enemy coalition formed"
+		dialog `The representative speaks calmly, which somehow makes it worse. "You've made enemies across enough factions that they've found common cause," they explain. "The Republic wants you for crimes against shipping. Pirates want you for interference. Corporations want you for disrupted profits. Normally these groups wouldn't cooperate. But against you, they've found alignment. You're not just fighting one enemy anymore. You're fighting a coalition." They present evidence of shared intelligence, coordinated patrols, and joint operations targeting you. "Network effects work both ways. Gratitude spreads through connections - and so does hostility."`

@@ -1,0 +1,370 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Drak/Archon Consequence Missions
+# The Drak are ancient cosmic guardians who enforce peace and prevent extinction.
+# They communicate telepathically and rarely intervene in mortal affairs.
+# Their consequences reflect cosmic-scale concerns rather than petty crimes.
+# They care about patterns of behavior that threaten the balance of life.
+
+
+
+# VOID SPRITE PROTECTION CONSEQUENCES
+
+mission "Archon Warning: Void Sprite Harm"
+	invisible
+	landing
+	to offer
+		"reputation: Indigenous Lifeform" < -10
+		not "archon void sprite warning"
+	on offer
+		set "archon void sprite warning"
+		conversation
+			`As you drift through space, a presence fills your mind. It is vast, ancient, and patient. A voice that is not a voice speaks: "You have harmed the Sprites."`
+			`	The thought carries with it an emotion you cannot name - something between disappointment and sorrow, but on a cosmic scale.`
+			choice
+				`	"They attacked me first."`
+				`	"What are these 'Sprites' to you?"`
+					goto explain
+				`	"I didn't know they were protected."`
+					goto ignorance
+			`	"The Sprites do not attack. They flee. You pursued." The presence is stating a fact, not making an accusation. "We do not punish. We observe. We remember."`
+				goto end
+			label explain
+			`	"They are... children of the cosmos. Evolution's experiment. We protect experiments." The concept of 'experiment' carries overtones of affection, of scientific curiosity, of hope. "Your species is also an experiment. We protect you as well."`
+				goto end
+			label ignorance
+			`	"Ignorance is understandable. The universe is vast." The presence seems to expand slightly, as if considering. "Now you know. What you do with knowledge defines what you are."`
+			label end
+			`	The presence withdraws, leaving you alone with your thoughts. The stars seem dimmer somehow.`
+				decline
+
+mission "Archon Judgment: Void Sprite Hunter"
+	invisible
+	landing
+	to offer
+		"reputation: Indigenous Lifeform" < -50
+		has "archon void sprite warning"
+		not "archon void sprite judgment"
+	on offer
+		set "archon void sprite judgment"
+		"reputation: Drak" -= 50
+		conversation
+			`The presence returns. This time it fills your entire consciousness, blotting out the stars. "You were warned. You continued."`
+			`	The emotion accompanying this thought is complex - still no anger, but something like clinical assessment. You feel yourself being... measured.`
+			choice
+				`	"I need their parts for my ship."`
+					goto material
+				`	"I enjoy hunting them."`
+					goto hunting
+				`	"I'm sorry. I'll stop."`
+					goto redemption
+			label material
+			`	"You destroy unique life for material gain." The presence considers this. "Your species often does this. It is... disappointing." A pause. "We will continue to observe. But know this: you are no longer invisible to us."`
+				goto end
+			label hunting
+			`	For a long moment, there is only silence. Then: "You hunt for pleasure. Not survival. Not necessity." The emotion that accompanies this is the closest you've felt to Archon disapproval. "Some experiments fail. We hope you are not one of them."`
+				goto end
+			label redemption
+			`	"Apology is easy. Action is difficult." The presence seems to soften slightly. "We will see what you choose. We always see."`
+			label end
+			`	The presence withdraws abruptly, leaving you with a profound sense of being watched. Your ship's sensors register a momentary distortion in space-time nearby. An Archon was here.`
+				decline
+
+
+
+# WARMONGER PATTERN CONSEQUENCES
+
+mission "Archon Observation: Pattern of Violence"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 5
+		"combat rating" > 200
+		not "archon warmonger observation"
+		random < 10
+	on offer
+		set "archon warmonger observation"
+		conversation
+			`A presence touches your mind - ancient, vast, and curious. "We have observed you."`
+			`	Images flash through your consciousness: battles you've fought, ships you've destroyed, lives you've ended. They pass without judgment, like an archivist cataloging records.`
+			choice
+				`	"Are you going to stop me?"`
+				`	"Why do you care what I do?"`
+					goto why
+				`	"Get out of my head."`
+					goto resist
+			`	"Stop you?" The concept seems to amuse the presence. "We do not stop. We observe. We prevent extinction. You are not threatening extinction." A pause. "Yet."`
+				goto end
+			label why
+			`	"We enforce peace. We prevent extinction." These words carry the weight of billions of years. "Your species is young. Violent. This is expected. But patterns interest us." Another pause. "Your pattern is... notable."`
+				goto end
+			label resist
+			`	The presence recedes slightly, but does not leave. "Your resistance is noted. Your fear is noted. Your aggression is noted." These are observations, not accusations. "All data is valuable."`
+			label end
+			`	"Continue as you will. We will continue to watch. If your pattern threatens extinction - of any species - we will intervene." The presence withdraws, leaving you with the unsettling knowledge that something ancient and powerful has taken an interest in you.`
+				decline
+
+mission "Archon Intervention: Extinction Threat"
+	invisible
+	landing
+	to offer
+		"reputation: atrocity"
+		"actionlog: pattern" == 5
+		has "archon warmonger observation"
+		not "archon extinction intervention"
+	on offer
+		set "archon extinction intervention"
+		"reputation: Drak" -= 100
+		conversation
+			`The presence returns. This time, it is not merely observing. This time, it fills your mind with INTENT.`
+			`	"You have committed atrocities. You threaten extinction." The words hammer into your consciousness. "This violates our directive."`
+			choice
+				`	"I'm just one person. I can't cause extinction."`
+					goto scale
+				`	"Try to stop me."`
+					goto defiance
+				`	"What do you want from me?"`
+					goto question
+			label scale
+			`	"One person begins. Others follow. Patterns propagate. Species die." The presence shows you visions: civilizations that rose and fell, worlds that burned, species that exist now only as Archon memories. "We have seen this pattern before. Many times."`
+				goto warning
+			label defiance
+			`	For an instant, you feel the full weight of the Archon's attention. It is like standing before a sun. "We do not 'try.' We observe until intervention is necessary. Then we act." The pressure recedes. "You are not yet worthy of our action. But you approach that threshold."`
+				goto warning
+			label question
+			`	"We want nothing. We observe. We preserve. We prevent." The presence seems almost sad. "What we would prefer is that you choose differently. But choice is yours."`
+			label warning
+			`	"Know this: if you continue on your current path, you will draw our full attention. We have ended threats before. We will do so again if necessary." The words carry absolute certainty. "This is not a threat. It is a statement of fact."`
+			`	The presence withdraws. Your ship's systems flicker momentarily, and when they stabilize, you notice a new contact on your sensors - an Archon vessel, watching from a distance. It does not approach. It does not attack. It simply... observes.`
+				decline
+
+
+
+# PROTECTOR PATTERN CONSEQUENCES
+
+mission "Archon Recognition: Guardian Pattern"
+	invisible
+	landing
+	to offer
+		"actionlog: pattern" == 4
+		"combat rating" > 100
+		not "archon guardian recognition"
+		random < 15
+	on offer
+		set "archon guardian recognition"
+		"reputation: Drak" += 25
+		conversation
+			`A presence touches your mind - not intrusive, but warm. Almost welcoming. "We have observed you."`
+			`	Unlike other Archon contacts, this one carries no weight of judgment. Instead, there is something like... recognition.`
+			choice
+				`	"What have you observed?"`
+				`	"Are you going to tell me to stop?"`
+					goto stop
+			`	"You protect. You defend the weak. You stand between the innocent and harm." The presence shows you images of your battles - not the destruction, but the ships you've saved, the traders you've escorted, the pirates you've deterred. "This is... aligned with our purpose."`
+				goto kinship
+			label stop
+			`	"No." The word carries amusement. "Why would we discourage what we ourselves do? You protect. This is good."`
+			label kinship
+			`	"We enforce peace. We prevent extinction. We protect." The presence seems to consider. "You are young. Your methods are crude. But your pattern..." A pause. "Your pattern pleases us."`
+			choice
+				`	"I'm honored."`
+				`	"I just do what's right."`
+					goto right
+			`	"Honor is a mortal concept. But your pleasure at our recognition is noted." The presence seems to smile - though how a telepathic entity can smile, you cannot say. "Continue your path, guardian. We will watch with interest."`
+				goto end
+			label right
+			`	"'Right' is a complex concept. Species define it differently. But protection of the innocent is... universal." The presence radiates something like approval. "You understand this instinctively. That is rare."`
+			label end
+			`	The presence withdraws gently, leaving you with a sense of cosmic validation. You've been noticed by beings who have watched over the galaxy for billions of years - and they approve.`
+				decline
+
+mission "Archon Ally: Cosmic Guardian"
+	name "The Watched Skies"
+	description "Something ancient has taken an interest in your protective nature. The Archons rarely communicate with mortals, but you've earned their attention."
+	job
+	to offer
+		has "archon guardian recognition"
+		"actionlog: pattern" == 4
+		"combat rating" > 150
+		random < 10
+	source
+		near "Nenia" 1 10
+	on offer
+		conversation
+			`As you land, a presence fills your mind. "Guardian. We have a request."`
+			`	This is unprecedented. The Archons are observers, not participants. They do not ask mortals for help.`
+			choice
+				`	"What do you need?"`
+				`	"Why ask me?"`
+					goto why
+			`	"There are those who would harm the Sprites in the Nenia system. We cannot intervene directly without revealing capabilities we wish to keep hidden. But you... you can act where we cannot."`
+				goto request
+			label why
+			`	"We cannot intervene directly in every matter. To do so would alter the natural development of species. But you are already a guardian. Your intervention would be... organic." The presence considers. "Also, we have observed that you are effective."`
+			label request
+			`	"Patrol the systems near Nenia. Deter those who would harm the Sprites. We will... compensate you, in our way."`
+			choice
+				`	"I'll do it."`
+					accept
+				`	"I'm not sure I can."`
+			`	"Your uncertainty is natural. We do not demand. We request." The presence seems patient. "Consider it. We will be watching."`
+				defer
+	on complete
+		payment 100000
+		"reputation: Drak" += 25
+		"reputation: Indigenous Lifeform" += 50
+		dialog `As you complete your patrol, the Archon presence returns. "You have protected them. This is good." Credits appear in your account - though how an ancient telepathic entity manages credit transfers is a mystery you'll likely never solve. "We remember those who align with our purpose. You have our... appreciation." The word carries weight beyond its simple meaning.`
+
+
+
+# CURIOSITY AND KNOWLEDGE CONSEQUENCES
+
+mission "Archon Dialogue: The Curious"
+	invisible
+	landing
+	to offer
+		has "Conversation on Sayaiban: offered"
+		not "archon curiosity dialogue"
+		random < 20
+	on offer
+		set "archon curiosity dialogue"
+		conversation
+			`The presence returns - the same Archon you encountered in the Sayaiban system, you sense. "You asked questions."`
+			`	This is unusual behavior for the Archons, you realize. They typically observe and depart. But here one is, initiating contact.`
+			choice
+				`	"I'm curious about you."`
+				`	"I ask questions about everything."`
+					goto everything
+				`	"Is that a problem?"`
+					goto problem
+			`	"Curiosity is... interesting to us. Many species fear what they do not understand. You sought to understand." The presence seems almost pleased. "This is a positive trait."`
+				goto explain
+			label everything
+			`	"Curiosity without direction is also valuable. It led you to ask about us. Few do. Most flee." There's something like respect in the thought. "Questions are how species grow."`
+				goto explain
+			label problem
+			`	"A problem? No." The presence radiates something like amusement. "Most species do not ask questions. They assume, or fear, or ignore. You asked. This is... notable."`
+			label explain
+			`	"We have observed for billions of years. In that time, few have asked 'why.' You did." The presence seems to consider its next words carefully. "If you have more questions, you may ask them now. This is... unprecedented, but your curiosity has earned it."`
+			choice
+				`	"Why do you protect species from extinction?"`
+					goto extinction
+				`	"What were you before you became Archons?"`
+					goto origin
+				`	"How long have you been watching humanity?"`
+					goto humanity
+			label extinction
+			`	"Because existence is preferable to non-existence. Because each species represents a unique experiment in consciousness. Because..." A long pause. "Because we remember those who are gone, and we wish no more such memories."`
+				goto end
+			label origin
+			`	"We were... organic. Once. Long ago." The thought carries echoes of something almost like nostalgia. "We evolved. We transcended. We chose to become guardians rather than conquerors. Not all who reach our stage make this choice."`
+				goto end
+			label humanity
+			`	"Since your first cities. We watched you grow from tool-users to city-builders to star-travelers." A pause. "Your species is... promising. And troubling. Like most young species, you could go either way."`
+			label end
+			`	"That is enough for now." The presence begins to withdraw. "Perhaps we will speak again, curious one. Your questions are... refreshing."`
+				decline
+
+
+
+# ATROCITY CONSEQUENCES
+
+mission "Archon Judgment: Beyond Forgiveness"
+	invisible
+	landing
+	to offer
+		"reputation: atrocity"
+		"reputation: Drak" < -75
+		not "archon final judgment"
+	on offer
+		set "archon final judgment"
+		conversation
+			`The presence that fills your mind is not one Archon. It is many. A council of beings older than most stars, focused entirely on you.`
+			`	"We have observed. We have warned. We have hoped." The collective voice carries the weight of cosmic disappointment. "You have chosen your path despite all."`
+			choice
+				`	"I don't answer to you."`
+					goto defiance
+				`	"What happens now?"`
+					goto question
+				`	"I... I'm sorry."`
+					goto apology
+			label defiance
+			`	"All answer to consequence. Even us." The council's attention is unwavering. "Your defiance is noted. Your pattern is recorded. When your species asks why the Archons do not help them, they will learn of you."`
+				goto sentence
+			label question
+			`	"Now, we remember. And we share that memory." The council's tone is not angry - it is simply final. "Every species that encounters the Archons will know of your deeds. You will serve as an example."`
+				goto sentence
+			label apology
+			`	"Apology cannot undo atrocity. But it suggests the capacity for change." The council considers. "We will not forget what you have done. But we will watch to see what you do next. Choose better."`
+				goto lesser
+			label sentence
+			`	"You have demonstrated that your species is capable of great evil. This was already known. But you have also demonstrated that such evil is not stopped by others of your kind." The presence seems to sigh. "This is... disappointing."`
+			`	"We will not destroy you. That would make us what you are. But you will never be welcome where we are. And we are many places."`
+				goto end
+			label lesser
+			`	"Your punishment is this: you will remember this conversation. You will remember that beings who have watched the birth and death of galaxies looked upon you and found you... wanting." The words cut deep. "Live with that knowledge."`
+			label end
+			`	The council's presence withdraws, leaving you alone in the vast emptiness of space. The stars seem colder now. More distant. You have been judged by the oldest beings in the galaxy, and you have been found lacking.`
+				decline
+
+
+
+# NEWS ITEMS
+
+news "Archon Sighting"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	name
+		word
+			"Astronomer"
+			"Physicist"
+			"Researcher"
+			"Professor"
+			"Scientist"
+	message
+		word
+			"I've been tracking anomalous energy signatures near the Korath border. "
+			"Our telescopes picked up something strange in deep space. "
+			"There are readings from the Ember Waste that defy explanation. "
+		word
+			"Whatever the Archons are, they're more powerful than anything we've encountered. "
+			"The energy levels are off our scales. No known technology comes close. "
+			"I think we're looking at beings that have transcended normal matter. "
+		word
+			"I hope we never give them a reason to take an interest in us."
+			"They've been watching for longer than humanity has existed."
+			"Perhaps it's best if we just... don't attract their attention."
+
+news "Archon Philosophy"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	name
+		word
+			"Philosopher"
+			"Theologian"
+			"Ethicist"
+			"Professor"
+	message
+		word
+			"The Archons present a fascinating ethical puzzle. "
+			"I've been thinking about what it means to 'enforce peace.' "
+			"The concept of preventing extinction raises interesting questions. "
+		word
+			"They claim to protect all species, yet they allow violence to occur. "
+			"They could end all war, but they choose to observe instead. "
+			"Their non-intervention policy seems inconsistent with their stated goals. "
+		word
+			"Perhaps they understand something about free will that we don't."
+			"Maybe development requires the freedom to make mistakes."
+			"I think they're playing a longer game than we can comprehend."

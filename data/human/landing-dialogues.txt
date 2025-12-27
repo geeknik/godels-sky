@@ -1,0 +1,199 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Consequence-Based Landing Phrases
+# These phrases provide flavor text when landing on planets, reflecting
+# the player's reputation, behavior pattern, and relationships.
+
+
+
+# POSITIVE REPUTATION LANDING PHRASES
+
+phrase "consequence landing: hero welcome"
+	word
+		"The spaceport workers wave as you land. Your reputation precedes you."
+		"A small crowd has gathered to watch your ship touch down. Word of your deeds has spread."
+		"The landing controller sounds genuinely pleased to guide you in. 'Welcome back, Captain.'"
+		"Port officials meet you at the hatch with warm greetings. You're known here."
+		"A young pilot asks for your autograph as you disembark. Your reputation has grown."
+
+phrase "consequence landing: trader welcome"
+	word
+		"Merchants are already approaching as your cargo bay opens. They know your reputation for fair dealing."
+		"The harbormaster greets you personally. 'Always good to see reliable traders,' they say."
+		"Several shipping companies have left messages requesting your services. Word spreads about good captains."
+		"Your preferred docking berth has been held for you. The port remembers its best customers."
+		"A trade delegation is waiting at the dock. Your reputation for honest commerce draws interest."
+
+phrase "consequence landing: protector honor"
+	word
+		"A family approaches with thanks. You saved their relative's ship once. They never forgot."
+		"The local militia salutes as you land. Protectors are honored here."
+		"Someone you once rescued is working at the spaceport. They wave gratefully as you pass."
+		"Children point excitedly at your ship. They've heard stories about the captain who helps people."
+		"A memorial plaque near the dock lists ships you've saved. Your name is remembered."
+
+
+
+# NEGATIVE REPUTATION LANDING PHRASES
+
+phrase "consequence landing: cold reception"
+	word
+		"The spaceport workers avoid eye contact as you land. Your reputation precedes you."
+		"Security personnel watch you carefully as you disembark. They've heard stories."
+		"The landing controller's voice is clipped and professional. No warmth here."
+		"People give you a wide berth as you walk through the port. Whispers follow you."
+		"A merchant quickly closes their stall as you approach. They don't want your business."
+
+phrase "consequence landing: hostile territory"
+	word
+		"Armed security meets you at the dock. 'We're watching you,' they say flatly."
+		"Your landing permission came with conditions. No weapons displayed. No extended stay."
+		"The port has assigned you a berth far from the main terminal. They want you isolated."
+		"A protest group has gathered near your ship. They haven't forgotten what you did."
+		"The local news is covering your arrival. The coverage is not flattering."
+
+phrase "consequence landing: pirate presence"
+	word
+		"Legitimate merchants quickly move away as you approach. Your reputation is known."
+		"Security scans your ship extra carefully. They're looking for evidence."
+		"A bounty hunter watches you from across the dock, making notes."
+		"Port officials demand additional documentation. They're making things difficult."
+		"Insurance representatives are already calculating premiums based on your presence."
+
+
+
+# BEHAVIOR PATTERN PHRASES
+
+phrase "consequence landing: bounty hunter"
+	word
+		"Other captains eye your ship with respect. They know a hunter when they see one."
+		"A wanted poster on the wall matches someone you eliminated. Good work pays off."
+		"The local law enforcement nods respectfully. They appreciate your kind of help."
+		"A criminal recognizes you and quickly leaves the port. Your reputation precedes you."
+		"Bounty postings are updated as you land. They know you're in the market."
+
+phrase "consequence landing: warmonger fear"
+	word
+		"The port clears rapidly as you land. People remember what you're capable of."
+		"Armed guards take positions around your ship. They're not sure what you'll do."
+		"The landing controller's voice trembles slightly. They've heard the stories."
+		"Civilian ships request priority departure as you arrive. No one wants to be near you."
+		"Emergency protocols activate automatically. Your reputation triggers them."
+
+
+
+# WITNESS-AWARE PHRASES
+
+phrase "consequence landing: watched"
+	word
+		"You notice surveillance drones tracking your ship as you land."
+		"Security cameras follow your movements from the moment you touch down."
+		"An undercover agent is poorly hidden in the crowd. You're being observed."
+		"Your ship is scanned multiple times during landing. They're thorough here."
+		"A government vehicle is parked near your berth. Someone official is interested."
+
+phrase "consequence landing: ghost"
+	word
+		"You land without fanfare. No one pays special attention. Just another ship."
+		"The port processes you routinely. Your reputation here is... unremarkable."
+		"Security gives you a cursory glance and moves on. Nothing to see here."
+		"You blend into the crowd of captains. Anonymous and unremarked."
+		"The bureaucracy processes you efficiently. Just another number in the system."
+
+
+
+# FLEET SIZE PHRASES
+
+phrase "consequence landing: major operation"
+	word
+		"Your fleet fills multiple berths. Port officials scramble to accommodate you."
+		"The harbormaster personally oversees your landing. A fleet this size demands attention."
+		"Other captains watch with a mix of envy and concern as your ships dock."
+		"Fuel and supply vendors compete for your business. Fleet operations are lucrative."
+		"The port adjusts traffic patterns to accommodate your arrival. You're a major operation now."
+
+phrase "consequence landing: lone wolf"
+	word
+		"Your single ship slots neatly into a standard berth. Efficient and unassuming."
+		"The port processes you quickly. Solo operators are easy to handle."
+		"You appreciate the simplicity of landing one ship. No coordination headaches."
+		"Other fleet commanders look down on your solo operation. You don't mind."
+		"The maintenance crew has your ship serviced quickly. One ship, one job."
+
+
+
+# FACTION-SPECIFIC PHRASES
+
+phrase "consequence landing: republic welcome"
+	word
+		"Republic Navy personnel nod respectfully as you pass. You've served the nation well."
+		"The Republic flag flying over the port feels like a welcome home."
+		"Official Republic channels play a brief message thanking loyal captains like you."
+		"A Republic recruitment officer approaches, then recognizes you. 'Never mind - you're already one of us.'"
+		"The efficiency of Republic port operations reminds you why you support them."
+
+phrase "consequence landing: republic hostile"
+	word
+		"Republic security scans your ship with obvious suspicion."
+		"The Republic flag feels accusatory as you dock. You're not welcome here."
+		"Navy personnel watch you with undisguised hostility. Your actions are remembered."
+		"Your landing clearance comes with warnings and restrictions."
+		"The port assigns you the worst berth available. A message is being sent."
+
+phrase "consequence landing: syndicate welcome"
+	word
+		"Syndicate efficiency processes your landing in record time. They value reliability."
+		"Corporate hospitality services offer complimentary upgrades. Good clients get perks."
+		"The Syndicate logo on the port reminds you of profitable partnerships."
+		"Executive-level services are available to you. Your credit rating matters here."
+		"Business proposals arrive before you've even left your ship. They know opportunity."
+
+phrase "consequence landing: syndicate hostile"
+	word
+		"Corporate security subjects you to additional screening. Trust must be earned."
+		"Syndicate services are available, but at premium rates. Hostiles pay more."
+		"Your accounts are flagged for additional verification. Nothing is easy here."
+		"The corporate efficiency that usually helps now works against you."
+		"Legal representatives are already preparing documentation. They're thorough."
+
+phrase "consequence landing: free worlds welcome"
+	word
+		"The Free Worlds welcome feels genuine, not bureaucratic. You're among friends."
+		"Citizens wave hello as you dock. Community matters here."
+		"The volunteer port workers seem genuinely happy to help. This is what freedom looks like."
+		"Someone thanks you for supporting the cause. Your contributions are remembered."
+		"The Free Worlds flag represents everything you've fought for. It feels like home."
+
+phrase "consequence landing: free worlds hostile"
+	word
+		"The normally friendly Free Worlds atmosphere feels cold. You've betrayed their trust."
+		"Citizens turn away as you pass. Word of your actions has spread."
+		"The volunteer spirit of Free Worlds ports doesn't extend to you."
+		"Militia members watch you carefully. You're not a friend here anymore."
+		"The freedom they celebrate doesn't feel like it includes you."
+
+
+
+# ATROCITY PHRASES
+
+phrase "consequence landing: atrocity marked"
+	word
+		"Everyone knows what you've done. The silence as you dock is deafening."
+		"Parents pull children away as you disembark. You're a monster to them."
+		"Someone spits at your ship. Security doesn't intervene."
+		"Protest signs appear within minutes of your landing. They haven't forgotten."
+		"The port grants you landing rights because they must. Nothing more."
+		"Your ship is vandalized before you can return. No witnesses will come forward."
+		"Religious figures perform cleansing rituals after you leave. They believe you carry evil."
+		"The port charges you triple fees. The price of being what you are."

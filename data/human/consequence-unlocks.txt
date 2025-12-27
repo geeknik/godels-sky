@@ -1,0 +1,441 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Consequence-Based Unlocks
+# These missions unlock special equipment, ships, or access based on player
+# reputation, behavior patterns, and accumulated consequences.
+# Rewards are tied to how you've played, not just what missions you've completed.
+
+
+
+# TRADER UNLOCKS
+# Special access for consistent traders
+
+mission "Unlock: Merchant Guild Access"
+	name "Guild Membership"
+	description "Your trading reputation has earned you access to the Merchant Guild's exclusive facilities."
+	job
+	to offer
+		"actionlog: pattern" == 1
+		"credits" > 2000000
+		not "merchant guild access"
+		random < 15
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		distance 3 6
+	on complete
+		set "merchant guild access"
+		payment 100000
+		dialog `The Merchant Guild welcomes you as a full member. "Your trading record speaks for itself," the Guild Master says. "You've established yourself as one of the most reliable captains in human space." They present you with a guild seal that grants access to exclusive cargo contracts and preferred docking. "Guild members support each other. Now that includes you."`
+
+mission "Unlock: Premium Trade Routes"
+	name "Exclusive Routes"
+	description "Your Guild membership grants access to premium trade information. Collect it on <destination>."
+	job
+	to offer
+		has "merchant guild access"
+		"actionlog: pattern" == 1
+		random < 25
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		attributes rich
+		distance 3 6
+	on complete
+		set "premium trade access"
+		payment 50000
+		dialog `The Guild analyst provides you with detailed market data - price fluctuations, supply shortages, upcoming demand spikes. "This information is updated weekly," they explain. "Guild members get it first. Use it wisely." This data represents a significant competitive advantage in the trading game.`
+
+mission "Unlock: Cargo Expansion License"
+	name "Expanded Cargo License"
+	description "Your exceptional trading record qualifies you for an expanded cargo license. Collect it on <destination>."
+	job
+	to offer
+		has "premium trade access"
+		"credits" > 5000000
+		random < 10
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		distance 2 5
+	on complete
+		set "expanded cargo license"
+		payment -100000
+		dialog `The licensing office reviews your trading history with approval. "You've moved more legitimate cargo than most small shipping companies," the official says. "This license authorizes you to carry restricted commodities - luxury goods, medical supplies, specialized equipment - that require additional certification." You pay the licensing fee, knowing it will pay for itself many times over.`
+
+
+
+# PROTECTOR UNLOCKS
+# Special access for consistent defenders
+
+mission "Unlock: Protector Registry"
+	name "Guardian Registration"
+	description "Your protective actions have qualified you for official recognition. Register on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 4
+		"combat rating" > 100
+		not "protector registered"
+		random < 20
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		distance 3 6
+	on complete
+		set "protector registered"
+		payment 50000
+		"reputation: Republic" += 10
+		"reputation: Syndicate" += 5
+		dialog `The security official reviews your combat record. "Impressive," they say. "You've defended more ships than most Navy pilots. We're adding you to the Protector Registry - a list of independent captains authorized to intervene in pirate attacks without prior coordination." They hand you official credentials. "These will get you cooperation from local authorities and priority refueling at military installations."`
+
+mission "Unlock: Military Surplus Access"
+	name "Surplus Authorization"
+	description "Your protective service has earned you access to military surplus equipment. Inspect the inventory on <destination>."
+	job
+	to offer
+		has "protector registered"
+		"combat rating" > 150
+		random < 15
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		attributes military
+		distance 3 6
+	on complete
+		set "military surplus access"
+		dialog `The quartermaster leads you through rows of decommissioned military equipment. "Nothing cutting-edge," they explain, "but solid, reliable hardware at significant discounts. Normally this is only available to registered security contractors." They mark your file as authorized. "Come back any time. People like you are keeping the spacelanes safe."`
+
+mission "Unlock: Escort Premium"
+	name "Premium Escort Contracts"
+	description "Your reputation as a protector has opened doors to high-value escort contracts. Learn more on <destination>."
+	job
+	to offer
+		has "military surplus access"
+		"actionlog: pattern" == 4
+		"combat rating" > 200
+		random < 10
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		distance 2 5
+	on complete
+		set "premium escort access"
+		payment 75000
+		dialog `The corporate security director explains the opportunity. "We have clients - wealthy individuals, sensitive cargo, VIP transports - who need the best protection available. Your record qualifies." They provide a secure contact channel. "Premium rates, challenging work, complete discretion required. Interested clients will reach out through this channel."`
+
+
+
+# BOUNTY HUNTER UNLOCKS
+# Special access for consistent hunters
+
+mission "Unlock: Bounty Hunter License"
+	name "Official Hunter"
+	description "Your bounty hunting record qualifies you for official licensing. Apply on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 3
+		"combat rating" > 75
+		not "bounty hunter licensed"
+		random < 20
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		distance 3 6
+	on complete
+		set "bounty hunter licensed"
+		payment 25000
+		dialog `The licensing board reviews your record. "You've brought in more bounties than most registered hunters," the official says. "This license grants you access to the official bounty network - real-time updates on wanted individuals, authorized apprehension rights, and legal protection when things get messy." They stamp your credentials. "Hunt well, Captain."`
+
+mission "Unlock: Priority Bounty Access"
+	name "Priority Targets"
+	description "Your hunting record qualifies you for high-priority bounty contracts. Get briefed on <destination>."
+	job
+	to offer
+		has "bounty hunter licensed"
+		"combat rating" > 125
+		random < 15
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		attributes military
+		distance 3 6
+	on complete
+		set "priority bounty access"
+		payment 50000
+		dialog `The intelligence officer briefs you on the priority bounty program. "These aren't your average pirates," they explain. "Organized crime leaders, smuggler kingpins, wanted war criminals. Higher risk, much higher reward." They provide secure access codes. "You'll get first crack at these targets before they're released to the general bounty board. Make them count."`
+
+mission "Unlock: Deep Space Pursuit Authorization"
+	name "Extended Jurisdiction"
+	description "Your exceptional record qualifies you for deep space pursuit authority. Get certified on <destination>."
+	job
+	to offer
+		has "priority bounty access"
+		"combat rating" > 175
+		random < 10
+	source
+		government "Republic" "Syndicate" "Free Worlds"
+	destination
+		government "Republic" "Syndicate" "Free Worlds"
+		distance 2 5
+	on complete
+		set "deep space pursuit"
+		dialog `The certification grants you something rare: authority to pursue bounties beyond normal jurisdiction. "Most hunters have to stop at faction borders," the official explains. "You won't. This authorization lets you pursue targets into pirate territory, anarchist space, even alien territory if necessary - and bring them back for processing." They seal the document. "Use this responsibility wisely."`
+
+
+
+# PIRATE UNLOCKS
+# Special access for those who embrace criminality
+
+mission "Unlock: Pirate Reputation"
+	name "Criminal Recognition"
+	description "Your piracy has earned you a certain reputation. Make contact with the underground on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 2
+		"combat rating" > 75
+		not "pirate reputation"
+		random < 20
+	source
+		government "Pirate"
+	destination
+		government "Pirate"
+		distance 3 6
+	on complete
+		set "pirate reputation"
+		payment 50000
+		dialog `The pirate captain evaluates you with a critical eye. "You've made a name for yourself," they say. "Not just any fool with a gun - you know how to hit targets and get away clean." They raise a glass. "Welcome to the real underworld, Captain. You're one of us now." The criminal network opens up to you - better fences, safer harbors, and more profitable targets.`
+
+mission "Unlock: Black Market Access"
+	name "Underground Shopping"
+	description "Your criminal reputation grants access to the black market. Find it on <destination>."
+	job
+	to offer
+		has "pirate reputation"
+		"credits" > 1000000
+		random < 20
+	source
+		government "Pirate"
+	destination
+		government "Pirate" "Independent"
+		distance 3 6
+	on complete
+		set "black market access"
+		dialog `The dealer leads you through hidden passages to an underground market. "Everything you could want," they say, gesturing at stalls selling weapons, illegal modifications, stolen goods, and items with no legitimate origin. "No questions asked, no records kept. Just bring credits." You've found a shopping experience unavailable to law-abiding citizens.`
+
+mission "Unlock: Pirate Fleet Membership"
+	name "Fleet Initiation"
+	description "A powerful pirate fleet wants you to join. Meet their leaders on <destination>."
+	job
+	to offer
+		has "black market access"
+		"combat rating" > 150
+		random < 10
+	source
+		government "Pirate"
+	destination
+		government "Pirate"
+		distance 3 6
+	on complete
+		set "pirate fleet member"
+		payment 100000
+		dialog `The fleet commander welcomes you formally. "You've proven you can survive alone," they say. "Now imagine what you could do with a fleet behind you. Shared intelligence, coordinated attacks, mutual defense." They outline the benefits of membership. "We don't ask for much - just a cut of your biggest scores and your gun when we need it. In return, you get family." The pirate life just got more organized.`
+
+
+
+# WARMONGER UNLOCKS
+# Special access for violent players
+
+mission "Unlock: Mercenary Contract"
+	name "Professional Violence"
+	description "Your combat record has attracted the attention of mercenary organizations. Meet them on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 5
+		"combat rating" > 150
+		not "mercenary contract"
+		random < 15
+	source
+		government "Republic" "Syndicate" "Free Worlds" "Pirate" "Independent"
+	destination
+		government "Independent"
+		distance 4 8
+	on complete
+		set "mercenary contract"
+		payment 100000
+		dialog `The mercenary recruiter reviews your combat statistics. "Impressive kill count," they say flatly. "We have clients who need problems... eliminated. No questions, no paperwork, just results." They offer you a secure communication channel. "Contracts will come through here. Good pay, dangerous work, complete deniability. Sound like your kind of job?"`
+
+mission "Unlock: Heavy Weapons License"
+	name "Unrestricted Armament"
+	description "Your mercenary status qualifies you for unrestricted weapons access. Get certified on <destination>."
+	job
+	to offer
+		has "mercenary contract"
+		"combat rating" > 200
+		random < 15
+	source
+		government "Independent" "Pirate"
+	destination
+		government "Independent"
+		distance 3 6
+	on complete
+		set "heavy weapons license"
+		dialog `The arms dealer doesn't ask questions about why you need military-grade weaponry. "Your credentials check out," they say. "You're authorized for restricted equipment - torpedo systems, heavy launchers, anything short of weapons of mass destruction." They hand you an encrypted certification. "Don't make me regret this authorization."`
+
+
+
+# REPUTATION THRESHOLD UNLOCKS
+# Access based on reaching specific reputation levels
+
+mission "Unlock: Republic High Honor"
+	name "Republic Commendation"
+	description "Your exceptional service to the Republic has earned you their highest civilian honor. Attend the ceremony on <destination>."
+	job
+	to offer
+		"reputation: Republic" > 75
+		not "republic high honor"
+		random < 10
+	source
+		government "Republic"
+	destination
+		government "Republic"
+		attributes urban
+		distance 2 5
+	on complete
+		set "republic high honor"
+		payment 150000
+		"reputation: Republic" += 25
+		dialog `The ceremony is formal and impressive. "For exceptional service to the Republic and its citizens," the admiral announces, "we present Captain <last> with the Star of Valor." The medal is pinned to your chest to applause. Later, the admiral pulls you aside. "This isn't just for show. This medal opens doors. Military installations, classified contracts, restricted equipment - you have access now. Use it well."`
+
+mission "Unlock: Syndicate Executive Status"
+	name "Corporate Recognition"
+	description "Your value to Syndicate operations has earned you executive privileges. Formalize them on <destination>."
+	job
+	to offer
+		"reputation: Syndicate" > 75
+		not "syndicate executive status"
+		random < 10
+	source
+		government "Syndicate"
+	destination
+		government "Syndicate"
+		attributes rich
+		distance 2 5
+	on complete
+		set "syndicate executive status"
+		payment 200000
+		"reputation: Syndicate" += 25
+		dialog `The corporate board treats you like a valued partner. "Your contributions to Syndicate interests have been substantial," the CEO says. "We're offering you executive contractor status - priority access to our facilities, discounted services, and first consideration for sensitive operations." They present you with a corporate identification card that practically glows with privilege. "Welcome to the inner circle, Captain."`
+
+mission "Unlock: Free Worlds Hero"
+	name "People's Champion"
+	description "The Free Worlds consider you a hero of the people. Accept their recognition on <destination>."
+	job
+	to offer
+		"reputation: Free Worlds" > 75
+		not "free worlds hero"
+		random < 10
+	source
+		government "Free Worlds"
+	destination
+		government "Free Worlds"
+		distance 2 5
+	on complete
+		set "free worlds hero"
+		payment 100000
+		"reputation: Free Worlds" += 25
+		dialog `The celebration is warm and genuine. "You've defended our people when the powerful wouldn't," the Council representative says. "You're one of us now - officially." The people of the Free Worlds treat you like family. "Hero status means free repairs at any Free Worlds port, priority docking, and the gratitude of everyone who believes in freedom." The cheering crowds make you feel like you've found a home.`
+
+
+
+# NEWS ITEMS
+
+news "Guild Member"
+	location
+		government "Republic" "Syndicate" "Free Worlds" "Neutral"
+	to show
+		has "merchant guild access"
+	name
+		word
+			"Merchant"
+			"Trader"
+			"Cargo captain"
+	message
+		word
+			"Are you in the Merchant Guild? "
+			"I've been trying to get Guild membership for years. "
+			"Guild members get all the best contracts. "
+		word
+			"I hear Captain <last> is a member now. "
+			"Some captains have all the luck with Guild access. "
+			"The premium routes are reserved for Guild members. "
+		word
+			"Maybe someday I'll qualify too."
+			"I need to build up my trading record."
+			"It's not fair how the Guild picks favorites."
+
+news "Bounty Hunter"
+	location
+		government "Republic" "Syndicate" "Free Worlds"
+	to show
+		has "bounty hunter licensed"
+	name
+		word
+			"Security officer"
+			"Local sheriff"
+			"Deputy marshal"
+	message
+		word
+			"We've got licensed hunters in the area now. "
+			"Captain <last> is on the official hunter registry. "
+			"The bounty board has been seeing more activity lately. "
+		word
+			"Crime rates are dropping where the hunters operate. "
+			"Pirates are thinking twice with hunters around. "
+			"It's good to have professional help. "
+		word
+			"Wish we had more like them."
+			"Makes my job a little easier."
+			"The system works when good people step up."
+
+news "Pirate Legend"
+	location
+		government "Pirate"
+	to show
+		has "pirate fleet member"
+	name
+		word
+			"Pirate"
+			"Smuggler"
+			"Outlaw"
+	message
+		word
+			"Captain <last> is running with the big fleets now. "
+			"I heard they got inducted into a major pirate organization. "
+			"That captain has serious criminal connections these days. "
+		word
+			"They say the Navy is afraid to go after them. "
+			"Fleet membership means serious protection. "
+			"You don't mess with someone who has that kind of backup. "
+		word
+			"I wish I could get that kind of recognition."
+			"Maybe someday I'll be running with a fleet too."
+			"That's what success looks like in our business."

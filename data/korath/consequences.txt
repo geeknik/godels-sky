@@ -1,0 +1,375 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Korath Consequence Missions
+# The Korath are hostile alien raiders divided into factions (Exiles, Kor Efret,
+# Kor Sestor). They are enemies to most of the galaxy, but the player's actions
+# against them (or with them) have consequences. Korath track enemies and
+# prioritize threats. There is no friendship path - only degrees of hostility.
+
+
+
+# KORATH THREAT ASSESSMENT
+
+mission "Korath: Target Identification"
+	name "Marked by Korath"
+	description "Korath raiders have identified you as a significant threat. A warning has been intercepted on <destination>."
+	job
+	to offer
+		"reputation: Korath" < -20
+		"combat rating" > 75
+		random < 25
+	source
+		government "Remnant" "Independent"
+	destination
+		government "Remnant"
+		distance 2 5
+	on complete
+		set "korath target"
+		payment 30000
+		dialog `Remnant intelligence has intercepted Korath communications. "Your ship's signature has been flagged in their targeting database," the analyst explains. "They've classified you as a significant threat. That means larger raiding parties, more aggressive tactics." They transfer hazard pay. "Welcome to the priority list."`
+
+mission "Korath: Hunter-Killer Assignment"
+	name "Korath Retaliation"
+	description "Korath forces have assigned a hunter-killer group to eliminate you. Survive their attack in <system> and escape."
+	job
+	repeat
+	to offer
+		has "korath target"
+		"reputation: Korath" < -40
+		"combat rating" > 100
+		random < 35
+	source
+		government "Remnant" "Independent"
+	waypoint
+		distance 2 4
+	destination
+		government "Remnant" "Independent"
+	npc evade
+		government "Korath"
+		personality nemesis waiting
+		system waypoint
+		fleet
+			names "korath"
+			variant
+				"Palavret" 2
+			variant
+				"Rano'erek"
+				"Tek Far 109"
+	on complete
+		payment 75000
+		dialog `You escape the Korath hunter-killer group, but just barely. Their ships are relentless and heavily armed. "They're dedicating significant resources to finding you," a Remnant contact observes. "You've become expensive to ignore." Survival payment is transferred to your account.`
+
+mission "Korath: Extermination Priority"
+	name "Priority Target"
+	description "You've been elevated to Korath priority target status. Expect maximum hostile response."
+	job
+	to offer
+		has "korath target"
+		"reputation: Korath" < -75
+		random < 30
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 5
+	on complete
+		set "korath extermination priority"
+		payment 50000
+		dialog `Remnant intelligence delivers grim news. "You've been flagged for extermination," they report. "The Korath are committing capital ship resources to hunting you. Our analysis suggests they view you as an existential threat." They offer what support they can. "On the bright side, every ship hunting you is one less ship attacking Remnant colonies. Try not to die."`
+
+
+
+# KORATH TECHNOLOGY CONSEQUENCES
+
+mission "Korath: Technology Acquisition"
+	name "Korath Tech Salvage"
+	description "You've acquired Korath technology in combat. A Remnant research team on <destination> wants to study it."
+	job
+	to offer
+		"reputation: Korath" < -30
+		"combat rating" > 50
+		random < 20
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 4
+	on complete
+		payment 60000
+		"reputation: Remnant" += 5
+		dialog `The Remnant research team is eager to examine any Korath technology you've recovered. "Every piece of their tech we can study helps us develop countermeasures," the lead researcher explains. "Your combat salvage is invaluable." They pay generously for your contribution to the war effort.`
+
+mission "Korath: Advanced Weapon Recovery"
+	name "Korath Weapon Analysis"
+	description "Remnant military wants Korath weapon samples for analysis. Hunt Korath ships in <system> and return to <destination>."
+	job
+	repeat
+	to offer
+		"reputation: Remnant" > 20
+		"combat rating" > 100
+		random < 25
+	source
+		government "Remnant"
+	waypoint
+		distance 2 4
+	destination
+		government "Remnant"
+	npc kill
+		government "Korath"
+		personality staying
+		system waypoint
+		fleet
+			names "korath"
+			variant
+				"Palavret"
+			variant
+				"Tek Far 109" 2
+	on complete
+		payment 100000
+		"reputation: Remnant" += 5
+		"reputation: Korath" -= 10
+		dialog `Remnant weapons researchers eagerly collect the salvaged Korath components. "Their thermal lance technology is fascinating," one says. "Horrifying, but fascinating." Your combat pay is substantial - the Remnant value this kind of intelligence work.`
+
+
+
+# KORATH RAIDER CONSEQUENCES
+
+mission "Korath: Raid Target"
+	name "Korath Raid Warning"
+	description "Korath raiders have targeted trade routes you frequent. A merchant on <destination> has information."
+	job
+	to offer
+		"actionlog: pattern" == 1
+		random < 20
+	source
+		government "Remnant" "Independent"
+	destination
+		government "Remnant" "Independent"
+		distance 2 5
+	on complete
+		payment 25000
+		dialog `The merchant is nervous. "Korath raiders have been hitting convoys on routes you use," they warn. "They seem to be expanding their hunting grounds. Be careful out there - those monsters don't take prisoners." They share route intelligence. "Here's what we know about their patrol patterns. Avoid these systems if you can."`
+
+mission "Korath: Survivor Rescue"
+	name "Raid Survivor"
+	description "Survivors of a Korath raid are stranded in <system>. Rescue them before the Korath return."
+	job
+	repeat
+	to offer
+		"actionlog: pattern" == 4
+		"combat rating" > 50
+		random < 25
+	source
+		government "Remnant" "Independent"
+	waypoint
+		distance 2 4
+	destination
+		government "Remnant" "Independent"
+	passengers 5 10
+	npc
+		government "Korath"
+		personality nemesis staying
+		system waypoint
+		fleet
+			names "korath"
+			variant
+				"Tek Far 109"
+			variant
+				"Palavret (Crippled)"
+	on complete
+		payment 40000
+		"reputation: Remnant" += 3
+		dialog `The survivors are traumatized but alive. "The Korath... they destroyed everything," one whispers. "We thought we were dead. Then you arrived." They're too shaken to say more. The Remnant processing center pays you for the rescue and begins trauma treatment.`
+	on visit
+		dialog "You still have rescue survivors on board! Return to <destination> to complete the rescue."
+
+
+
+# KORATH WARMONGER RESPONSE
+
+mission "Korath: Mutual Destruction"
+	name "Chaos Recognition"
+	description "Your pattern of violence has been noted by Korath observers. A strange message awaits on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 5
+		"reputation: Korath" < -50
+		random < 15
+	source
+		government "Remnant" "Independent"
+	destination
+		government "Independent"
+		distance 2 5
+	on complete
+		payment 40000
+		dialog `The message is translated from Korath: "DESTRUCTION. WE SEE. YOU DESTROY MANY. WE DESTROY MANY. SAME. NOT ENEMY. NOT FRIEND. DESTROYER." The translation is rough, but the meaning is clear - the Korath have recognized you as a fellow agent of chaos. It's not respect. It's acknowledgment. You're not sure which is worse.`
+
+mission "Korath: Escalation Response"
+	name "Korath Escalation"
+	description "Your escalating violence has triggered increased Korath aggression in response. Survive their offensive."
+	job
+	to offer
+		"actionlog: escalation"
+		"reputation: Korath" < -60
+		random < 30
+	source
+		government "Remnant"
+	waypoint
+		distance 2 4
+	destination
+		government "Remnant"
+	npc evade
+		government "Korath"
+		personality nemesis waiting
+		system waypoint
+		fleet
+			names "korath"
+			variant
+				"Rano'erek"
+				"Palavret" 2
+			variant
+				"Palavret" 3
+				"Tek Far 109"
+	on complete
+		payment 80000
+		dialog `You survive the Korath offensive, but the scale of their response is concerning. "They're matching your escalation," a Remnant analyst observes. "Every time you increase the violence, they respond in kind. It's becoming a feedback loop." The survival bonus is substantial, but the implications are troubling.`
+
+
+
+# KORATH INTELLIGENCE
+
+mission "Korath: Movement Patterns"
+	name "Korath Intelligence"
+	description "Remnant intelligence wants you to observe Korath fleet movements in <system>. Return to <destination> with data."
+	job
+	repeat
+	to offer
+		"reputation: Remnant" > 15
+		"combat rating" > 50
+		random < 25
+	source
+		government "Remnant"
+	waypoint
+		distance 2 4
+	destination
+		government "Remnant"
+	on complete
+		payment 50000
+		"reputation: Remnant" += 3
+		dialog `Remnant intelligence analysts pore over your observation data. "Korath fleet movements are... concerning," one says. "They're expanding in a new direction. This data helps us prepare." Your scouting work is well compensated.`
+
+mission "Korath: Communication Intercept"
+	name "Signal Intercept"
+	description "Remnant intelligence wants you to intercept Korath communications in <system>. This is dangerous work."
+	job
+	repeat
+	to offer
+		"reputation: Remnant" > 30
+		"combat rating" > 75
+		random < 20
+	source
+		government "Remnant"
+	waypoint
+		distance 2 4
+	destination
+		government "Remnant"
+	npc evade
+		government "Korath"
+		personality staying
+		system waypoint
+		fleet
+			names "korath"
+			variant
+				"Tek Far 109" 2
+			variant
+				"Palavret"
+	on complete
+		payment 75000
+		"reputation: Remnant" += 5
+		dialog `The communication intercept data is invaluable. "Their encryption is complex, but we're making progress," the intelligence officer reports. "Every piece of their communications we capture brings us closer to understanding their plans." Your hazard pay is generous - this is frontline intelligence work.`
+
+
+
+# KORATH BOUNTY CONSEQUENCES
+
+mission "Korath: Bounty Hunter Prestige"
+	name "Korath Killer"
+	description "Your record of destroying Korath ships has earned recognition. The Remnant military wants to discuss honors on <destination>."
+	job
+	to offer
+		"actionlog: pattern" == 3
+		"reputation: Korath" < -50
+		"reputation: Remnant" > 25
+		random < 15
+	source
+		government "Remnant"
+	destination
+		government "Remnant"
+		distance 2 5
+	on complete
+		set "korath killer"
+		payment 100000
+		"reputation: Remnant" += 10
+		dialog `The Remnant military formally recognizes your achievements against the Korath threat. "Your kill count is impressive," the commander says. "You've destroyed more Korath ships than some of our patrol squadrons." They award you a commendation and substantial bonus. "Keep hunting. Every Korath ship you destroy is one less threat to our people."`
+
+mission "Korath: Elite Hunter"
+	name "Korath Nemesis"
+	description "You've become a legendary Korath hunter. The Remnant want you to lead an assault on a Korath staging area in <system>."
+	job
+	to offer
+		has "korath killer"
+		"reputation: Remnant" > 40
+		"combat rating" > 150
+		random < 15
+	source
+		government "Remnant"
+	waypoint
+		distance 2 4
+	destination
+		government "Remnant"
+	npc kill
+		government "Korath"
+		personality staying heroic
+		system waypoint
+		fleet
+			names "korath"
+			variant
+				"Rano'erek"
+				"Palavret" 2
+				"Tek Far 109" 3
+	on complete
+		payment 200000
+		"reputation: Remnant" += 15
+		"reputation: Korath" -= 25
+		dialog `The Korath staging area is destroyed. Debris fields mark where their ships once gathered. "That will set their operations back significantly," the Remnant commander reports with grim satisfaction. "You've become a legend among our forces. The Korath know your ship signature - they fear you." The payment is unprecedented. "Worth every credit."`
+
+
+
+# KORATH ATROCITY RESPONSE
+
+mission "Korath: Atrocity Recognition"
+	name "Destroyer of Worlds"
+	description "Your atrocities have been observed by the Korath. Their response is... unexpected."
+	job
+	to offer
+		"reputation: atrocity"
+		"reputation: Korath" < -50
+		random < 20
+	source
+		government "Remnant" "Independent"
+	destination
+		government "Independent"
+		distance 2 5
+	on complete
+		dialog `A translated Korath message arrives: "DESTROYER. MASS DEATH. WE KNOW THIS. WE DO THIS. YOU... SAME AS US. DIFFERENT SPECIES. SAME DESTRUCTION." The Korath have recognized you as a kindred spirit of annihilation. There's no warmth in the message - they don't have that concept. But there's something like acknowledgment. You've become something they understand: a force of pure destruction.`

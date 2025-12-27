@@ -626,7 +626,18 @@ void AI::UpdateEvents(const list<ShipEvent> &events)
 				// If you provoke the same ship twice, it should have an effect both times.
 				if(event.Type() & ShipEvent::PROVOKE)
 					newActions |= ShipEvent::PROVOKE;
-				event.TargetGovernment()->Offend(newActions, target->CrewValue());
+
+				// Gödel's Sky: Filter out witnessed events (PROVOKE/attacks) from immediate
+				// reputation effects. These are now handled by the WitnessSystem which checks
+				// for witnesses and applies effects after a delay (giving time to suppress).
+				// Only apply immediate reputation for non-witnessed events like ASSIST.
+				constexpr int witnessedEvents = ShipEvent::PROVOKE | ShipEvent::DISABLE |
+					ShipEvent::DESTROY;
+				int immediateActions = newActions & ~witnessedEvents;
+
+				// Apply immediate reputation effects for non-witnessed actions.
+				if(immediateActions)
+					event.TargetGovernment()->Offend(immediateActions, target->CrewValue());
 			}
 		}
 	}

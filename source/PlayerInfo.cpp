@@ -481,6 +481,10 @@ void PlayerInfo::Load(const filesystem::path &path)
 				}
 			}
 		}
+		else if(key == "action log")
+			actionLog.Load(child);
+		else if(key == "encounter log")
+			encounterLog.Load(child);
 		else if(key == "start")
 			startData.Load(child);
 		else if(key == "message log")
@@ -3442,6 +3446,34 @@ bool PlayerInfo::DisplayCarrierHelp() const
 
 
 
+const ActionLog &PlayerInfo::Actions() const
+{
+	return actionLog;
+}
+
+
+
+ActionLog &PlayerInfo::Actions()
+{
+	return actionLog;
+}
+
+
+
+const EncounterLog &PlayerInfo::Encounters() const
+{
+	return encounterLog;
+}
+
+
+
+EncounterLog &PlayerInfo::Encounters()
+{
+	return encounterLog;
+}
+
+
+
 // Apply any "changes" saved in this player info to the global game state.
 void PlayerInfo::ApplyChanges()
 {
@@ -4328,6 +4360,253 @@ void PlayerInfo::RegisterDerivedConditions()
 	{
 		GameData::GlobalConditions().Set(ce.NameWithoutPrefix(), value);
 	});
+
+	// Gödel's Sky: ActionLog-derived conditions.
+	// Returns the dominant behavior pattern detected from recent player actions.
+	conditions["actionlog: pattern"].ProvideNamed([this](const ConditionEntry &ce) -> int64_t {
+		return static_cast<int64_t>(Actions().GetPatternScore(date));
+	});
+
+	// Returns hostility score against current system's government (0.0 to 1.0+, scaled to 0-1000).
+	conditions["actionlog: hostility"].ProvideNamed([this](const ConditionEntry &ce) -> int64_t {
+		const Government *gov = system ? system->GetGovernment() : nullptr;
+		if(!gov)
+			return 0;
+		return static_cast<int64_t>(Actions().GetHostilityScore(gov, date) * 1000.);
+	});
+
+	// Returns true if player has shown an escalating pattern of violence.
+	conditions["actionlog: escalation"].ProvideNamed([this](const ConditionEntry &ce) -> bool {
+		const Government *gov = system ? system->GetGovernment() : nullptr;
+		if(!gov)
+			return false;
+		return Actions().HasEscalationPattern(gov, date);
+	});
+
+	// Returns true if player has attacked multiple distinct governments recently.
+	conditions["actionlog: warmonger"].ProvideNamed([this](const ConditionEntry &ce) -> bool {
+		return Actions().GetDistinctTargets(date, 30) >= 3;
+	});
+
+	// Returns the ratio of witnessed actions (0-1000, representing 0.0-1.0).
+	conditions["actionlog: witnessed"].ProvideNamed([this](const ConditionEntry &ce) -> int64_t {
+		return static_cast<int64_t>(Actions().GetWitnessedRatio(date, 30) * 1000.);
+	});
+
+	// Gödel's Sky: EncounterRecord-derived conditions.
+	// Returns count of NPCs with specified disposition.
+	conditions["encounter: count disposition "].ProvidePrefixed([this](const ConditionEntry &ce) -> int64_t {
+		string type = ce.NameWithoutPrefix();
+		NPCDisposition disposition = NPCDisposition::UNKNOWN;
+
+		if(type == "friendly")
+			disposition = NPCDisposition::FRIENDLY;
+		else if(type == "hostile")
+			disposition = NPCDisposition::HOSTILE;
+		else if(type == "wary")
+			disposition = NPCDisposition::WARY;
+		else if(type == "grateful")
+			disposition = NPCDisposition::GRATEFUL;
+		else if(type == "indebted")
+			disposition = NPCDisposition::INDEBTED;
+		else if(type == "nemesis")
+			disposition = NPCDisposition::NEMESIS;
+		else
+			return 0;
+
+		return static_cast<int64_t>(Encounters().GetByDisposition(disposition).size());
+	});
+
+	// Returns true if any NPCs with specified disposition exist.
+	conditions["encounter: has disposition "].ProvidePrefixed([this](const ConditionEntry &ce) -> bool {
+		string type = ce.NameWithoutPrefix();
+		NPCDisposition disposition = NPCDisposition::UNKNOWN;
+
+		if(type == "friendly")
+			disposition = NPCDisposition::FRIENDLY;
+		else if(type == "hostile")
+			disposition = NPCDisposition::HOSTILE;
+		else if(type == "wary")
+			disposition = NPCDisposition::WARY;
+		else if(type == "grateful")
+			disposition = NPCDisposition::GRATEFUL;
+		else if(type == "indebted")
+			disposition = NPCDisposition::INDEBTED;
+		else if(type == "nemesis")
+			disposition = NPCDisposition::NEMESIS;
+		else
+			return false;
+
+		return !Encounters().GetByDisposition(disposition).empty();
+	});
+
+	// Returns total number of NPCs in encounter log.
+	conditions["encounter: count"].ProvideNamed([this](const ConditionEntry &ce) -> int64_t {
+		return static_cast<int64_t>(Encounters().Size());
+	});
+
+	// Gödel's Sky: ReputationManager-derived conditions.
+	// Returns true if player's reputation with current system's government matches threshold.
+	conditions["reputation: threshold "].ProvidePrefixed([this](const ConditionEntry &ce) -> bool {
+		const Government *gov = system ? system->GetGovernment() : nullptr;
+		if(!gov)
+			return false;
+
+		string type = ce.NameWithoutPrefix();
+		ReputationThreshold target = ReputationThreshold::NEUTRAL;
+
+		if(type == "war")
+			target = ReputationThreshold::WAR;
+		else if(type == "hostile")
+			target = ReputationThreshold::HOSTILE;
+		else if(type == "unfriendly")
+			target = ReputationThreshold::UNFRIENDLY;
+		else if(type == "neutral")
+			target = ReputationThreshold::NEUTRAL;
+		else if(type == "friendly")
+			target = ReputationThreshold::FRIENDLY;
+		else if(type == "allied")
+			target = ReputationThreshold::ALLIED;
+		else if(type == "honored")
+			target = ReputationThreshold::HONORED;
+		else
+			return false;
+
+		const ReputationManager &repMgr = GameData::GetPolitics().GetReputationManager();
+		double reputation = GameData::GetPolitics().Reputation(gov);
+		ReputationThreshold current = repMgr.GetThreshold(reputation);
+
+		return current == target;
+	});
+
+	// Returns true if player has committed an atrocity against current system's government.
+	conditions["reputation: atrocity"].ProvideNamed([this](const ConditionEntry &ce) -> bool {
+		const Government *gov = system ? system->GetGovernment() : nullptr;
+		if(!gov)
+			return false;
+
+		const ReputationManager &repMgr = GameData::GetPolitics().GetReputationManager();
+		return repMgr.HasUnforgivenAtrocity(gov);
+	});
+
+	// Returns true if recent actions were mostly unwitnessed (< 30% witnessed ratio).
+	conditions["witness: unwitnessed"].ProvideNamed([this](const ConditionEntry &ce) -> bool {
+		double witnessedRatio = Actions().GetWitnessedRatio(date, 30);
+		return witnessedRatio < 0.3;
+	});
+
+	// Returns true if witnessed ratio is below specified threshold (0-1000 for 0.0-1.0).
+	conditions["witness: ratio "].ProvidePrefixed([this](const ConditionEntry &ce) -> int64_t {
+		int64_t threshold = DataNode::Value(ce.NameWithoutPrefix());
+		double witnessedRatio = Actions().GetWitnessedRatio(date, 30);
+		return static_cast<int64_t>(witnessedRatio * 1000.) < threshold;
+	});
+
+	// Gödel's Sky: Crew trustworthiness and crime leak conditions.
+	conditions["crew: trustworthiness"].ProvideNamed([this](const ConditionEntry &ce) -> int64_t {
+		constexpr double BASE_TRUST = 800.0;
+		constexpr double MAX_SALARY_PENALTY = 400.0;
+		constexpr double SALARY_PENALTY_DIVISOR = 20.0;
+		constexpr double PIRATE_PENALTY = 150.0;
+		constexpr double WARMONGER_PENALTY = 100.0;
+		constexpr double HONEST_WORK_BONUS = 50.0;
+
+		double trust = BASE_TRUST;
+
+		int64_t salariesOwed = accounts.CrewSalariesOwed();
+		if(salariesOwed > 0)
+			trust -= min(MAX_SALARY_PENALTY, salariesOwed / SALARY_PENALTY_DIVISOR);
+
+		int creditScore = accounts.CreditScore();
+		if(creditScore < 400)
+			trust -= (400 - creditScore) / 2;
+		else if(creditScore > 600)
+			trust += min(100.0, (creditScore - 600) / 4.0);
+
+		BehaviorPattern pattern = Actions().GetPatternScore(date);
+		if(pattern == BehaviorPattern::PIRATE)
+			trust -= PIRATE_PENALTY;
+		else if(pattern == BehaviorPattern::WARMONGER)
+			trust -= WARMONGER_PENALTY;
+		else if(pattern == BehaviorPattern::TRADER || pattern == BehaviorPattern::PROTECTOR)
+			trust += HONEST_WORK_BONUS;
+
+		return static_cast<int64_t>(max(0.0, min(1000.0, trust)));
+	});
+
+	conditions["crew: leak chance"].ProvideNamed([this](const ConditionEntry &ce) -> int64_t {
+		constexpr double BASE_LEAK_CHANCE = 50.0;
+		constexpr double MAX_LEAK_CHANCE = 500.0;
+
+		double leakChance = BASE_LEAK_CHANCE;
+
+		int64_t salariesOwed = accounts.CrewSalariesOwed();
+		if(salariesOwed > 0)
+			leakChance += min(200.0, salariesOwed / 50.0);
+
+		int creditScore = accounts.CreditScore();
+		if(creditScore < 400)
+			leakChance += (400 - creditScore) / 4;
+
+		double unwitnessedRatio = 1.0 - Actions().GetWitnessedRatio(date, 30);
+		if(unwitnessedRatio > 0.5)
+			leakChance += (unwitnessedRatio - 0.5) * 200;
+
+		BehaviorPattern pattern = Actions().GetPatternScore(date);
+		if(pattern == BehaviorPattern::PIRATE)
+			leakChance += 100;
+		else if(pattern == BehaviorPattern::WARMONGER)
+			leakChance += 75;
+
+		return static_cast<int64_t>(max(0.0, min(MAX_LEAK_CHANCE, leakChance)));
+	});
+
+	conditions["ship: compromised"].ProvideNamed([this](const ConditionEntry &ce) -> bool {
+		if(!flagship)
+			return false;
+
+		constexpr double BASE_COMPROMISE_CHANCE = 0.05;
+		constexpr double MIN_COMPROMISE_CHANCE = 0.01;
+		constexpr double MAX_COMPROMISE_CHANCE = 0.15;
+
+		double scanInterference = flagship->Attributes().Get("scan interference");
+		double compromiseChance = BASE_COMPROMISE_CHANCE - (scanInterference * 0.01);
+
+		double unwitnessedRatio = 1.0 - Actions().GetWitnessedRatio(date, 30);
+		compromiseChance += unwitnessedRatio * 0.05;
+
+		BehaviorPattern pattern = Actions().GetPatternScore(date);
+		if(pattern == BehaviorPattern::PIRATE || pattern == BehaviorPattern::SABOTEUR)
+			compromiseChance += 0.05;
+
+		return Random::Real() < max(MIN_COMPROMISE_CHANCE, min(MAX_COMPROMISE_CHANCE, compromiseChance));
+	});
+
+	conditions["witness: crime leaked"].ProvideNamed([this](const ConditionEntry &ce) -> bool {
+		double unwitnessedRatio = 1.0 - Actions().GetWitnessedRatio(date, 30);
+		if(unwitnessedRatio < 0.1)
+			return false;
+
+		double leakProb = 0.0;
+
+		int64_t salariesOwed = accounts.CrewSalariesOwed();
+		if(salariesOwed > 0)
+			leakProb += min(0.15, salariesOwed / 100000.0);
+
+		BehaviorPattern pattern = Actions().GetPatternScore(date);
+		if(pattern == BehaviorPattern::PIRATE)
+			leakProb += 0.05;
+
+		if(flagship)
+		{
+			double scanInterference = flagship->Attributes().Get("scan interference");
+			leakProb += max(0.0, 0.03 - scanInterference * 0.01);
+		}
+
+		leakProb *= unwitnessedRatio;
+
+		return Random::Real() < max(0.01, min(0.20, leakProb));
+	});
 }
 
 
@@ -4877,6 +5156,10 @@ void PlayerInfo::Save(DataWriter &out) const
 				}
 	}
 	out.EndChild();
+
+	// Gödel's Sky consequence systems.
+	actionLog.Save(out);
+	encounterLog.Save(out);
 
 	out.Write();
 	out.WriteComment("How you began:");

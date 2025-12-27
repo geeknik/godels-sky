@@ -1,0 +1,350 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Wanderer Consequence Missions
+# The Wanderers are a species devoted to terraforming and restoring worlds.
+# They have a deep philosophical commitment to life and growth, balanced
+# with a pragmatic understanding of the need for defense. Consequences
+# reflect their environmental values and their unique perspective on conflict.
+
+
+
+# POSITIVE CONSEQUENCES: ECOLOGICAL PARTNERSHIP
+
+mission "Wanderer Ecological Recognition"
+	name "Friend of the Green"
+	description "The Wanderers have observed your respect for life and growth. An ecological council on <destination> wishes to welcome you."
+	job
+	to offer
+		has "language: Wanderer"
+		"reputation: Wanderer" > 20
+		"actionlog: pattern" <= 1
+		not "wanderer ecological friend"
+		random < 15
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		attributes "farming"
+		distance 2 5
+	on complete
+		set "wanderer ecological friend"
+		payment 35000
+		"reputation: Wanderer" += 10
+		dialog `The Wanderer council welcomes you with a ceremony involving living plants. "You walk softly upon the worlds," the elder translates through your ship's systems. "You bring trade, not destruction. This is the Way of Growing." They present you with a small terrarium containing a Wanderer plant species. "Carry this. It speaks of your honor."`
+
+mission "Wanderer Terraforming Participant"
+	name "The Great Work"
+	description "The Wanderers are inviting you to participate in their terraforming work. Transport supplies to a project on <destination>."
+	job
+	repeat
+	to offer
+		has "wanderer ecological friend"
+		"reputation: Wanderer" > 30
+		random < 25
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		attributes "farming"
+		distance 2 6
+	cargo "Terraforming Equipment" 20 3 .1
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		set "wanderer terraformer"
+		payment 50000
+		"reputation: Wanderer" += 5
+		dialog `The Wanderer terraforming team receives the equipment with reverent care. "Each piece brings life to dead worlds," the project leader explains. "You are now part of the Great Work. Generations will live on worlds made green by these tools." They grant you honorary status in the terraforming corps.`
+
+mission "Wanderer Life-Speaker"
+	name "Voice of Growth"
+	description "The Wanderers have designated you a 'Life-Speaker' - an honored representative who understands their values. A ceremony awaits on <destination>."
+	job
+	to offer
+		has "wanderer terraformer"
+		"reputation: Wanderer" > 50
+		random < 10
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		distance 2 5
+	on complete
+		set "wanderer life speaker"
+		payment 75000
+		"reputation: Wanderer" += 15
+		dialog `The ceremony is profound. Wanderer elders surround you with growing plants and speak words in their melodic language. "You have been named Life-Speaker," the translation comes. "You understand that growth is the purpose. Destruction is sometimes necessary, but always in service of future growth." They mark you with a bioluminescent symbol. "Other Wanderers will know you by this mark."`
+
+
+
+# NEGATIVE CONSEQUENCES: ENVIRONMENTAL HARM
+
+mission "Wanderer Ecological Concern"
+	name "Disharmony Observed"
+	description "Your recent activities have caused concern among the Wanderer ecological council. Report to <destination> for consultation."
+	job
+	to offer
+		has "language: Wanderer"
+		"reputation: Wanderer" < -5
+		"reputation: Wanderer" > -20
+		not "wanderer ecological warning"
+		random < 30
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		distance 2 4
+	on complete
+		set "wanderer ecological warning"
+		dialog `The Wanderer council addresses you with evident disappointment. "We have observed your path," the elder says. "It brings more destruction than growth. This troubles us." Their large eyes are sad rather than angry. "We ask you to consider: is there not a way to walk that brings life instead of death?" They do not threaten - they simply ask you to reflect.`
+
+mission "Wanderer Growth Restriction"
+	name "Limited Access"
+	description "Your harmful actions have resulted in restrictions on your access to Wanderer space. Report to <destination> for processing."
+	job
+	to offer
+		"reputation: Wanderer" < -20
+		has "wanderer ecological friend"
+		random < 40
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		distance 2 4
+	on complete
+		clear "wanderer ecological friend"
+		clear "wanderer terraformer"
+		clear "wanderer life speaker"
+		dialog `The Wanderer administrator processes your restriction with businesslike efficiency. "Your access to ecological sites is revoked," they explain. "You have brought harm where we seek to bring growth. This cannot continue." They update your status. "Perhaps, in time, you will find the path of growth again. Until then, you are limited in what you may do here."`
+
+mission "Wanderer Final Warning: Sterile Path"
+	name "The Sterile Path"
+	description "Your continued destruction has placed you on the 'Sterile Path' - those who bring only death. A final warning awaits on <destination>."
+	job
+	to offer
+		"reputation: Wanderer" < -40
+		not "wanderer sterile path"
+		random < 30
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		distance 2 5
+	on complete
+		set "wanderer sterile path"
+		dialog `The Wanderer elder speaks with profound sorrow. "You walk the Sterile Path," they say. "Where you go, only death follows. No growth, no future." They show you images of destruction - worlds bombed to lifelessness, species driven to extinction. "This is where your path leads. We cannot stop you. We can only grieve for what will never grow because of you."`
+
+
+
+# PROTECTOR PATTERN: DEFENDER OF LIFE
+
+mission "Wanderer Defender Recognition"
+	name "Shield of Growing Things"
+	description "Your pattern of protecting others has aligned you with Wanderer values. The Defense Council wishes to honor you on <destination>."
+	job
+	to offer
+		has "language: Wanderer"
+		"actionlog: pattern" == 4
+		"reputation: Wanderer" > 25
+		random < 20
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		distance 2 5
+	on complete
+		set "wanderer defender"
+		payment 60000
+		"reputation: Wanderer" += 10
+		dialog `The Wanderer Defense Council presents you with a ceremonial shield-symbol. "You understand," the war-leader says, "that sometimes destruction is necessary to protect growth. You fight not for conquest, but for defense." They grant you status as an honorary defender. "When the Unfettered or other threats come, we will stand together."`
+
+mission "Wanderer Defender: Escort Duty"
+	name "Protecting the Terraformers"
+	description "Wanderer terraforming ships need protection on their journey to <destination>. Ensure they arrive safely."
+	job
+	repeat
+	to offer
+		has "wanderer defender"
+		"combat rating" > 50
+		random < 30
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		attributes "farming"
+		distance 3 6
+	npc accompany save
+		government "Wanderer"
+		personality escort timid
+		fleet
+			names "wanderer"
+			variant
+				"Deep River"
+			variant
+				"Summer Leaf"
+	npc
+		government "Pirate"
+		personality nemesis plunders
+		system destination
+		fleet
+			names "pirate"
+			variant
+				"Fury" 2
+			variant
+				"Berserker"
+				"Fury"
+	on complete
+		payment 45000
+		"reputation: Wanderer" += 5
+		dialog `The terraforming ships arrive safely at their destination. "You have protected the future," the convoy leader says. "These ships carry seeds, equipment, and hope. Because of you, another world will grow green." The payment is generous, but the gratitude is worth more.`
+	on visit
+		dialog phrase "generic arrived-without-npc dialog"
+
+
+
+# WITNESS-AWARE CONSEQUENCES
+
+mission "Wanderer: Silent Violence"
+	name "Hidden Destruction"
+	description "The Wanderers have sensed disharmony in your actions, even those you thought were secret. A spiritual advisor awaits on <destination>."
+	job
+	to offer
+		has "language: Wanderer"
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 500
+		"reputation: Wanderer" > 0
+		random < 15
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		distance 2 5
+	on complete
+		dialog `The Wanderer spiritual advisor seems to look through you. "You carry the weight of hidden violence," they say. "We sense it in the way living things react to you. Plants wilt slightly in your presence." They offer no judgment, only observation. "Whether or not others witnessed your deeds, life itself knows. Consider what you carry with you."`
+
+mission "Wanderer: Clean Growth"
+	name "Pure Purpose"
+	description "Your ability to act without leaving traces has intrigued Wanderer strategists. They wish to discuss ecological restoration operations."
+	job
+	to offer
+		has "language: Wanderer"
+		"witness: unwitnessed"
+		"reputation: Wanderer" > 20
+		random < 15
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		distance 2 5
+	on complete
+		set "wanderer covert ops"
+		payment 50000
+		"reputation: Wanderer" += 5
+		dialog `The Wanderer strategist speaks carefully. "Sometimes, protecting growth requires... subtlety," they explain. "Removing threats before they can harm, without provoking larger conflicts." They offer you a role in covert ecological defense operations. "You move without disturbing the pattern. That is useful."`
+
+
+
+# WARMONGER CONSEQUENCES
+
+mission "Wanderer: Entropy Agent"
+	name "Bringer of Stillness"
+	description "The Wanderers have classified you as an 'Entropy Agent' - one who brings death and stillness. A final assessment awaits."
+	job
+	to offer
+		has "language: Wanderer"
+		"actionlog: pattern" == 5
+		"reputation: Wanderer" < -30
+		random < 25
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		distance 2 5
+	on complete
+		set "wanderer entropy agent"
+		"reputation: Wanderer" -= 20
+		dialog `The Wanderer assessment is clinical. "You are an Entropy Agent," they state. "You bring stillness where there should be growth. Death where there should be life." They update your classification. "We will defend ourselves against you as we would defend against any threat to growing things. This is not anger. This is ecological necessity."`
+
+
+
+# ATROCITY CONSEQUENCES
+
+mission "Wanderer: Life-Ender Designation"
+	name "The Dead Path"
+	description "Your atrocities have earned you the Wanderer's most severe designation. A final communication awaits on <destination>."
+	job
+	to offer
+		"reputation: atrocity"
+		"reputation: Wanderer" < -50
+		random < 40
+	source
+		government "Independent" "Neutral"
+	destination
+		government "Independent" "Neutral"
+		distance 2 5
+	on complete
+		set "wanderer life ender"
+		dialog `The message is transmitted in the Wanderer's most formal register. "You have been designated Life-Ender," the translation reads. "This is the name we give to those who have destroyed so much that new growth cannot follow. You are to Wanderers what a sterilizing plague is to a garden. We will oppose you with all our strength, for all time. There is no reconciliation for those who walk the Dead Path."`
+
+
+
+# REDEMPTION: THE GROWING PATH
+
+mission "Wanderer: Seed of Redemption"
+	name "First Growth"
+	description "The Wanderers offer you a chance to walk the Growing Path again. Begin your redemption on <destination>."
+	job
+	to offer
+		has "language: Wanderer"
+		"reputation: Wanderer" < -10
+		"reputation: Wanderer" > -40
+		not "reputation: atrocity"
+		random < 15
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		attributes "farming"
+		distance 2 5
+	cargo "Seedlings" 10 2 .05
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 20000
+		"reputation: Wanderer" += 20
+		dialog `You spend days helping plant seedlings on a world being restored to life. "Every seed is a choice," the Wanderer guide explains. "A choice for growth over destruction." By the end, your hands are dirty and your back aches, but something feels different. "You have planted growth," the guide says. "Now carry that feeling with you. Let it guide your path."`
+
+mission "Wanderer: Continued Growth"
+	name "Nurturing the Future"
+	description "Continue your redemption by helping Wanderer terraforming efforts. Deliver supplies to <destination>."
+	job
+	repeat
+	to offer
+		has "language: Wanderer"
+		"reputation: Wanderer" > -10
+		"reputation: Wanderer" < 10
+		random < 25
+	source
+		government "Wanderer"
+	destination
+		government "Wanderer"
+		attributes "farming"
+		distance 2 6
+	cargo "Fertilizer Compounds" 15 2 .1
+	on visit
+		dialog phrase "generic cargo on visit"
+	on complete
+		payment 30000
+		"reputation: Wanderer" += 5
+		dialog `The terraforming team receives your supplies gratefully. "Each delivery helps a world grow," they explain. "You are part of the Great Work now, in your own small way." The payment is fair, but the sense of contributing to something larger is the real reward.`

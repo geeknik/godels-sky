@@ -29,6 +29,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Mission.h"
 #include "SystemEntry.h"
 
+#include "ActionLog.h"
+#include "EncounterRecord.h"
+
 #include <chrono>
 #include <filesystem>
 #include <list>
@@ -378,6 +381,12 @@ public:
 	// Should help dialogs relating to carriers be displayed?
 	bool DisplayCarrierHelp() const;
 
+	// Gödel's Sky consequence system accessors.
+	const ActionLog &Actions() const;
+	ActionLog &Actions();
+	const EncounterLog &Encounters() const;
+	EncounterLog &Encounters();
+
 	// Advance any active mission timers that meet the right criteria.
 	void StepMissionTimers(UI *ui);
 	// Checks and resets recacheJumpRoutes. Returns the value that was present upon entry.
@@ -473,6 +482,10 @@ private:
 
 	std::map<Date, BookEntry> logbook;
 	std::map<std::string, std::map<std::string, BookEntry>> specialLogs;
+
+	// Gödel's Sky consequence systems:
+	ActionLog actionLog;
+	EncounterLog encounterLog;
 
 	// A list of the player's active, accepted missions.
 	std::list<Mission> missions;

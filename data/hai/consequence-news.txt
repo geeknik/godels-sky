@@ -1,0 +1,354 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Consequence-Reactive News - Hai Space
+# Hai news that reacts to player's patterns, reputation, and actions.
+# The Hai are a peaceful species who value harmony, family, and environmental stewardship.
+
+# =============================================================================
+# HAI TRADER PATTERN REACTIONS
+# =============================================================================
+
+news "hai trader praise"
+	location
+		government "Hai"
+		"actionlog: pattern" == 1  # TRADER
+	name
+		word
+			"Hai merchant"
+			"Hai trader"
+			"Peaceful Hai"
+	message
+		word
+			`"`
+		word
+			"The human captain brings good trade to our systems. Nut prices stable, no conflict. This is how visitors should behave."
+			"My family's nut grove has prospered since this trader began visiting our systems. Fair prices, reliable schedule. We trust them."
+			"Other humans attack. This captain only trades. Their presence is welcome in Hai space. We hope they continue."
+			"The human understands balance. Trading enough to make profit, not so much as to disrupt markets. Respectful of our ways."
+			"My grandfather said humans always bring trouble. This captain proves him wrong. Trade, not conquest. Cooperation, not conflict."
+		word
+			`"`
+
+
+news "hai trader protection"
+	location
+		government "Hai"
+		"actionlog: pattern" == 1
+		"encounter: count disposition grateful" >= 3
+	name
+		word
+			"Grateful Hai"
+			"Hai family"
+	message
+		word
+			`"`
+		word
+			"This human captain defended our ships when pirates attacked. For no payment, just to help. They understand family duty."
+			"My sisters were aboard that freighter. The human fought pirates to protect them. We are grateful beyond words."
+			"Not all humans are violent. This one risked their ship to protect Hai civilians. They have our trust."
+			"The captain helped a Hai child lost in spaceport. Took hours to reunite with family. This is how honorable humans should act."
+			"Our grove was raided by slavers. The human captain intervened, freed the captives, received no payment. True guardian spirit."
+		word
+			`"`
+
+
+# =============================================================================
+# HAI PROTECTOR PATTERN REACTIONS
+# =============================================================================
+
+news "hai protector recognition"
+	location
+		government "Hai"
+		"actionlog: pattern" == 4  # PROTECTOR
+		"reputation: Hai" > 40
+	name
+		word
+			"Hai elder"
+			"Community leader"
+			"Hai historian"
+	message
+		word
+			`"`
+		word
+			"The human protects the weak, defends families, fights pirates without harming civilians. They embody virtues we teach our children."
+			"We have heard stories across Hai space. Human captain who fights for others, not for profit. Rare and precious."
+			"The captain's actions mirror our own values. Family above self, community above individual. They understand the way."
+			"Many humans are warmongers. This captain is a peacemaker. They bring honor to their species in our eyes."
+			"Our storytellers are already composing songs about this human. Not of conquest, but of protection and kindness."
+		word
+			`"`
+
+
+news "hai protector environmentalist"
+	location
+		government "Hai"
+		"actionlog: pattern" == 4
+		"reputation: Hai" > 50
+	name
+		word
+			"Environmentalist Hai"
+			"Hai gardener"
+	message
+		word
+			`"`
+		word
+			"The human captain respects our environment. They don't damage asteroid fields, they avoid polluting. This is rare for spacefarers."
+			"The captain helped replant a damaged grove after pirate raid. Paid for saplings, provided transport labor. Environmental steward."
+			"Human usually treat space as resource to exploit. This captain treats it as garden to tend. They understand balance."
+			"The captain's ship uses clean propulsion, respects habitat protection zones. They see our world as we do: living system to protect."
+			"When mining accident damaged my family's asteroid habitat, the human helped with evacuation, provided medical care, refused payment. True compassion."
+		word
+			`"`
+
+
+# =============================================================================
+# HAI NEGATIVE REACTIONS
+# =============================================================================
+
+news "hai pirate condemnation"
+	location
+		government "Hai"
+		"actionlog: pattern" == 2  # PIRATE
+	name
+		word
+			"Worried Hai"
+			"Hai merchant"
+			"Hai elder"
+	message
+		word
+			`"`
+		word
+			"The human pirate attacks our ships. Takes nuts meant for hungry families. This is not honorable behavior."
+			"My family's freighter was raided by this human. They stole our harvest. Children will go hungry. We fear their return."
+			"Pirates plague our trade routes. This human captain is among the worst. They attack even small, defenseless ships."
+			"The Hai remember those who harm us. This pirate captain's name is known, their face remembered. They are not welcome in Hai space."
+			"Human pirates are cowards. Attack the weak, flee the strong. This one is especially vicious. Avoid their space."
+		word
+			`"`
+
+
+news "hai warmonger concern"
+	location
+		government "Hai"
+		"actionlog: pattern" == 5  # WARMONGER
+	name
+		word
+			"Alarmed Hai"
+			"Hai council member"
+	message
+		word
+			`"`
+		word
+			"The human captain fights everyone. Pirates, governments, even civilians. This is excessive violence, brings imbalance."
+			"We hear of the battles. Entire fleets destroyed, countless casualties. The Hai prefer peace, not such destruction."
+			"The human seeks conflict, creates enemies everywhere. This path leads to suffering. We pray they find another way."
+			"Violence should be last resort, not first choice. This captain uses force before diplomacy. We worry about their spirit."
+			"Our ancestors taught that every life is precious. This human treats existence as cheap. They dishonor themselves with such slaughter."
+		word
+			`"`
+
+
+news "hai atrocity reaction"
+	location
+		government "Hai"
+		"reputation: atrocity"
+	name
+		word
+			"Outraged Hai"
+			"Hai spiritual leader"
+	message
+		word
+			`"`
+		word
+			"The human committed crimes that cannot be forgiven. Killing civilians, destroying families. This is evil, not honorable."
+			"The Hai have long memories. The atrocity committed by this human will never be forgotten. They are permanently unwelcome."
+			"There is darkness in this captain's soul. Actions so terrible that even explaining them brings horror. They must be stopped."
+			"Our spiritual leaders say the captain is cursed by their own actions. Each atrocity binds them tighter to suffering. No redemption possible."
+			"The Hai do not seek revenge, but we do not forget. This human's name will be spoken only with sorrow and warning for generations."
+		word
+			`"`
+
+
+# =============================================================================
+# HAI WITNESS REACTIONS
+# =============================================================================
+
+news "hai witness report"
+	location
+		government "Hai"
+		not "witness: unwitnessed"
+		"actionlog: witnessed" > 500
+	name
+		word
+			"Hai witness"
+			"Concerned observer"
+	message
+		word
+			`"`
+		word
+			"Many Hai saw the human's actions. Our people do not look away when wrong is done. Reports have been filed."
+			"The Hai observed the pirate raid. We do not tolerate such behavior in our space. Our testimonies will be given to authorities."
+			"Multiple Hai witnessed the atrocity. We will not stay silent. Justice must be served for the victims."
+			"Our communities keep records. Every witness statement, every observation, is preserved. The human cannot escape the consequences."
+			"The Hai remember. When someone attacks us, we remember who, when, how. Reports are permanent, witnesses never forget."
+		word
+			`"`
+
+
+news "hai unwitnessed recognition"
+	location
+		government "Hai"
+		"witness: unwitnessed"
+	name
+		word
+			"Perceptive Hai"
+			"Hai trader"
+	message
+		word
+			`"`
+		word
+			"The human operates without being seen. No witnesses report their actions. Impressive, but suspicious. What are they hiding?"
+			"Strange things happen, but no one sees them. This human moves through our space like ghost. We worry about their intentions."
+			"Reports of pirate raids, but no witnesses identified. The human's involvement is suspected but unproven. We remain alert."
+			"The captain avoids all sensors, evades patrols, leaves no trace. This level of stealth requires purpose and resources. What is their mission?"
+			"Some Hai suspect this human of crimes. Others praise their efficiency. Without witnesses, we cannot know the truth. We watch carefully."
+		word
+			`"`
+
+
+# =============================================================================
+# HAI NETWORK EFFECT REACTIONS
+# =============================================================================
+
+news "hai reputation spread"
+	location
+		government "Hai"
+		"days" > 100
+		or
+			"encounter: count disposition grateful" >= 10
+			"encounter: count disposition hostile" >= 8
+	name
+		word
+			"Hai network"
+			"Connected Hai"
+	message
+		word
+			`"`
+		word
+			"The human's reputation spreads through Hai trade routes. Merchants tell grove tenders, who tell families, who tell elders. We all know the captain now."
+			"Stories of the human captain travel faster than light. My cousin in distant Hai space told me their deeds. Good or bad, they are famous among us."
+			"The Hai network of connections spans lightyears. The human's actions have reached every major Hai settlement. They are well-known throughout our territory."
+			"Word about this captain has reached even our most remote groves. If they visit, they will be recognized immediately - for good or for ill."
+			"Our information networks are ancient and efficient. The human cannot hope to hide their reputation among the Hai. We all know them by now."
+		word
+			`"`
+
+
+# =============================================================================
+# HAI LONG-TERM REACTIONS
+# =============================================================================
+
+news "hai long-term alliance"
+	location
+		government "Hai"
+		"days" > 365
+		"reputation: Hai" > 70
+		"actionlog: pattern" == 4
+	name
+		word
+			"Hai council"
+			"Elder Hai"
+	message
+		word
+			`"`
+		word
+			"For years, the human captain has beenfriend to the Hai. Consistent support, protection, respect for our ways. They are now considered family."
+			"The Hai council has debated the human's status. Unanimous agreement: the captain is trusted ally, welcome in any Hai territory, entitled to our aid."
+			"Many humans come and go. This captain has remained with us through seasons. Proven loyalty over long time. They have earned our deepest trust."
+			"The captain helped establish new trade routes between Hai and human space. They've opened doors we thought permanently closed. They are bridge-builder."
+			"Our grandparents now tell stories of the human captain to new generations. They are becoming part of Hai history and legend."
+		word
+			`"`
+
+
+news "hai long-term enemy"
+	location
+		government "Hai"
+		"days" > 300
+		"reputation: Hai" < -50
+		"reputation: atrocity"
+	name
+		word
+			"Hai council warning"
+			"Hai security"
+	message
+		word
+			`"`
+		word
+			"The human has been enemy of the Hai for too long. We have exhausted patience. They are permanently unwelcome in Hai space."
+			"The Hai council declares: this human is banned from all Hai territories. Any violation will be met with force. We will not tolerate their crimes further."
+			"Years of attacks, years of atrocity, years of suffering caused by this human. No more. The Hai will defend ourselves with whatever means necessary."
+			"The human's reputation among us is permanently tainted. Even if they changed their ways, we could never trust them again. Some wounds never heal."
+			"Our grandchildren will be told to avoid this human, to treat them as threat. They are written into our family histories as enemy."
+		word
+			`"`
+
+
+# =============================================================================
+# HAI CROSS-FACTION REACTIONS
+# =============================================================================
+
+news "hai human cooperation"
+	location
+		government "Hai"
+		"reputation: Hai" > 40
+		"reputation: Republic" > 40
+		"actionlog: pattern" == 4
+	name
+		word
+			"Hai diplomat"
+			"Hai observer"
+	message
+		word
+			`""
+		word
+			"The human captain bridges Hai and human interests. They understand both cultures, find common ground. We appreciate such ambassadors."
+			"Republic trusts the human. Hai trust the human. They are rare link between our peoples. This relationship is valuable and fragile."
+			"The captain helped resolve a dispute between Hai merchants and Republic patrol. Showed understanding of both perspectives. We need more humans like them."
+			"When Republic officials tried to impose tariffs on Hai goods, the human intervened, negotiated compromise. They respect both sides equally."
+			"The captain is building friendship between our peoples. Not through force or conquest, but through mutual benefit and understanding. This is how peace is made."
+		word
+			`"`
+
+
+news "hai human conflict"
+	location
+		government "Hai"
+		"reputation: Hai" < -30
+		"reputation: Republic" > 30
+	name
+		word
+			"Confused Hai"
+			"Hai analyst"
+	message
+		word
+			`"`
+		word
+			"The Republic considers this human ally, but Hai see them as enemy. Different perceptions of the same person create confusion and tension."
+			"Republic officials defend the human despite their crimes against Hai. This strains our relationship with Republic. Why do they protect our enemy?"
+			"The human attacks our ships, then returns to Republic space where they are welcomed. This hypocrisy makes us question Republic's true intentions."
+			"How can the same captain be hero to Republic and villain to Hai? We suspect Republic either doesn't know the human's crimes or doesn't care."
+			"We have presented evidence of the human's atrocity to Republic authorities. Their response was unsatisfactory. This damages trust between our peoples."
+		word
+			`"`

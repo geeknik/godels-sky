@@ -36,6 +36,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Radar.h"
 #include "Rectangle.h"
 #include "TaskQueue.h"
+#include "WitnessSystem.h"
 
 #include <condition_variable>
 #include <list>
@@ -286,6 +287,9 @@ private:
 	// Keep track of who has asked for help in fighting whom.
 	std::map<const Government *, std::weak_ptr<const Ship>> grudge;
 	int grudgeTime = 0;
+
+	// Gödel's Sky: Track witnesses to crimes and queue reports.
+	WitnessSystem witnessSystem;
 
 	CollisionSet shipCollisions;
 

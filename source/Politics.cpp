@@ -425,10 +425,28 @@ void Politics::SetReputation(const Government *gov, double value)
 
 
 // Reset any temporary provocation (typically because a day has passed).
-void Politics::ResetDaily()
+void Politics::ResetDaily(const Date &date)
 {
 	provoked.clear();
 	bribed.clear();
 	bribedPlanets.clear();
 	fined.clear();
+
+	// Gödel's Sky: Step the reputation decay/recovery system.
+	if(date)
+		reputationManager.StepDaily(date);
+}
+
+
+
+const ReputationManager &Politics::GetReputationManager() const
+{
+	return reputationManager;
+}
+
+
+
+ReputationManager &Politics::GetReputationManager()
+{
+	return reputationManager;
 }

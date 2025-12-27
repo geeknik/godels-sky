@@ -16,6 +16,8 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "MainPanel.h"
 
 #include "BoardingPanel.h"
+#include "EncounterRecord.h"
+#include "EsUuid.h"
 #include "comparators/ByGivenOrder.h"
 #include "CategoryList.h"
 #include "CoreStartData.h"
@@ -710,6 +712,56 @@ void MainPanel::StepEvents(bool &isActive)
 		// for entering missions that can be offered.
 		if((event.Type() & ShipEvent::JUMP) && flagship && event.Actor().get() == flagship)
 			player.CreateEnteringMissions();
+
+		// Gödel's Sky: Record significant player actions to the ActionLog.
+		// This tracks the player's behavior patterns over time.
+		if(actor && actor->IsPlayer() && event.Target())
+		{
+			const int significantEvents = ShipEvent::DESTROY | ShipEvent::DISABLE |
+				ShipEvent::BOARD | ShipEvent::ASSIST | ShipEvent::CAPTURE | ShipEvent::PROVOKE;
+			if(event.Type() & significantEvents)
+			{
+				const Ship *target = event.Target().get();
+				int crewKilled = (event.Type() & ShipEvent::DESTROY) ? target->Crew() : 0;
+				int64_t valueDestroyed = (event.Type() & ShipEvent::DESTROY) ? target->Cost() : 0;
+
+				// Check if this was witnessed (using witness system's pending reports as proxy)
+				// For now, assume witnessed if there are other ships in system
+				bool witnessed = true;
+
+				player.Actions().Record(
+					player.GetDate(),
+					event.Type(),
+					event.TargetGovernment(),
+					player.GetSystem() ? player.GetSystem()->TrueName() : "",
+					crewKilled,
+					valueDestroyed,
+					witnessed);
+			}
+		}
+
+		// Gödel's Sky: Record NPC encounters for memory system.
+		// This allows NPCs to "remember" past interactions with the player.
+		if(actor && actor->IsPlayer() && event.Target())
+		{
+			const int encounterEvents = ShipEvent::SCAN_CARGO | ShipEvent::SCAN_OUTFITS |
+				ShipEvent::BOARD | ShipEvent::CAPTURE | ShipEvent::ASSIST |
+				ShipEvent::DISABLE | ShipEvent::DESTROY | ShipEvent::PROVOKE;
+			if(event.Type() & encounterEvents)
+			{
+				const shared_ptr<Ship> &target = event.Target();
+				string systemName = player.GetSystem() ? player.GetSystem()->TrueName() : "";
+				string uuid = target->UUID().ToString();
+
+				// Get or create encounter record for this NPC.
+				EncounterRecord &record = player.Encounters().GetOrCreate(
+					uuid, player.GetDate(), systemName);
+
+				// Update the record with the new encounter.
+				record.RecordEncounter(player.GetDate(), systemName);
+				record.RecordEvent(event.Type());
+			}
+		}
 
 		// Remove the fully-handled event.
 		eventQueue.pop_front();
