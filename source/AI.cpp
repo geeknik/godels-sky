@@ -18,6 +18,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "audio/Audio.h"
 #include "Command.h"
 #include "ConditionsStore.h"
+#include "EncounterRecord.h"
 #include "DistanceMap.h"
 #include "FighterHitHelper.h"
 #include "Flotsam.h"
@@ -169,6 +170,27 @@ namespace {
 			}
 		}
 		return false;
+	}
+
+	// Check if this NPC has a personal grudge against the player based on encounter history.
+	// Returns the disposition if the NPC recognizes and has negative history with the player,
+	// or UNKNOWN if no grudge exists.
+	NPCDisposition GetPersonalGrudge(const Ship &npc, const PlayerInfo &player)
+	{
+		// Only NPCs (not player ships) can have a personal grudge
+		if(npc.IsYours())
+			return NPCDisposition::UNKNOWN;
+
+		// Get the encounter record for this NPC
+		const EncounterRecord *record = player.Encounters().Get(npc.UUID().ToString());
+		if(!record)
+			return NPCDisposition::UNKNOWN;
+
+		// The NPC must recognize the player and have negative history
+		if(!record->WouldRecognizePlayer() || !record->HasNegativeHistory())
+			return NPCDisposition::UNKNOWN;
+
+		return record->GetDisposition();
 	}
 
 	void Deploy(const Ship &ship, bool includingDamaged)
@@ -906,6 +928,25 @@ void AI::Step(Command &activeCommands)
 		else if(it->IsFleeing())
 			it->SetFleeing(false);
 
+		// NPCs with WARY disposition flee when the player gets too close.
+		if(!it->IsYours() && !it->IsFleeing())
+		{
+			NPCDisposition grudge = GetPersonalGrudge(*it, player);
+			if(grudge == NPCDisposition::WARY)
+			{
+				const Ship *flagship = player.Flagship();
+				if(flagship && flagship->GetSystem() == it->GetSystem())
+				{
+					double distance = it->Position().Distance(flagship->Position());
+					if(distance < 2000.)
+					{
+						it->SetTargetShip(shared_ptr<Ship>());
+						it->SetFleeing();
+					}
+				}
+			}
+		}
+
 		// Special actions when a ship is heavily damaged:
 		if(healthRemaining < RETREAT_HEALTH + .25)
 		{
@@ -1630,6 +1671,41 @@ shared_ptr<Ship> AI::FindTarget(const Ship &ship) const
 			closest = range;
 			target = foe->shared_from_this();
 			hasNemesis = isPotentialNemesis;
+		}
+	}
+
+	// NPCs with personal grudges against the player may target player ships
+	// even if governments aren't hostile. This implements encounter-based memory.
+	if(!isYours)
+	{
+		NPCDisposition grudge = GetPersonalGrudge(ship, player);
+		if(grudge == NPCDisposition::HOSTILE || grudge == NPCDisposition::NEMESIS)
+		{
+			for(const shared_ptr<Ship> &playerShip : player.Ships())
+			{
+				if(!playerShip || playerShip.get() == &ship)
+					continue;
+				if(!playerShip->IsTargetable() || playerShip->GetSystem() != ship.GetSystem())
+					continue;
+				if(!CanPursue(ship, *playerShip))
+					continue;
+
+				double range = (playerShip->Position() + 60. * playerShip->Velocity()).Distance(
+					ship.Position() + 60. * ship.Velocity());
+
+				if(playerShip == oldTarget)
+					range -= 500.;
+				if(grudge == NPCDisposition::NEMESIS)
+					range -= 1000.;
+				else
+					range -= 500.;
+
+				if(range < closest)
+				{
+					closest = range;
+					target = playerShip;
+				}
+			}
 		}
 	}
 

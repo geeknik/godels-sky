@@ -130,6 +130,8 @@ void NPC::Load(const DataNode &node, const ConditionsStore *playerConditions,
 			{
 				if(child.Token(1) == "destination")
 					isAtDestination = true;
+				else if(child.Token(1) == "waypoint")
+					isAtWaypoint = true;
 				else
 					system = GameData::Systems().Get(child.Token(1));
 			}
@@ -646,7 +648,7 @@ bool NPC::HasFailed() const
 // Create a copy of this NPC but with the fleets replaced by the actual
 // ships they represent, wildcards in the conversation text replaced, etc.
 NPC NPC::Instantiate(const PlayerInfo &player, map<string, string> &subs, const System *origin,
-		const System *destination, int jumps, int64_t payload) const
+		const System *destination, const set<const System *> &waypoints, int jumps, int64_t payload) const
 {
 	NPC result;
 	result.government = government;
@@ -685,7 +687,14 @@ NPC NPC::Instantiate(const PlayerInfo &player, map<string, string> &subs, const 
 	if(!result.system && !location.IsEmpty())
 		result.system = location.PickSystem(origin);
 	if(!result.system)
-		result.system = (isAtDestination && destination) ? destination : origin;
+	{
+		if(isAtDestination && destination)
+			result.system = destination;
+		else if(isAtWaypoint && !waypoints.empty())
+			result.system = *waypoints.begin();
+		else
+			result.system = origin;
+	}
 	// If a planet was specified in the template, it must be in this system.
 	if(planet && result.system->FindStellar(planet))
 		result.planet = planet;

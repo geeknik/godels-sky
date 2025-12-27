@@ -1654,7 +1654,7 @@ Mission Mission::Instantiate(const PlayerInfo &player, const shared_ptr<Ship> &b
 		return result;
 	}
 	for(const NPC &npc : npcs)
-		result.npcs.push_back(npc.Instantiate(player, subs, sourceSystem, result.destination->GetSystem(), jumps, payload));
+		result.npcs.push_back(npc.Instantiate(player, subs, sourceSystem, result.destination->GetSystem(), result.waypoints, jumps, payload));
 	result.hasTrackedNpcs = hasTrackedNpcs;
 
 	// Instantiate the timers.

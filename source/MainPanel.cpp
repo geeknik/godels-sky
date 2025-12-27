@@ -725,9 +725,17 @@ void MainPanel::StepEvents(bool &isActive)
 				int crewKilled = (event.Type() & ShipEvent::DESTROY) ? target->Crew() : 0;
 				int64_t valueDestroyed = (event.Type() & ShipEvent::DESTROY) ? target->Cost() : 0;
 
-				// Check if this was witnessed (using witness system's pending reports as proxy)
-				// For now, assume witnessed if there are other ships in system
-				bool witnessed = true;
+				// Gödel's Sky: Inhabited systems have traffic/patrols, so actions are witnessed.
+				// Uninhabited systems are truly remote with no witnesses.
+				bool witnessed = false;
+				const System *system = player.GetSystem();
+				if(system)
+					for(const StellarObject &object : system->Objects())
+						if(object.HasValidPlanet() && object.GetPlanet()->HasServices())
+						{
+							witnessed = true;
+							break;
+						}
 
 				player.Actions().Record(
 					player.GetDate(),

@@ -115,7 +115,7 @@ public:
 	// Create a copy of this NPC but with the fleets replaced by the actual
 	// ships they represent, wildcards in the conversation text replaced, etc.
 	NPC Instantiate(const PlayerInfo &player, std::map<std::string, std::string> &subs, const System *origin,
-			const System *destination, int jumps, int64_t payload) const;
+			const System *destination, const std::set<const System *> &waypoints, int jumps, int64_t payload) const;
 
 
 private:
@@ -138,6 +138,7 @@ private:
 	LocationFilter location;
 	const System *system = nullptr;
 	bool isAtDestination = false;
+	bool isAtWaypoint = false;
 	// Start out landed on this planet.
 	const Planet *planet = nullptr;
 
