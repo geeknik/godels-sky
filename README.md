@@ -6,6 +6,8 @@ Explore other star systems. Earn money by trading, carrying passengers, or compl
 
 **But beware: in Gödel's Sky, every action has consequences.**
 
+<img width="800" height="464" alt="image" src="https://github.com/user-attachments/assets/e0223f58-8550-448d-867f-4be906bffe49" />
+
 ------
 
 Gödel's Sky is a sandbox-style space exploration game forked from [Endless Sky](https://github.com/endless-sky/endless-sky). It maintains all the original gameplay while adding deep consequence systems that make the universe feel more alive and responsive to your choices.
