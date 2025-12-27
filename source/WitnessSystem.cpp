@@ -153,7 +153,8 @@ vector<shared_ptr<Ship>> WitnessResult::GetSuppressibleWitnesses() const
 WitnessReport::WitnessReport(const Government *reportingGov, const Government *victimGov,
 	int eventType, int frames, const System *system, double impact)
 	: reportingGov(reportingGov), victimGov(victimGov), eventType(eventType),
-	framesRemaining(frames), system(system), reputationImpact(impact)
+	framesRemaining(frames), system(system), reputationImpact(impact),
+	canBeSuppressed(false)
 {
 }
 

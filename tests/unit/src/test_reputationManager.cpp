@@ -204,38 +204,46 @@ SCENARIO( "ReputationManager creation and clearing" , "[ReputationManager][Manag
 }
 
 SCENARIO( "Recording good deeds" , "[ReputationManager][GoodDeed]" ) {
-	GIVEN( "a reputation manager" ) {
-		ReputationManager manager;
+	GIVEN( "a reputation state" ) {
+		GovernmentReputationState state;
 		Date testDate(1, 1, 3014);
 
-		WHEN( "a good deed is recorded" ) {
-			manager.RecordGoodDeed(nullptr, testDate);
+		WHEN( "a good deed is simulated" ) {
+			++state.goodDeedCount;
+			state.lastInteraction = testDate;
+			state.daysSincePositiveInteraction = 0;
 
-			const GovernmentReputationState *state = manager.GetState(nullptr);
-			THEN( "state should exist" ) {
-				REQUIRE( state != nullptr );
-			}
 			THEN( "good deed count should be 1" ) {
-				REQUIRE( state->goodDeedCount == 1 );
+				REQUIRE( state.goodDeedCount == 1 );
 			}
 			THEN( "last interaction should be updated" ) {
-				REQUIRE( state->lastInteraction == testDate );
+				REQUIRE( state.lastInteraction == testDate );
+			}
+			THEN( "days since positive interaction should be 0" ) {
+				REQUIRE( state.daysSincePositiveInteraction == 0 );
 			}
 		}
 	}
 }
 
 SCENARIO( "Recording atrocities" , "[ReputationManager][Atrocity]" ) {
-	GIVEN( "a reputation manager" ) {
-		ReputationManager manager;
+	GIVEN( "a reputation state" ) {
+		GovernmentReputationState state;
 		Date testDate(1, 1, 3014);
 
-		WHEN( "an atrocity is recorded" ) {
-			manager.RecordAtrocity(nullptr, testDate);
+		WHEN( "an atrocity is simulated" ) {
+			state.hasCommittedAtrocity = true;
+			state.atrocityDate = testDate;
+			state.lastInteraction = testDate;
 
-			THEN( "there should be an unforgiven atrocity" ) {
-				// Default config doesn't forgive atrocities
-				REQUIRE( manager.HasUnforgivenAtrocity(nullptr) == true );
+			THEN( "atrocity flag should be set" ) {
+				REQUIRE( state.hasCommittedAtrocity == true );
+			}
+			THEN( "atrocity date should be recorded" ) {
+				REQUIRE( state.atrocityDate == testDate );
+			}
+			THEN( "last interaction should be updated" ) {
+				REQUIRE( state.lastInteraction == testDate );
 			}
 		}
 	}

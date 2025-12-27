@@ -83,7 +83,12 @@ list(APPEND INTEGRATION_TESTS
 )
 
 target_include_directories(EndlessSkyTests PRIVATE unit/include)
-target_link_libraries(EndlessSkyTests PRIVATE Catch2::Catch2WithMain)
+# Catch2 v3 provides Catch2WithMain, v2 only provides Catch2
+if(TARGET Catch2::Catch2WithMain)
+	target_link_libraries(EndlessSkyTests PRIVATE Catch2::Catch2WithMain)
+else()
+	target_link_libraries(EndlessSkyTests PRIVATE Catch2::Catch2)
+endif()
 target_link_libraries(EndlessSkyTests PRIVATE ExternalLibraries $<TARGET_OBJECTS:EndlessSkyLib>)
 
 target_compile_options(EndlessSkyTests PUBLIC ${SANITIZER_OPTS})

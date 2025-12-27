@@ -25,4 +25,14 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #define CATCH_CONFIG_WINDOWS_CRTDBG
 #endif
 
+// Support both Catch2 v2 and v3
+#if __has_include(<catch2/catch_all.hpp>)
 #include <catch2/catch_all.hpp>
+#else
+#include <catch2/catch.hpp>
+// Catch2 v2 puts Approx in Catch::Detail, v3 puts it in Catch
+// Provide compatibility alias so tests can use Catch::Approx with both versions
+namespace Catch {
+	using Approx = Detail::Approx;
+}
+#endif
