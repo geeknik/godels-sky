@@ -15,6 +15,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include "ActionLog.h"
 #include "Command.h"
 #include "FireCommand.h"
 #include "FormationPositioner.h"
@@ -89,6 +90,10 @@ public:
 	// Get the in-system strength of each government's allies and enemies.
 	int64_t AllyStrength(const Government *government) const;
 	int64_t EnemyStrength(const Government *government) const;
+
+	// Get the player's current behavior pattern for NPC decision-making.
+	// This is cached and updated periodically for performance.
+	BehaviorPattern GetPlayerBehaviorPattern() const;
 
 	// Find nearest landing location.
 	static const StellarObject *FindLandingLocation(const Ship &ship, const bool refuel = true);
@@ -292,4 +297,8 @@ private:
 
 	// Route planning cache:
 	std::unordered_map<RouteCacheKey, RoutePlan, RouteCacheKey::HashFunction> routeCache;
+
+	// Cached player behavior pattern, updated periodically for performance.
+	mutable BehaviorPattern cachedPlayerPattern = BehaviorPattern::UNKNOWN;
+	mutable int patternCacheStep = -1;
 };

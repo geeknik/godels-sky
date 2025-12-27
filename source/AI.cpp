@@ -193,6 +193,84 @@ namespace {
 		return record->GetDisposition();
 	}
 
+	// Pattern-based flee: pirates flee bounty hunters, merchants flee pirates.
+	bool ShouldFleePlayerPattern(const Ship &npc, BehaviorPattern playerPattern,
+		const Ship *flagship, double fleeDistance = 3000.)
+	{
+		if(!flagship || flagship->GetSystem() != npc.GetSystem())
+			return false;
+
+		double distance = npc.Position().Distance(flagship->Position());
+		if(distance > fleeDistance)
+			return false;
+
+		const Government *npcGov = npc.GetGovernment();
+		if(!npcGov)
+			return false;
+
+		bool npcIsHostileToPlayer = npcGov->IsEnemy(GameData::PlayerGovernment());
+		bool playerIsHunterOrWarmonger = (playerPattern == BehaviorPattern::BOUNTY_HUNTER ||
+			playerPattern == BehaviorPattern::WARMONGER);
+		bool playerIsPirateOrWarmonger = (playerPattern == BehaviorPattern::PIRATE ||
+			playerPattern == BehaviorPattern::WARMONGER);
+
+		if(npcIsHostileToPlayer && playerIsHunterOrWarmonger)
+			return true;
+
+		if(!npcIsHostileToPlayer && playerIsPirateOrWarmonger)
+			return !IsArmed(npc) || npc.GetPersonality().IsTimid();
+
+		return false;
+	}
+
+	// Flee urgency from encounter history. Range: 0.0 (none) to 1.0+ (extreme).
+	double GetFleeUrgency(const Ship &npc, const PlayerInfo &player)
+	{
+		const EncounterRecord *record = player.Encounters().Get(npc.UUID().ToString());
+		if(!record)
+			return 0.;
+
+		double threat = record->GetPerceivedThreat();
+		NPCDisposition disposition = record->GetDisposition();
+
+		if(disposition == NPCDisposition::NEMESIS)
+			return threat + 0.5;
+		if(disposition == NPCDisposition::HOSTILE)
+			return threat + 0.3;
+		if(disposition == NPCDisposition::WARY)
+			return threat + 0.1;
+		return threat;
+	}
+
+	bool ShouldFleeAsWitness(const Ship &npc, const Ship *flagship,
+		const shared_ptr<Ship> &flagshipTarget, double witnessRange = 5000.)
+	{
+		if(!flagship || !flagshipTarget)
+			return false;
+		if(flagship->GetSystem() != npc.GetSystem())
+			return false;
+
+		const Government *npcGov = npc.GetGovernment();
+		const Government *victimGov = flagshipTarget->GetGovernment();
+		if(!npcGov || !victimGov)
+			return false;
+
+		bool npcIsFriendlyToVictim = !npcGov->IsEnemy(victimGov);
+		bool npcIsNotInvolved = (&npc != flagshipTarget.get());
+		if(!npcIsFriendlyToVictim || !npcIsNotInvolved)
+			return false;
+
+		double distanceToEvent = npc.Position().Distance(flagshipTarget->Position());
+		if(distanceToEvent > witnessRange)
+			return false;
+
+		bool canIntervene = IsArmed(npc) && !npc.GetPersonality().IsTimid();
+		if(canIntervene)
+			return false;
+
+		return true;
+	}
+
 	void Deploy(const Ship &ship, bool includingDamaged)
 	{
 		for(const Ship::Bay &bay : ship.Bays())
@@ -928,22 +1006,51 @@ void AI::Step(Command &activeCommands)
 		else if(it->IsFleeing())
 			it->SetFleeing(false);
 
-		// NPCs with WARY disposition flee when the player gets too close.
 		if(!it->IsYours() && !it->IsFleeing())
 		{
-			NPCDisposition grudge = GetPersonalGrudge(*it, player);
-			if(grudge == NPCDisposition::WARY)
+			const Ship *flagship = player.Flagship();
+			bool shouldFleeFromPlayer = false;
+
+			bool hasWaryGrudge = (GetPersonalGrudge(*it, player) == NPCDisposition::WARY);
+			bool playerIsNearby = flagship && flagship->GetSystem() == it->GetSystem();
+
+			if(hasWaryGrudge && playerIsNearby)
 			{
-				const Ship *flagship = player.Flagship();
-				if(flagship && flagship->GetSystem() == it->GetSystem())
+				double distance = it->Position().Distance(flagship->Position());
+				if(distance < 2000.)
+					shouldFleeFromPlayer = true;
+			}
+
+			if(!shouldFleeFromPlayer)
+			{
+				BehaviorPattern playerPattern = GetPlayerBehaviorPattern();
+				shouldFleeFromPlayer = ShouldFleePlayerPattern(*it, playerPattern, flagship);
+			}
+
+			if(!shouldFleeFromPlayer && playerIsNearby)
+			{
+				double fleeUrgency = GetFleeUrgency(*it, player);
+				if(fleeUrgency > 0.6)
 				{
 					double distance = it->Position().Distance(flagship->Position());
-					if(distance < 2000.)
-					{
-						it->SetTargetShip(shared_ptr<Ship>());
-						it->SetFleeing();
-					}
+					double fleeRadius = 1500. + (fleeUrgency * 2000.);
+					if(distance < fleeRadius)
+						shouldFleeFromPlayer = true;
 				}
+			}
+
+			if(!shouldFleeFromPlayer && flagship)
+			{
+				shared_ptr<Ship> flagshipTarget = flagship->GetTargetShip();
+				bool playerIsAttacking = flagshipTarget && flagship->Commands().Has(Command::PRIMARY);
+				if(playerIsAttacking && ShouldFleeAsWitness(*it, flagship, flagshipTarget))
+					shouldFleeFromPlayer = true;
+			}
+
+			if(shouldFleeFromPlayer)
+			{
+				it->SetTargetShip(shared_ptr<Ship>());
+				it->SetFleeing();
 			}
 		}
 
@@ -1307,6 +1414,18 @@ int64_t AI::EnemyStrength(const Government *government) const
 {
 	auto it = enemyStrength.find(government);
 	return (it == enemyStrength.end() ? 0 : it->second);
+}
+
+
+
+BehaviorPattern AI::GetPlayerBehaviorPattern() const
+{
+	if(patternCacheStep != step)
+	{
+		patternCacheStep = step;
+		cachedPlayerPattern = player.Actions().GetPatternScore(player.GetDate());
+	}
+	return cachedPlayerPattern;
 }
 
 

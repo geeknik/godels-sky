@@ -159,6 +159,60 @@ Threshold levels: `war`, `hostile`, `unfriendly`, `neutral`, `friendly`, `allied
 - NPCs with WARY disposition flee when player approaches
 - NPCs with NEMESIS disposition prioritize player over other targets
 
+### Scenario 7: Pattern-Based NPC Reactions
+
+**Goal**: Verify that NPCs react to your known behavior pattern.
+
+**Steps**:
+1. Build up a BOUNTY_HUNTER pattern by destroying pirates
+2. After 10-15 pirate kills, check `actionlog: pattern` = 3
+3. Travel to pirate-controlled systems
+4. Observe pirate behavior when you arrive
+
+**Expected Results**:
+- Pirates flee from you at greater distances
+- Pirates with low health flee immediately rather than engaging
+- Weaker pirate ships avoid you entirely
+
+**Alternative Test (Pirate Pattern)**:
+1. Build up a PIRATE pattern by attacking merchants
+2. Travel to trade-heavy systems
+3. Observe unarmed merchant behavior
+
+**Expected Results**:
+- Unarmed merchants flee when you approach
+- Armed merchants may still engage
+- NPCs with "timid" personality always flee
+
+### Scenario 8: Witness Flee Behavior
+
+**Goal**: Verify that NPCs witnessing your crimes flee to report.
+
+**Steps**:
+1. Find a system with multiple ships
+2. Attack a merchant ship while other friendly ships are nearby
+3. Observe the nearby ships' behavior
+
+**Expected Results**:
+- Unarmed civilian ships flee toward the system edge
+- Ships that witness the attack set "fleeing" state
+- Ships with combat capability may engage instead of fleeing
+- Fled witnesses contribute to reputation damage if they escape
+
+### Scenario 9: Perceived Threat-Based Flee
+
+**Goal**: Verify that NPCs flee based on encounter history threat level.
+
+**Steps**:
+1. Attack the same NPC type repeatedly (e.g., disable 3+ ships)
+2. Travel to new systems with the same government's ships
+3. Observe NPC behavior when you approach
+
+**Expected Results**:
+- NPCs with high perceived threat (>0.6) flee at greater distances
+- Flee radius increases with threat level (1500 + threat * 2000)
+- NPCs that have seen you attack allies are more cautious
+
 ## Console Commands for Testing
 
 If the game has console access, use these to check conditions:
@@ -189,13 +243,17 @@ Consequence-related data files:
 
 ## Known Limitations
 
-1. **AI Integration Cannot Be Unit Tested**: The `GetPersonalGrudge` and related AI functions depend on GameData and cannot be tested without the full game running.
+1. **AI Integration Cannot Be Unit Tested**: AI flee behavior functions (`ShouldFleePlayerPattern`, `GetFleeUrgency`, `ShouldFleeAsWitness`) are in an anonymous namespace and cannot be unit tested. Testing requires full gameplay scenarios.
 
 2. **Random Conditions**: `witness: crime leaked` and `ship: compromised` are probabilistic - they may not trigger every time conditions are met.
 
 3. **Disposition Building**: Dispositions require multiple encounters to build up. Single interactions won't create strong dispositions.
 
 4. **UUID Persistence**: NPC memory relies on UUID persistence across saves. New NPCs generated each session won't have history.
+
+5. **Pattern Caching**: Player behavior pattern is cached per-step for performance. Pattern changes may take a few seconds to propagate to NPC behavior.
+
+6. **Witness Flee Detection**: Witness flee only triggers when player is actively firing (Command::PRIMARY). Ships won't flee from players who are just targeting but not shooting.
 
 ## Reporting Issues
 
