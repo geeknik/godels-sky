@@ -1,0 +1,394 @@
+# Copyright (c) 2025 by the Gödel's Sky contributors
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Gödel's Sky Crew Consequence Missions
+# These missions react to crew trustworthiness, crime leaks, and ship security.
+# Crew trustworthiness is affected by: owed salaries, credit score, and behavior pattern.
+# Conditions used:
+#   - "crew: trustworthiness" (0-1000, higher is more trustworthy)
+#   - "crew: leak chance" (0-500, chance of information leaks)
+#   - "ship: compromised" (boolean, random based on unwitnessed actions + behavior)
+#   - "witness: crime leaked" (boolean, random based on crew morale and unwitnessed ratio)
+
+
+
+# CREW TRUSTWORTHINESS: HIGH (trustworthy crew, loyal to captain)
+
+mission "Loyal Crew: Bonus Performance"
+	name "Crew Excellence Report"
+	description "Your crew's exceptional morale and competence has been noticed. A captain's association on <destination> wants to recognize your leadership."
+	job
+	to offer
+		"crew: trustworthiness" > 850
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		distance 2 5
+	on complete
+		payment 25000
+		dialog `The captain's association reviews your crew manifests and performance records. "Your crew turnover is remarkably low," the coordinator notes. "And their efficiency ratings are off the charts. This speaks well of your leadership." They present you with a commendation and a modest payment. "Crews perform best when they trust their captain. Clearly, yours does."`
+
+mission "Loyal Crew: Saved by Trust"
+	name "Crew Saves the Day"
+	description "Your crew's loyalty has paid off. They protected your ship from sabotage. Report the incident on <destination>."
+	job
+	to offer
+		"crew: trustworthiness" > 900
+		"encounter: has disposition hostile"
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes military
+		distance 2 5
+	on complete
+		payment 15000
+		"reputation: Republic" += 5
+		dialog `Security reviews the sabotage attempt your crew foiled. "Someone tried to plant explosives in your cargo bay," the investigator explains. "But your crew noticed - and instead of looking the other way, they stopped it and reported it." She looks impressed. "That kind of loyalty is rare. You've built something special with your people."`
+
+mission "Loyal Crew: Information Network"
+	name "Crew Intelligence"
+	description "Your loyal crew has picked up valuable intelligence through spaceport gossip. Act on it at <destination>."
+	job
+	repeat
+	to offer
+		"crew: trustworthiness" > 800
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment 35000
+		dialog `Your crew's information proves accurate - they overheard pirates planning an ambush on a merchant convoy, and you were able to warn the targets in time. The grateful merchants reward you handsomely. Your first mate grins. "We keep our ears open, Captain. Never know what useful things people say when they think no one's listening."`
+
+
+
+# CREW TRUSTWORTHINESS: LOW (disgruntled crew, risk of problems)
+
+mission "Disgruntled Crew: Minor Sabotage"
+	name "Equipment Problems"
+	description "Your ship has been experiencing mysterious malfunctions. Get it checked at <destination>."
+	job
+	to offer
+		"crew: trustworthiness" < 400
+		random < 25
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes shipyard
+		distance 1 3
+	on complete
+		payment -20000
+		dialog `The mechanic shakes their head as they pull damaged components from your systems. "This wasn't wear and tear," they say. "Someone did this deliberately. Whoever it was knew exactly what to damage to cause maximum inconvenience without making the ship unflyable." They look at you meaningfully. "Got any unhappy crew members, Captain?"`
+
+mission "Disgruntled Crew: Desertion"
+	name "Crew Gone Missing"
+	description "Several crew members have deserted, taking valuables with them. Track them down or find replacements on <destination>."
+	job
+	to offer
+		"crew: trustworthiness" < 350
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+		distance 2 5
+	on complete
+		payment -30000
+		dialog `You manage to recruit replacement crew on <planet>, but the deserters are long gone - along with their "severance package" of ship supplies and petty cash. A recruiter gives you a hard look. "Word gets around when a captain doesn't treat their people right. Might want to think about what drove them to leave."`
+
+mission "Disgruntled Crew: Strike Threat"
+	name "Labor Dispute"
+	description "Your crew is threatening to refuse work. Negotiate with their representative on <destination>."
+	job
+	to offer
+		"crew: trustworthiness" < 300
+		"credits" > 50000
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		distance 1 3
+	on complete
+		payment -40000
+		dialog `The crew's representative presents a list of grievances. "Back pay. Better food. Safety improvements. Basic respect." They're not hostile, just firm. "We know how hard this job is. We're not asking for luxury. Just fair treatment." After negotiation, you agree to improved conditions. It's expensive, but cheaper than having no crew at all.`
+
+
+
+# CRIME LEAK MECHANICS: When unwitnessed crimes get revealed
+
+mission "Crime Leaked: Anonymous Tip"
+	name "Questions from Authorities"
+	description "The authorities have received an anonymous tip about your activities. Report to <destination> for questioning."
+	job
+	to offer
+		"witness: crime leaked"
+		not "reputation: atrocity"
+		random < 30
+	source
+		government "Republic" "Free Worlds" "Syndicate"
+	destination
+		government "Republic" "Free Worlds" "Syndicate"
+		attributes military
+		distance 2 5
+	on complete
+		payment -25000
+		"reputation: Republic" -= 5
+		dialog `The investigator reviews the anonymous tip with skepticism. "Someone claims you were involved in illegal activities. However, the details are vague and we have no corroborating evidence." They study your face. "Consider this a warning, Captain. We'll be keeping an eye on you." You pay a "cooperation fee" and leave, wondering who sold you out.`
+
+mission "Crime Leaked: Crew Member Talked"
+	name "Loose Lips"
+	description "One of your crew members has been talking. Damage control is needed. Handle it on <destination>."
+	job
+	to offer
+		"witness: crime leaked"
+		"crew: trustworthiness" < 500
+		random < 25
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	destination
+		government "Independent" "Pirate"
+		distance 2 5
+	on complete
+		payment -35000
+		dialog `A fixer on <planet> has managed to discredit the loose-lipped crew member's testimony. "I've spread word that they're unreliable," the fixer explains. "Drinking problem, history of exaggeration. Their story won't carry weight now." The fixer's services aren't cheap, but your reputation is intact - for now. "Might want to be more careful who you hire, Captain."`
+
+mission "Crime Leaked: Blackmail"
+	name "An Inconvenient Truth"
+	description "Someone knows what you've done. They're demanding payment to stay quiet. Meet them on <destination>."
+	job
+	to offer
+		"witness: crime leaked"
+		"credits" > 100000
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Independent" "Pirate"
+		distance 3 6
+	on complete
+		conversation
+			`The blackmailer is smug. "I know what you did in <system>," they say. "The authorities don't - yet. But they could." They name their price: 75,000 credits for silence.`
+			choice
+				`	(Pay the blackmail.)`
+				`	"I don't respond to threats."`
+					goto refuse
+			action
+				payment -75000
+			`	The blackmailer takes your money with a smile. "Pleasure doing business. I'll be in touch if I need anything else." You've bought silence - for now. But blackmailers rarely stay satisfied.`
+				accept
+			label refuse
+			action
+				"reputation: Republic" -= 15
+				"reputation: Free Worlds" -= 10
+			`	"Your choice." The blackmailer shrugs. "I'll just take my evidence to the authorities. Enjoy explaining yourself." Within days, you notice increased scrutiny from government patrols. The blackmailer made good on their threat.`
+				accept
+
+
+
+# SHIP COMPROMISED: When your operations have been detected or bugged
+
+mission "Ship Compromised: Surveillance Detected"
+	name "You're Being Watched"
+	description "Your crew has discovered surveillance devices on your ship. Get them removed at <destination>."
+	job
+	to offer
+		"ship: compromised"
+		random < 30
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Independent" "Pirate"
+		attributes shipyard
+		distance 2 5
+	on complete
+		payment -15000
+		dialog `The technician sweeps your ship thoroughly and finds three separate bugs - audio pickups, a tracking beacon, and a data tap on your navigation computer. "Professional work," they note. "Someone really wanted to know what you're up to." They remove everything for a fee. "I'd change your route patterns for a while. Whoever planted these knows your habits."`
+
+mission "Ship Compromised: Intelligence Knew"
+	name "They Know Where You'll Be"
+	description "Your enemies knew your exact route. Someone has compromised your navigation data. Investigate on <destination>."
+	job
+	to offer
+		"ship: compromised"
+		"encounter: has disposition hostile"
+		random < 25
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Independent"
+		distance 3 6
+	on complete
+		payment -20000
+		dialog `A security consultant reviews your ship's systems. "Your navigation computer has been sending regular updates to an unknown receiver," they explain. "Every jump you've made in the last month is logged somewhere." They purge the malware and install countermeasures. "Someone with money and patience put this here. Watch your back, Captain."`
+
+mission "Ship Compromised: Pirate Ambush"
+	name "Expected Arrival"
+	description "Pirates were waiting for you at every jump point. Someone tipped them off. Find out who at <destination>."
+	job
+	to offer
+		"ship: compromised"
+		"actionlog: pattern" == 1
+		random < 20
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	waypoint
+		distance 2 4
+	destination
+		government "Independent"
+		distance 2 5
+	npc
+		government "Pirate"
+		personality nemesis waiting
+		system waypoint
+		fleet
+			names "pirate"
+			variant
+				"Fury"
+				"Berserker"
+			variant
+				"Corvette"
+	on complete
+		payment -25000
+		dialog `After escaping the ambush and reaching <planet>, you hire an investigator. They trace the information leak to a data broker who's been selling ship schedules. "Traders like you are valuable targets," the investigator explains. "Someone's been tracking your routes and selling them to pirates." They provide countermeasures - for a fee. "Change your patterns. Vary your timing. Make yourself unpredictable."`
+
+
+
+# COMBINED CONDITIONS: Multiple systems interacting
+
+mission "Trust and Leaks: Cover Up"
+	name "Keeping Secrets"
+	description "A loyal crew member intercepted a leak before it could cause damage. Thank them on <destination>."
+	job
+	to offer
+		"crew: trustworthiness" > 700
+		"witness: unwitnessed"
+		"actionlog: pattern" >= 2
+		random < 15
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Independent" "Neutral"
+		distance 1 3
+	on complete
+		payment 20000
+		dialog `Your first mate meets you privately. "Caught one of the newer crew trying to sell information about our... activities," they say quietly. "Handled it. They won't be talking to anyone." They don't elaborate on how the situation was "handled," and you don't ask. "Ship's clean now, Captain. But might want to be more careful about who we hire."`
+
+mission "Compromise Cascade: Total Security Failure"
+	name "Everything's Compromised"
+	description "Your operations are completely exposed. A massive security overhaul is needed at <destination>."
+	job
+	to offer
+		"ship: compromised"
+		"crew: trustworthiness" < 400
+		"witness: crime leaked"
+		random < 10
+	source
+		government "Republic" "Free Worlds" "Syndicate" "Neutral" "Independent"
+	destination
+		government "Independent" "Pirate"
+		distance 3 6
+	on complete
+		payment -100000
+		dialog `The security consultant's report is devastating. "Your ship is bugged, your crew is unreliable, and your activities are being monitored by at least three different parties." They outline a complete overhaul - new crew vetting, ship sweep, communications protocols, route randomization. "This will be expensive and disruptive, but right now you're operating completely exposed." You pay for the full package. It hurts, but the alternative is worse.`
+
+
+
+# NEWS ITEMS
+
+news "Loyal Crew Reputation"
+	location
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	to show
+		"crew: trustworthiness" > 800
+	name
+		word
+			"Spacer"
+			"Crew member"
+			"Deckhand"
+	message
+		word
+			"Captain <last>'s crew is fiercely loyal. "
+			"I hear <first>'s ship runs like clockwork. "
+			"The crew on <ship> are the happiest in the fleet. "
+		word
+			"Good pay, fair treatment, that's all we ask. "
+			"A captain who takes care of their people gets loyalty in return. "
+			"Some captains understand that happy crew means smooth sailing. "
+		word
+			"Wish I worked for someone like that."
+			"That's how a ship should be run."
+			"More captains should follow that example."
+
+news "Crew Problems"
+	location
+		government "Republic" "Free Worlds" "Syndicate" "Neutral"
+	to show
+		"crew: trustworthiness" < 400
+	name
+		word
+			"Disgruntled"
+			"Former"
+			"Ex-"
+		word
+			" crew member"
+			" deckhand"
+			" engineer"
+	message
+		word
+			"Don't sign on with Captain <last>. "
+			"<first>'s ship is a nightmare. "
+			"Working on <ship> was the worst experience of my career. "
+		word
+			"Late pay, dangerous conditions, no respect. "
+			"That captain treats crew like expendable parts. "
+			"I've seen better conditions on pirate ships. "
+		word
+			"I'm warning everyone I can."
+			"Save yourself the trouble and look elsewhere."
+			"Word gets around about captains like that."
+
+news "Information Leaks"
+	location
+		government "Independent" "Pirate"
+	to show
+		"witness: crime leaked"
+	name
+		word
+			"Information"
+			"Data"
+			"Intel"
+		word
+			" broker"
+			" trader"
+			" dealer"
+	message
+		word
+			"There's good information about Captain <last> for sale. "
+			"Someone's been talking about <first>'s activities. "
+			"I've got a buyer looking for dirt on <last>. "
+		word
+			"Leaks from inside the ship, very reliable. "
+			"First-hand accounts from crew members. "
+			"Verified intelligence, worth good money. "
+		word
+			"Information is power, after all."
+			"Privacy is a luxury in this business."
+			"Everyone's got something to hide."
