@@ -80,3 +80,5 @@ CMakeUserPresets.json
 .claude
 CLAUDE.md
 .pf
+.auditor_venv
+AGENTS.md
