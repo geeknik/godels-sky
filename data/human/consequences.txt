@@ -58,7 +58,7 @@ mission "Republic Honor Guard"
 		government "Republic"
 		personality escort
 		fleet
-			names "republic"
+			names "republic small"
 			variant
 				"Frigate"
 	npc
@@ -145,7 +145,7 @@ mission "Atrocity Consequences: Pursued"
 		government "Republic"
 		personality nemesis waiting
 		fleet
-			names "republic"
+			names "republic small"
 			variant
 				"Frigate"
 				"Corvette" 2
@@ -381,10 +381,10 @@ mission "Pirate Council: Fleet Operation"
 		personality staying
 		system waypoint
 		fleet
-			names "republic"
+			names "republic small"
 			variant
 				"Corvette"
-				"Patrol Boat"
+				"Quicksilver"
 	on complete
 		payment 120000
 		"reputation: Republic" -= 15

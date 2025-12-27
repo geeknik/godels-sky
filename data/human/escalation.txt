@@ -114,9 +114,9 @@ mission "Escalation: Republic Surveillance"
 		personality surveillance waiting
 		system destination
 		fleet
-			names "republic"
+			names "republic small"
 			variant
-				"Patrol Boat"
+				"Quicksilver"
 				"Flivver" 2
 	on complete
 		set "republic escalation stage 2"
@@ -192,13 +192,13 @@ mission "Escalation: Republic Blockade"
 		personality staying nemesis
 		system waypoint
 		fleet
-			names "republic"
+			names "republic small"
 			variant
 				"Frigate"
 				"Corvette" 2
 			variant
 				"Cruiser"
-				"Patrol Boat" 2
+				"Quicksilver" 2
 	on complete
 		set "republic escalation stage 3"
 		payment 30000
@@ -247,7 +247,7 @@ mission "Escalation: Free Worlds Militia"
 		personality staying nemesis
 		system waypoint
 		fleet
-			names "free worlds"
+			names "free worlds small"
 			variant
 				"Falcon"
 				"Fury" 2
@@ -286,7 +286,7 @@ mission "Escalation: Republic Task Force"
 		personality nemesis waiting
 		system waypoint
 		fleet
-			names "republic"
+			names "republic small"
 			variant
 				"Cruiser"
 				"Frigate" 2
@@ -353,7 +353,7 @@ mission "Escalation: Free Worlds Coalition"
 		personality nemesis waiting
 		system waypoint
 		fleet
-			names "free worlds"
+			names "free worlds small"
 			variant
 				"Osprey" 2
 				"Falcon"
@@ -388,7 +388,7 @@ mission "De-escalation: Republic Service"
 		government "Republic"
 		personality escort
 		fleet
-			names "republic"
+			names "republic small"
 			variant
 				"Shuttle"
 	npc

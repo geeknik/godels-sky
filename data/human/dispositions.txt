@@ -134,9 +134,9 @@ mission "Indebted Contact: Rescue Request"
 		fleet
 			names "civilian"
 			variant
-				"Shuttle (Damaged)"
+				"Shuttle"
 			variant
-				"Flivver (Disabled)"
+				"Flivver"
 	npc
 		government "Pirate"
 		personality nemesis
@@ -362,9 +362,9 @@ mission "Hostile Encounter: Blockade"
 		fleet
 			names "civilian"
 			variant
-				"Freighter (Heavy Warship)"
+				"Freighter (Proton)"
 			variant
-				"Hauler III (Heavy Warship)"
+				"Hauler III (Hai)"
 	on complete
 		payment 20000
 		dialog `You make it through the blockade, but it's clear that your enemies are organizing against you. A friendly contact on <planet> fills you in: "Word is you've made enough people angry that they're coordinating. Might want to think about making some amends before this gets worse."`
@@ -444,7 +444,7 @@ mission "Nemesis Encounter: Final Confrontation"
 			variant
 				"Corvette"
 			variant
-				"Fury (Heavy Warship)"
+				"Fury (Heavy)"
 	on complete
 		payment 50000
 		dialog `Your nemesis's ship explodes in a brilliant flash. The feud is over - one way or another. Salvaging what you can from the wreckage, you find a data chip containing their personal logs. The obsession with destroying you had consumed their entire life. You're not sure how to feel about that.`

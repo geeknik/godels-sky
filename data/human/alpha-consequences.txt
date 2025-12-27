@@ -253,24 +253,27 @@ mission "Alpha Target: Betrayal Choice"
 				`	(This is my chance to take them down.)`
 					goto attack
 			label accept
+			action
+				payment 100000
+				set "alpha assassin"
+				"reputation: Alpha" += 20
+				"reputation: Republic" -= 50
 			`	"Good. You'll be compensated generously." Prometheus transfers coordinates and details. "Don't disappoint us." You leave with blood money in your account and murder in your future. Is this really who you want to be?`
 			`	You receive 100,000 credits. Your soul feels considerably cheaper.`
-			payment 100000
-			set "alpha assassin"
-			"reputation: Alpha" += 20
-			"reputation: Republic" -= 50
 				accept
 			label refuse
+			action
+				set "alpha enemy made"
+				"reputation: Alpha" -= 100
 			`	Prometheus's eyes narrow. "Then you're of no use to us. And you know too much." The guards draw weapons. "This is disappointing, Captain. You had such potential." You barely escape with your life, but you escape. The Alphas will hunt you now.`
-			set "alpha enemy made"
-			"reputation: Alpha" -= 100
 				decline
 			label attack
+			action
+				set "alpha enemy made"
+				"reputation: Alpha" -= 100
+				"reputation: Republic" += 25
 			`	You draw your weapon and fire. The guards are fast - inhumanly fast - but you're faster. Or maybe just luckier. In the chaos, Prometheus escapes, but you eliminate both guards. As alarms sound, you flee the station.`
 			`	A message arrives from Prometheus: "You've just signed your death warrant, Captain. Enjoy what little time you have left."`
-			set "alpha enemy made"
-			"reputation: Alpha" -= 100
-			"reputation: Republic" += 25
 				decline
 
 

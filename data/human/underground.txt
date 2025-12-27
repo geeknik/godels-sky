@@ -86,7 +86,7 @@ mission "Silent Professional: Evidence Destruction"
 		government "Republic"
 		personality staying
 		fleet
-			names "republic"
+			names "republic small"
 			variant
 				"Corvette"
 				"Shuttle" 2
@@ -148,9 +148,9 @@ mission "Witness Elimination: Government Agent"
 		government "Republic"
 		personality staying
 		fleet
-			names "republic"
+			names "republic small"
 			variant
-				"Patrol Boat"
+				"Quicksilver"
 	on complete
 		payment 75000
 		"reputation: Republic" -= 20
@@ -340,9 +340,9 @@ mission "Crime Syndicate: Major Operation"
 		personality staying
 		system waypoint
 		fleet
-			names "republic"
+			names "republic small"
 			variant
-				"Patrol Boat"
+				"Quicksilver"
 				"Flivver"
 	on complete
 		payment 150000

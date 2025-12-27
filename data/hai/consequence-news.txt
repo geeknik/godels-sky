@@ -20,9 +20,10 @@
 # =============================================================================
 
 news "hai trader praise"
+	to show
+		"actionlog: pattern" == 1
 	location
 		government "Hai"
-		"actionlog: pattern" == 1  # TRADER
 	name
 		word
 			"Hai merchant"
@@ -42,10 +43,11 @@ news "hai trader praise"
 
 
 news "hai trader protection"
-	location
-		government "Hai"
+	to show
 		"actionlog: pattern" == 1
 		"encounter: count disposition grateful" >= 3
+	location
+		government "Hai"
 	name
 		word
 			"Grateful Hai"
@@ -68,10 +70,11 @@ news "hai trader protection"
 # =============================================================================
 
 news "hai protector recognition"
+	to show
+		"actionlog: pattern" == 4
+		"reputation: Hai" > 40
 	location
 		government "Hai"
-		"actionlog: pattern" == 4  # PROTECTOR
-		"reputation: Hai" > 40
 	name
 		word
 			"Hai elder"
@@ -91,10 +94,11 @@ news "hai protector recognition"
 
 
 news "hai protector environmentalist"
-	location
-		government "Hai"
+	to show
 		"actionlog: pattern" == 4
 		"reputation: Hai" > 50
+	location
+		government "Hai"
 	name
 		word
 			"Environmentalist Hai"
@@ -117,9 +121,10 @@ news "hai protector environmentalist"
 # =============================================================================
 
 news "hai pirate condemnation"
+	to show
+		"actionlog: pattern" == 2
 	location
 		government "Hai"
-		"actionlog: pattern" == 2  # PIRATE
 	name
 		word
 			"Worried Hai"
@@ -139,9 +144,10 @@ news "hai pirate condemnation"
 
 
 news "hai warmonger concern"
+	to show
+		"actionlog: pattern" == 5
 	location
 		government "Hai"
-		"actionlog: pattern" == 5  # WARMONGER
 	name
 		word
 			"Alarmed Hai"
@@ -160,9 +166,10 @@ news "hai warmonger concern"
 
 
 news "hai atrocity reaction"
+	to show
+		"reputation: atrocity"
 	location
 		government "Hai"
-		"reputation: atrocity"
 	name
 		word
 			"Outraged Hai"
@@ -185,10 +192,11 @@ news "hai atrocity reaction"
 # =============================================================================
 
 news "hai witness report"
-	location
-		government "Hai"
+	to show
 		not "witness: unwitnessed"
 		"actionlog: witnessed" > 500
+	location
+		government "Hai"
 	name
 		word
 			"Hai witness"
@@ -207,9 +215,10 @@ news "hai witness report"
 
 
 news "hai unwitnessed recognition"
+	to show
+		"witness: unwitnessed"
 	location
 		government "Hai"
-		"witness: unwitnessed"
 	name
 		word
 			"Perceptive Hai"
@@ -232,12 +241,13 @@ news "hai unwitnessed recognition"
 # =============================================================================
 
 news "hai reputation spread"
-	location
-		government "Hai"
+	to show
 		"days" > 100
 		or
 			"encounter: count disposition grateful" >= 10
 			"encounter: count disposition hostile" >= 8
+	location
+		government "Hai"
 	name
 		word
 			"Hai network"
@@ -260,11 +270,12 @@ news "hai reputation spread"
 # =============================================================================
 
 news "hai long-term alliance"
-	location
-		government "Hai"
+	to show
 		"days" > 365
 		"reputation: Hai" > 70
 		"actionlog: pattern" == 4
+	location
+		government "Hai"
 	name
 		word
 			"Hai council"
@@ -273,7 +284,7 @@ news "hai long-term alliance"
 		word
 			`"`
 		word
-			"For years, the human captain has beenfriend to the Hai. Consistent support, protection, respect for our ways. They are now considered family."
+			"For years, the human captain has been friend to the Hai. Consistent support, protection, respect for our ways. They are now considered family."
 			"The Hai council has debated the human's status. Unanimous agreement: the captain is trusted ally, welcome in any Hai territory, entitled to our aid."
 			"Many humans come and go. This captain has remained with us through seasons. Proven loyalty over long time. They have earned our deepest trust."
 			"The captain helped establish new trade routes between Hai and human space. They've opened doors we thought permanently closed. They are bridge-builder."
@@ -283,11 +294,12 @@ news "hai long-term alliance"
 
 
 news "hai long-term enemy"
-	location
-		government "Hai"
+	to show
 		"days" > 300
 		"reputation: Hai" < -50
 		"reputation: atrocity"
+	location
+		government "Hai"
 	name
 		word
 			"Hai council warning"
@@ -310,18 +322,19 @@ news "hai long-term enemy"
 # =============================================================================
 
 news "hai human cooperation"
-	location
-		government "Hai"
+	to show
 		"reputation: Hai" > 40
 		"reputation: Republic" > 40
 		"actionlog: pattern" == 4
+	location
+		government "Hai"
 	name
 		word
 			"Hai diplomat"
 			"Hai observer"
 	message
 		word
-			`""
+			`"`
 		word
 			"The human captain bridges Hai and human interests. They understand both cultures, find common ground. We appreciate such ambassadors."
 			"Republic trusts the human. Hai trust the human. They are rare link between our peoples. This relationship is valuable and fragile."
@@ -333,10 +346,11 @@ news "hai human cooperation"
 
 
 news "hai human conflict"
-	location
-		government "Hai"
+	to show
 		"reputation: Hai" < -30
 		"reputation: Republic" > 30
+	location
+		government "Hai"
 	name
 		word
 			"Confused Hai"
